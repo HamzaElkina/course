@@ -1,1 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des TP - JavaScript</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        h1 {
+            color: #f7df1e;
+            background-color: #323330;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            border-left: 3px solid #f7df1e;
+            padding-left: 15px;
+        }
+
+        .tp-list {
+            margin: 30px 0;
+        }
+
+        .tp-item {
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tp-item:hover {
+            transform: translateX(5px);
+            border-color: #f7df1e;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .tp-info {
+            flex: 1;
+        }
+
+        .tp-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #323330;
+        }
+
+        .tp-desc {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .tp-link {
+            background-color: #323330;
+            color: #f7df1e;
+            padding: 8px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .tp-link:hover {
+            background-color: #f7df1e;
+            color: #323330;
+        }
+
+        .info {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 12px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            text-align: center;
+            color: #888;
+            border-top: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Travaux Pratiques</h1>
+        <div class="subtitle">
+            Cours JavaScript - Programmation Orientée Objet
+        </div>
+
+        <div class="tp-list">
+            <!-- TP1 -->
+            <div class="tp-item">
+                <div class="tp-info">
+                    <div class="tp-title">TP1 - Introduction au scripting JavaScript</div>
+                    <div class="tp-desc">Premiers pas avec JavaScript : structure HTML, console, variables, conditions et boucles</div>
+                </div>
+                <a href="TP1.html" class="tp-link">Voir le TP →</a>
+            </div>
+
+            <!-- À venir -->
+            <div class="tp-item" style="opacity: 0.6;">
+                <div class="tp-info">
+                    <div class="tp-title">TP2 - Programmation Orientée Objet (à venir)</div>
+                    <div class="tp-desc">Classes, objets, attributs, méthodes et héritage</div>
+                </div>
+                <span style="background:#ccc; padding:8px 20px; border-radius:5px; color:#666;">Bientôt</span>
+            </div>
+
+            <div class="tp-item" style="opacity: 0.6;">
+                <div class="tp-info">
+                    <div class="tp-title">TP3 - Projet final (à venir)</div>
+                    <div class="tp-desc">Application complète intégrant tous les concepts du cours</div>
+                </div>
+                <span style="background:#ccc; padding:8px 20px; border-radius:5px; color:#666;">Bientôt</span>
+            </div>
+        </div>
+
+        <div class="info">
+            <strong>📌 Information :</strong> Cliquez sur "Voir le TP" pour accéder au travail pratique.
+            Les autres TP seront ajoutés progressivement.
+        </div>
+
+        <footer>
+            <p>🎓 Cours JavaScript - Tous les travaux pratiques sont à rendre sur la plateforme Google Classroom</p>
+        </footer>
+    </div>
+</body>
+</html>
