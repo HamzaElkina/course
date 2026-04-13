@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP JavaScript : Introduction au scripting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        h1 {
+            color: #f7df1e;
+            background-color: #323330;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #323330;
+            border-left: 4px solid #f7df1e;
+            padding-left: 15px;
+            margin: 35px 0 15px 0;
+        }
+
+        .exercise {
+            background-color: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            transition: box-shadow 0.2s;
+        }
+
+        .exercise:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .exercise h3 {
+            color: #f7df1e;
+            background-color: #323330;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .question {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .indice {
+            background-color: #f0f7ff;
+            border-left: 4px solid #3498db;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        .indice strong {
+            color: #2980b9;
+        }
+
+        .todo {
+            background-color: #fff8e7;
+            border-left: 4px solid #f39c12;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .code-placeholder {
+            background-color: #2d2d2d;
+            color: #888;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 15px 0;
+            border: 1px dashed #555;
+        }
+
+        .info {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .editor-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+
+        .editor-section h3 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+
+        .editor-grid {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .editor-card {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .editor-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .editor-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .editor-card p {
+            font-size: 0.9rem;
+            margin: 10px 0;
+        }
+
+        .download-btn {
+            display: inline-block;
+            background-color: #667eea;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .download-btn:hover {
+            background-color: #5a67d8;
+        }
+
+        hr {
+            margin: 30px 0;
+            border: none;
+            border-top: 2px solid #eee;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            text-align: center;
+            color: #888;
+            border-top: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        kbd {
+            background-color: #f4f4f4;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            padding: 2px 6px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .objectives {
+            background-color: #fef9e7;
+            border: 1px solid #f1c40f;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TP JavaScript : Les bases du scripting</h1>
+        <p>Ce travail pratique vous guidera à travers les concepts fondamentaux de JavaScript. Pour chaque exercice, vous devrez écrire le code vous-même en suivant les indications fournies. N'oubliez pas d'utiliser la console du navigateur (<kbd>F12</kbd>) pour tester et déboguer votre code.</p>
+
+        <!-- Section : Éditeurs de texte et IDE -->
+        <div class="editor-section">
+            <h3>📝 Choisissez votre outil de développement</h3>
+            <p>Pour écrire votre code HTML et JavaScript, vous pouvez utiliser :</p>
+            <div class="editor-grid">
+                <div class="editor-card">
+                    <h4>📄 Notepad++</h4>
+                    <p>Éditeur de texte léger et gratuit avec coloration syntaxique. Idéal pour commencer.</p>
+                    <a href="https://notepad-plus-plus.org/downloads/" target="_blank" class="download-btn">Télécharger Notepad++</a>
+                </div>
+                <div class="editor-card">
+                    <h4>💻 Visual Studio Code</h4>
+                    <p>IDE complet et gratuit avec extensions puissantes (Live Server, Auto Rename Tag, etc.). Recommandé pour ce TP.</p>
+                    <a href="https://code.visualstudio.com/download" target="_blank" class="download-btn">Télécharger VS Code</a>
+                </div>
+            </div>
+            <div class="info" style="background: rgba(255,255,255,0.2); margin-top: 15px; color: white;">
+                💡 <strong>Astuce :</strong> Si vous utilisez VS Code, installez l'extension "Live Server" pour voir vos modifications en temps réel dans le navigateur.
+            </div>
+        </div>
+
+        <!-- Objectifs du TP -->
+        <div class="objectives">
+            <strong>🎯 Objectifs de ce TP :</strong>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>Créer une structure HTML valide</li>
+                <li>Intégrer du JavaScript dans une page web</li>
+                <li>Utiliser la console du navigateur pour déboguer</li>
+                <li>Manipuler les variables, les conditions et les boucles</li>
+                <li>Créer des fonctions interactives avec prompt()</li>
+            </ul>
+        </div>
+
+        <!-- Exercice 1 : Structure HTML -->
+        <div class="exercise">
+            <h3>Exercice 1</h3>
+            <div class="question">🎯 Créer une structure HTML de base avec un titre "Cours JavaScript"</div>
+            <p>Vous devez créer un fichier HTML valide contenant une structure complète.</p>
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Utilisez la déclaration <code>&lt;!DOCTYPE html&gt;</code></li>
+                    <li>Créez les balises <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code> et <code>&lt;body&gt;</code></li>
+                    <li>Dans le <code>&lt;body&gt;</code>, ajoutez un titre principal <code>&lt;h1&gt;</code> contenant le texte "Cours JavaScript"</li>
+                    <li>Ajoutez un paragraphe de présentation avec votre nom et prénom</li>
+                </ul>
+            </div>
+            <div class="code-placeholder">
+                📁 Fichier : index.html<br>
+                ⚡ À compléter : Écrivez la structure HTML complète
+            </div>
+        </div>
+
+        <!-- Exercice 2 : Script intégré -->
+        <div class="exercise">
+            <h3>Exercice 2</h3>
+            <div class="question">🎯 Insérer un script JavaScript directement dans la page HTML</div>
+            <p>Ajoutez du code JavaScript qui s'exécute au chargement de la page.</p>
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Utilisez la balise <code>&lt;script&gt;</code> dans le <code>&lt;head&gt;</code> ou avant la fermeture du <code>&lt;body&gt;</code></li>
+                    <li>À l'intérieur, écrivez une instruction qui affiche une alerte avec <code>alert()</code></li>
+                    <li>Testez en ouvrant la page dans votre navigateur</li>
+                </ul>
+            </div>
+            <div class="todo">
+                💡 <strong>À faire :</strong> Créez une alerte qui dit "Bienvenue dans le cours JavaScript !"
+            </div>
+            <div class="code-placeholder">
+                🔧 À écrire : Votre code JavaScript entre les balises &lt;script&gt;
+            </div>
+        </div>
+
+        <!-- Exercice 3 : Script externe -->
+        <div class="exercise">
+            <h3>Exercice 3</h3>
+            <div class="question">🎯 Créer un script dans un fichier externe et le lier à la page HTML</div>
+            <p>Séparez le code JavaScript du HTML en créant un fichier dédié.</p>
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Créez un nouveau fichier nommé <code>script.js</code> dans le même dossier que votre page HTML</li>
+                    <li>Dans ce fichier, écrivez une instruction <code>console.log()</code> avec un message de votre choix</li>
+                    <li>Dans le fichier HTML, liez ce fichier externe avec <code>&lt;script src="script.js"&gt;&lt;/script&gt;</code></li>
+                    <li>Vérifiez dans la console (F12) que le message apparaît</li>
+                </ul>
+            </div>
+            <div class="code-placeholder">
+                📄 Fichier script.js : <span style="color: #aaa;">[à créer]</span><br>
+                🔗 Lien HTML : <span style="color: #aaa;">[à ajouter dans index.html]</span>
+            </div>
+        </div>
+
+        <!-- Exercice 4 : Console navigateur -->
+        <div class="exercise">
+            <h3>Exercice 4</h3>
+            <div class="question">🎯 Ouvrir et utiliser la console du navigateur</div>
+            <p>Apprenez à accéder aux outils de développement pour visualiser les messages JavaScript.</p>
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li><strong>Chrome / Edge :</strong> Appuyez sur <kbd>F12</kbd> ou <kbd>Ctrl + Shift + I</kbd> (Windows/Linux) / <kbd>Cmd + Option + I</kbd> (Mac)</li>
+                    <li><strong>Firefox :</strong> Appuyez sur <kbd>F12</kbd> ou <kbd>Ctrl + Shift + K</kbd></li>
+                    <li>Cliquez sur l'onglet "Console" pour voir les messages</li>
+                    <li>Essayez d'écrire directement du JavaScript dans la console (ex: <code>2 + 2</code>, <code>"Bonjour".toUpperCase()</code>)</li>
+                </ul>
+            </div>
+            <div class="todo">
+                💡 <strong>À faire :</strong> Ouvrez la console, tapez <code>console.log("Premier test manuel")</code> et validez. Observez le résultat.
+            </div>
+        </div>
+
+        <!-- Exercice 5 : console.log -->
+        <div class="exercise">
+            <h3>Exercice 5</h3>
+            <div class="question">🎯 Écrire plusieurs messages dans la console avec console.log()</div>
+            <p>Utilisez la méthode <code>console.log()</code> pour afficher différentes informations.</p>
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Dans votre fichier <code>script.js</code> (ou dans une balise <code>&lt;script&gt;</code>), ajoutez plusieurs appels à <code>console.log()</code></li>
+                    <li>Affichez un message texte simple : <code>"Début du TP JavaScript"</code></li>
+                    <li>Créez une variable avec <code>let</code> (ex: votre âge, votre ville) et affichez sa valeur</li>
+                    <li>Affichez le résultat d'une opération mathématique (ex: <code>25 * 4</code>)</li>
+                    <li>Affichez une chaîne de caractères avec concaténation (ex: <code>"Je m'appelle " + prenom</code>)</li>
+                </ul>
+            </div>
+            <div class="todo">
+                💡 <strong>À faire :</strong> Écrivez au moins 4 messages différents dans la console.
+            </div>
+            <div class="code-placeholder">
+                // Exemple de structure à compléter dans script.js :<br><br>
+                // let prenom = "...";<br>
+                // console.log("...");<br>
+                // console.log(...);<br>
+                ⚡ À vous d'écrire votre code
+            </div>
+        </div>
+
+        <!-- Exercice 6 : Fonction avec prompt, condition et console.log -->
+        <div class="exercise">
+            <h3>Exercice 6</h3>
+            <div class="question">🎯 Créer une fonction qui utilise prompt, une condition et console.log</div>
+            <p>Écrivez une fonction qui demande une information à l'utilisateur et effectue un traitement conditionnel.</p>
+            
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Créez une fonction nommée <code>verifierAge()</code></li>
+                    <li>Utilisez <code>prompt()</code> pour demander l'âge de l'utilisateur</li>
+                    <li>Convertissez la saisie en nombre avec <code>parseInt()</code> ou <code>Number()</code></li>
+                    <li>Ajoutez une condition <code>if/else if/else</code> pour vérifier :
+                        <ul style="margin-left: 20px;">
+                            <li>Si l'âge est inférieur à 18 → afficher "Mineur" dans la console</li>
+                            <li>Si l'âge est entre 18 et 65 → afficher "Adulte" dans la console</li>
+                            <li>Si l'âge est supérieur à 65 → afficher "Senior" dans la console</li>
+                            <li>Si la saisie n'est pas valide → afficher "Âge invalide"</li>
+                        </ul>
+                    </li>
+                    <li>Ajoutez un bouton HTML qui appelle cette fonction au clic</li>
+                </ul>
+            </div>
+
+            <div class="todo">
+                💡 <strong>Objectifs détaillés :</strong>
+                <ol style="margin-left: 20px; margin-top: 8px;">
+                    <li>Créer une fonction avec <code>function verifierAge() { ... }</code></li>
+                    <li>Utiliser <code>prompt()</code> pour récupérer l'âge</li>
+                    <li>Convertir la chaîne en nombre avec <code>parseInt()</code></li>
+                    <li>Écrire une structure conditionnelle <code>if/else if/else</code></li>
+                    <li>Afficher les résultats avec <code>console.log()</code></li>
+                    <li>Ajouter un bouton : <code>&lt;button onclick="verifierAge()"&gt;Vérifier mon âge&lt;/button&gt;</code></li>
+                </ol>
+            </div>
+
+            <div class="code-placeholder">
+                📝 Structure à compléter dans votre HTML/JS :<br><br>
+                &lt;button onclick="verifierAge()"&gt;Vérifier mon âge&lt;/button&gt;<br><br>
+                &lt;script&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;function verifierAge() {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// À compléter<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                &lt;/script&gt;
+            </div>
+        </div>
+
+        <!-- Exercice 7 : Boucle avec prompt, condition et console.log -->
+        <div class="exercise">
+            <h3>Exercice 7</h3>
+            <div class="question">🎯 Créer une fonction qui utilise une boucle, prompt, une condition et console.log</div>
+            <p>Écrivez une fonction interactive qui demande plusieurs nombres à l'utilisateur et effectue des calculs.</p>
+            
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Créez une fonction nommée <code>analyserNombres()</code></li>
+                    <li>Utilisez <code>prompt()</code> pour demander combien de nombres l'utilisateur veut saisir</li>
+                    <li>Utilisez une boucle <code>for</code> pour répéter la saisie autant de fois que demandé</li>
+                    <li>Pour chaque nombre saisi :
+                        <ul style="margin-left: 20px;">
+                            <li>Vérifiez avec une condition si le nombre est pair ou impair</li>
+                            <li>Affichez dans la console : "Nombre X est pair/impair"</li>
+                            <li>Calculez et stockez la somme de tous les nombres</li>
+                        </ul>
+                    </li>
+                    <li>Après la boucle, affichez dans la console : "Somme totale : X"</li>
+                    <li>Affichez également la moyenne des nombres</li>
+                    <li>Ajoutez un bouton HTML qui appelle cette fonction</li>
+                </ul>
+            </div>
+
+            <div class="todo">
+                💡 <strong>Objectifs détaillés :</strong>
+                <ol style="margin-left: 20px; margin-top: 8px;">
+                    <li>Demander avec <code>prompt()</code> : "Combien de nombres voulez-vous saisir ?"</li>
+                    <li>Stocker cette valeur dans une variable <code>nombreDeValeurs</code></li>
+                    <li>Initialiser une variable <code>somme = 0</code></li>
+                    <li>Créer une boucle <code>for (let i = 1; i <= nombreDeValeurs; i++)</code></li>
+                    <li>Dans la boucle, demander à l'utilisateur de saisir un nombre avec <code>prompt("Nombre " + i + " :")</code></li>
+                    <li>Convertir la saisie en nombre avec <code>parseInt()</code></li>
+                    <li>Utiliser une condition <code>if/else</code> pour vérifier si le nombre est pair ou impair</li>
+                    <li>Afficher dans la console : "Nombre X est pair/impair"</li>
+                    <li>Ajouter le nombre à la somme</li>
+                    <li>Après la boucle, calculer la moyenne = somme / nombreDeValeurs</li>
+                    <li>Afficher dans la console : "Somme totale : " + somme et "Moyenne : " + moyenne</li>
+                    <li>Ajouter un bouton dans le HTML : <code>&lt;button onclick="analyserNombres()"&gt;Analyser des nombres&lt;/button&gt;</code></li>
+                </ol>
+            </div>
+
+            <div class="code-placeholder">
+                📝 Structure à compléter dans votre HTML/JS :<br><br>
+                &lt;button onclick="analyserNombres()"&gt;Analyser des nombres&lt;/button&gt;<br><br>
+                &lt;script&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;function analyserNombres() {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Étape 1 : Demander combien de nombres<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Étape 2 : Initialiser somme = 0<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Étape 3 : Boucle for pour les saisies<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Étape 4 : Condition pair/impair<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Étape 5 : Afficher dans la console<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Étape 6 : Calculer somme et moyenne<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                &lt;/script&gt;
+            </div>
+        </div>
+
+        <!-- Rappel sur la console -->
+        <hr>
+        <div class="info">
+            <strong>🔍 Rappel important :</strong> La console du navigateur (accessible avec <kbd>F12</kbd>) est votre outil principal pour ce TP. Utilisez-la pour :
+            <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>Voir les messages <code>console.log()</code></li>
+                <li>Tester des bouts de code JavaScript rapidement</li>
+                <li>Voir les erreurs éventuelles dans votre code</li>
+                <li>Déboguer vos fonctions interactives</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>📝 TP JavaScript - 7 exercices à réaliser dans l'ordre</p>
+            <p>💡 N'oubliez pas : chaque exercice doit être testé dans le navigateur avant de passer au suivant</p>
+            <p>🛠️ Besoin d'aide ? Utilisez la console (F12) pour voir les erreurs et les messages</p>
+        </footer>
+    </div>
+</body>
+</html>
