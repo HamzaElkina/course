@@ -225,7 +225,7 @@
                         <div class="course-description">Apprenez les bases du Javascript.</div>
                     </td>
                     <td><span class="course-level level-debutant">Débutant</span></td>
-                    <td><button class="access-btn" onclick="openCourse('Javascript')">Accéder</button></td>
+                    <td><button class="access-btn" onclick="openCourse('javascript/')">Accéder</button></td>
                 </tr>
                 <tr>
                     <td class="course-icon">🌐</td>
@@ -293,7 +293,7 @@
             //alert("🔗 Accès au cours : " + courseName + "\n\nCette fonctionnalité redirigera vers le contenu du cours dans la version finale.");
             
             // Optionnel : rediriger vers une page spécifique
-            // window.location.href = "/course/" + encodeURIComponent(courseName);
+            window.location.href = "/course/" + encodeURIComponent(courseName);
             
             // Afficher dans la console pour le suivi
         }
