@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TP React : Création d'une application avec Vite</title>
+    <title>Liste des TP - JavaScript</title>
     <style>
         * {
             margin: 0;
@@ -20,7 +20,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
             background: white;
             border-radius: 8px;
@@ -29,161 +29,80 @@
         }
 
         h1 {
-            color: #61dafb;
-            background-color: #20232a;
+            color: #f7df1e;
+            background-color: #323330;
             display: inline-block;
             padding: 5px 15px;
             border-radius: 5px;
             margin-bottom: 20px;
         }
 
-        h2 {
-            color: #20232a;
-            border-left: 4px solid #61dafb;
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            border-left: 3px solid #f7df1e;
             padding-left: 15px;
-            margin: 35px 0 15px 0;
         }
 
-        .step {
-            background-color: #fafafa;
+        .tp-list {
+            margin: 30px 0;
+        }
+
+        .tp-item {
+            background: #fafafa;
             border: 1px solid #e0e0e0;
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 20px;
-            margin: 20px 0;
-            transition: box-shadow 0.2s;
-        }
-
-        .step:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .step h3 {
-            color: #61dafb;
-            background-color: #20232a;
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 1.1rem;
             margin-bottom: 15px;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .question {
+        .tp-item:hover {
+            transform: translateX(5px);
+            border-color: #f7df1e;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .tp-info {
+            flex: 1;
+        }
+
+        .tp-title {
+            font-size: 1.2rem;
             font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            color: #2c3e50;
+            color: #323330;
         }
 
-        .indice {
-            background-color: #f0f7ff;
-            border-left: 4px solid #3498db;
-            padding: 12px;
-            margin: 15px 0;
-            border-radius: 4px;
-            font-size: 0.95rem;
+        .tp-desc {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
         }
 
-        .indice strong {
-            color: #2980b9;
+        .tp-link {
+            background-color: #323330;
+            color: #f7df1e;
+            padding: 8px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.2s;
         }
 
-        .todo {
-            background-color: #fff8e7;
-            border-left: 4px solid #f39c12;
-            padding: 12px;
-            margin: 15px 0;
-            border-radius: 4px;
-        }
-
-        .code-block {
-            background-color: #2d2d2d;
-            color: #f8f8f2;
-            padding: 15px;
-            border-radius: 6px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            margin: 15px 0;
-            overflow-x: auto;
-            border: 1px solid #555;
-        }
-
-        .code-block code {
-            color: #f8f8f2;
-            font-family: 'Courier New', monospace;
+        .tp-link:hover {
+            background-color: #f7df1e;
+            color: #323330;
         }
 
         .info {
             background-color: #e8f5e9;
             border-left: 4px solid #4caf50;
             padding: 12px;
-            margin: 15px 0;
-            border-radius: 4px;
-        }
-
-        .warning {
-            background-color: #fff3e0;
-            border-left: 4px solid #ff9800;
-            padding: 12px;
-            margin: 15px 0;
-            border-radius: 4px;
-        }
-
-        .terminal {
-            background-color: #1e1e1e;
-            color: #d4d4d4;
-            padding: 15px;
-            border-radius: 6px;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            margin: 15px 0;
-            overflow-x: auto;
-        }
-
-        .terminal .prompt {
-            color: #4ec9b0;
-        }
-
-        .terminal .command {
-            color: #ce9178;
-        }
-
-        .screenshot-task {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
             margin: 20px 0;
-        }
-
-        .screenshot-task h4 {
-            margin-bottom: 10px;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .screenshot-task .camera-icon {
-            font-size: 1.3rem;
-        }
-
-        .file-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 15px 0;
-        }
-
-        .file-card h4 {
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-        }
-
-        hr {
-            margin: 30px 0;
-            border: none;
-            border-top: 2px solid #eee;
+            border-radius: 4px;
         }
 
         footer {
@@ -194,457 +113,50 @@
             border-top: 1px solid #eee;
             font-size: 0.9rem;
         }
-
-        kbd {
-            background-color: #f4f4f4;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            padding: 2px 6px;
-            font-family: monospace;
-            font-size: 0.9rem;
-        }
-
-        .objectives {
-            background-color: #fef9e7;
-            border: 1px solid #f1c40f;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .file-structure {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 8px;
-            font-family: monospace;
-            margin: 15px 0;
-        }
-
-        .file-structure ul {
-            list-style-type: none;
-            margin-left: 20px;
-        }
-
-        .file-structure li {
-            margin: 5px 0;
-        }
-
-        .file-structure .folder {
-            color: #e67e22;
-            font-weight: bold;
-        }
-
-        .file-structure .file {
-            color: #3498db;
-        }
-
-        .recap-screenshots {
-            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-
-        .recap-screenshots h4 {
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-        }
-
-        .recap-screenshots ol {
-            margin-left: 20px;
-        }
-
-        .recap-screenshots li {
-            margin: 8px 0;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>⚛️ TP React : Création d'une application avec Vite</h1>
-        <p>Ce travail pratique vous guidera à travers l'installation des outils nécessaires et la création d'une application React moderne utilisant Vite. Vous apprendrez à configurer un environnement de développement complet et à comprendre la structure d'un projet React.</p>
-
-        <!-- Objectifs du TP -->
-        <div class="objectives">
-            <strong>🎯 Objectifs de ce TP :</strong>
-            <ul style="margin-left: 20px; margin-top: 8px;">
-                <li>Installer et configurer Visual Studio Code</li>
-                <li>Installer Node.js et npm (gestionnaire de paquets)</li>
-                <li>Utiliser le terminal en ligne de commande</li>
-                <li>Créer une application React avec Vite</li>
-                <li>Comprendre la structure d'un projet React</li>
-                <li>Découvrir le rôle des fichiers essentiels</li>
-                <li>Documenter son travail avec des captures d'écran</li>
-            </ul>
+        <h1>📚 Travaux Pratiques</h1>
+        <div class="subtitle">
+            Cours JavaScript - Programmation Orientée Objet
         </div>
 
-        <!-- ÉTAPE 1 : Installation des outils -->
-        <h2>📦 ÉTAPE 1 : Installation des outils de développement</h2>
-
-        <!-- Sous-étape 1.1 : VSCode -->
-        <div class="step">
-            <h3>1.1 - Téléchargement et installation de Visual Studio Code</h3>
-            <div class="question">💻 Installer l'éditeur de code officiel pour le développement React</div>
-            <p>Visual Studio Code est l'IDE le plus populaire pour le développement JavaScript/React grâce à ses nombreuses extensions.</p>
-            
-            <div class="indice">
-                <strong>📌 Procédure d'installation :</strong>
-                <ol style="margin-left: 20px; margin-top: 8px;">
-                    <li>Rendez-vous sur le site officiel : <a href="https://code.visualstudio.com/" target="_blank">https://code.visualstudio.com/</a></li>
-                    <li>Téléchargez la version correspondant à votre système d'exploitation (Windows, macOS, Linux)</li>
-                    <li>Lancez l'installateur et suivez les instructions</li>
-                    <li><strong>Important (Windows)</strong> : Cochez les options :
-                        <ul style="margin-left: 20px;">
-                            <li>"Ajouter l'action 'Ouvrir avec Code' au menu contextuel"</li>
-                            <li>"Ajouter à PATH" (pour utiliser la commande 'code' dans le terminal)</li>
-                        </ul>
-                    </li>
-                    <li>Une fois installé, lancez VS Code</li>
-                </ol>
-            </div>
-
-            <div class="screenshot-task">
-                <h4>📸 Étape 1 - Capture d'écran</h4>
-                <p>Prenez une capture d'écran de Visual Studio Code après son installation, montrant l'interface principale.</p>
-            </div>
-
-            <div class="code-block">
-                📝 Pour vérifier que VS Code est bien installé et accessible en ligne de commande :
-                <br><br>
-                <span style="color: #aaa;"># Ouvrez un terminal (cmd, PowerShell ou terminal) et tapez :</span>
-                <br>
-                <span style="color: #4ec9b0;">$</span> <span style="color: #ce9178;">code --version</span>
-                <br><br>
-                <span style="color: #aaa;"># Si la commande est reconnue, vous verrez le numéro de version de VS Code</span>
-            </div>
-        </div>
-
-        <!-- Sous-étape 1.2 : Node.js et npm -->
-        <div class="step">
-            <h3>1.2 - Téléchargement et installation de Node.js et npm</h3>
-            <div class="question">🟢 Installer l'environnement d'exécution JavaScript et son gestionnaire de paquets</div>
-            <p>Node.js est indispensable pour exécuter des applications JavaScript côté serveur et utiliser npm (Node Package Manager) pour installer les bibliothèques nécessaires comme React.</p>
-
-            <div class="indice">
-                <strong>📌 Procédure d'installation :</strong>
-                <ol style="margin-left: 20px; margin-top: 8px;">
-                    <li>Rendez-vous sur <a href="https://nodejs.org/" target="_blank">https://nodejs.org/</a></li>
-                    <li>Téléchargez la <strong>version LTS (Long Term Support)</strong> - la plus stable</li>
-                    <li>Lancez l'installateur et suivez les instructions par défaut</li>
-                    <li>L'installation inclut automatiquement <strong>npm</strong> (Node Package Manager)</li>
-                    <li>Redémarrez votre terminal après l'installation</li>
-                </ol>
-            </div>
-
-            <div class="screenshot-task">
-                <h4>📸 Étape 2 - Capture d'écran</h4>
-                <p>Prenez une capture d'écran du terminal après avoir vérifié les versions de Node.js et npm.</p>
-            </div>
-
-            <div class="terminal">
-                <span style="color: #aaa;"># Vérifiez que Node.js est correctement installé :</span><br>
-                <span class="prompt">$</span> <span class="command">node --version</span><br>
-                <span style="color: #4ec9b0;">v20.11.0</span>  <span style="color: #aaa;">&lt;-- Doit afficher une version récente</span><br><br>
-                
-                <span style="color: #aaa;"># Vérifiez la version de npm :</span><br>
-                <span class="prompt">$</span> <span class="command">npm --version</span><br>
-                <span style="color: #4ec9b0;">10.2.4</span>  <span style="color: #aaa;">&lt;-- Doit afficher une version</span>
-            </div>
-
-            <div class="info">
-                <strong>ℹ️ À savoir :</strong> npm est le gestionnaire de paquets officiel de Node.js. Il permet d'installer des bibliothèques JavaScript comme React, Vite, etc. La commande <code>npx</code> (inclus avec npm) permet d'exécuter des paquets sans les installer globalement.
-            </div>
-        </div>
-
-        <!-- ÉTAPE 2 : Création de l'application React -->
-        <h2>🚀 ÉTAPE 2 : Création d'une application React avec Vite</h2>
-
-        <div class="step">
-            <h3>2.1 - Accès au terminal et création du projet</h3>
-            <div class="question">💻 Ouvrir un terminal et créer une application "reactappvite"</div>
-            
-            <div class="indice">
-                <strong>📌 Commandes à exécuter :</strong>
-                <ul style="margin-left: 20px; margin-top: 8px;">
-                    <li>Ouvrez un terminal (PowerShell sur Windows, Terminal sur macOS/Linux)</li>
-                    <li>Naviguez vers le dossier où vous souhaitez créer votre projet</li>
-                    <li>Utilisez la commande de création avec Vite</li>
-                </ul>
-            </div>
-
-            <div class="screenshot-task">
-                <h4>📸 Étape 3 - Capture d'écran</h4>
-                <p>Prenez une capture d'écran du terminal pendant la création du projet (commandes et messages de confirmation).</p>
-            </div>
-
-            <div class="terminal">
-                <span style="color: #aaa;"># 1. Se déplacer dans le dossier de travail (ex: Bureau)</span><br>
-                <span class="prompt">$</span> <span class="command">cd ~/Desktop</span><br><br>
-                
-                <span style="color: #aaa;"># 2. Créer une nouvelle application React avec Vite</span><br>
-                <span class="prompt">$</span> <span class="command">npm create vite@latest reactappvite -- --template react</span><br><br>
-                
-                <span style="color: #aaa;"># 3. Se déplacer dans le dossier du projet</span><br>
-                <span class="prompt">$</span> <span class="command">cd reactappvite</span><br><br>
-                
-                <span style="color: #aaa;"># 4. Installer les dépendances (node_modules)</span><br>
-                <span class="prompt">$</span> <span class="command">npm install</span>
-            </div>
-
-            <div class="warning">
-                <strong>⚠️ Note importante :</strong> La première installation peut prendre quelques minutes.
-            </div>
-        </div>
-
-        <div class="step">
-            <h3>2.2 - Démarrer l'application et visualiser dans le navigateur</h3>
-            <div class="question">🌐 Lancer le serveur de développement et ouvrir l'application</div>
-            
-            <div class="indice">
-                <strong>📌 Après avoir exécuté <code>npm run dev</code> :</strong>
-                <ul style="margin-left: 20px; margin-top: 8px;">
-                    <li>Le terminal affiche : <code>Local: http://localhost:5173/</code></li>
-                    <li>Ouvrez votre navigateur (Chrome, Firefox, Edge)</li>
-                    <li>Tapez l'adresse : <code>http://localhost:5173</code></li>
-                    <li>Vous devriez voir la page d'accueil par défaut de React + Vite</li>
-                </ul>
-            </div>
-
-            <div class="screenshot-task">
-                <h4>📸 Étape 4 - Capture d'écran</h4>
-                <p>Prenez une capture d'écran de l'application React qui tourne dans le navigateur (afficher l'URL et l'interface).</p>
-            </div>
-
-            <div class="info">
-                <strong>🎉 Félicitations !</strong> Vous venez de créer votre première application React. La page affiche le logo React qui tourne, ainsi qu'un compteur interactif et des liens vers la documentation.
-            </div>
-
-            <div class="todo">
-                💡 <strong>À faire :</strong>
-                <ul style="margin-left: 20px; margin-top: 8px;">
-                    <li>Cliquez sur le bouton "count is 0" - observez comment le compteur s'incrémente</li>
-                    <li>Modifiez le fichier <code>src/App.jsx</code> pendant que l'application tourne - les changements sont automatiquement rechargés (Hot Reload)</li>
-                    <li>Pour arrêter le serveur, appuyez sur <kbd>Ctrl + C</kbd> dans le terminal</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- ÉTAPE 3 : Structure du projet et fichiers essentiels -->
-        <h2>📁 ÉTAPE 3 : Analyse de la structure du projet</h2>
-
-        <div class="step">
-            <h3>3.1 - Ouvrir le dossier dans VS Code</h3>
-            <div class="question">📂 Ouvrir l'application "reactappvite" dans Visual Studio Code</div>
-            
-            <div class="indice">
-                <strong>📌 Méthodes pour ouvrir le projet :</strong>
-                <ul style="margin-left: 20px; margin-top: 8px;">
-                    <li><strong>Méthode 1 (Terminal) :</strong> Depuis le dossier du projet, tapez <code>code .</code></li>
-                    <li><strong>Méthode 2 (Interface) :</strong> Ouvrez VS Code, puis Fichier → Ouvrir le dossier → Sélectionnez "reactappvite"</li>
-                    <li><strong>Méthode 3 (Glisser-déposer) :</strong> Glissez le dossier reactappvite directement dans VS Code</li>
-                </ul>
-            </div>
-
-            <div class="screenshot-task">
-                <h4>📸 Étape 5 - Capture d'écran</h4>
-                <p>Prenez une capture d'écran de VS Code avec le projet "reactappvite" ouvert (explorateur de fichiers visible).</p>
-            </div>
-
-            <div class="terminal">
-                <span style="color: #aaa;"># Dans le terminal, à la racine du projet reactappvite :</span><br>
-                <span class="prompt">$</span> <span class="command">code .</span><br><br>
-                <span style="color: #aaa;"># VS Code s'ouvre avec l'ensemble des fichiers du projet</span>
-            </div>
-        </div>
-
-        <div class="step">
-            <h3>3.2 - Définition du rôle des fichiers essentiels</h3>
-            <div class="question">📖 Comprendre l'architecture d'une application React avec Vite</div>
-            
-            <div class="file-structure">
-                <strong>📁 Structure du projet reactappvite :</strong>
-                <ul>
-                    <li><span class="folder">📁 node_modules/</span> → Dépendances du projet (ne jamais modifier manuellement)</li>
-                    <li><span class="folder">📁 public/</span> → Fichiers statiques (images, favicon, etc.)</li>
-                    <li><span class="folder">📁 src/</span> → Code source de l'application
-                        <ul>
-                            <li><span class="file">📄 src/main.jsx</span> → Point d'entrée de l'application</li>
-                            <li><span class="file">📄 src/App.jsx</span> → Composant principal de l'application</li>
-                            <li><span class="file">🎨 src/App.css</span> → Styles du composant App</li>
-                            <li><span class="file">🎨 src/index.css</span> → Styles globaux</li>
-                        </ul>
-                    </li>
-                    <li><span class="file">📄 index.html</span> → Page HTML principale (point d'entrée du navigateur)</li>
-                    <li><span class="file">📄 package.json</span> → Configuration du projet et dépendances</li>
-                    <li><span class="file">📄 vite.config.js</span> → Configuration de Vite (bundler)</li>
-                    <li><span class="file">📄 .gitignore</span> → Fichiers exclus du versionnement Git</li>
-                </ul>
-            </div>
-
-            <div class="screenshot-task">
-                <h4>📸 Étape 6 - Capture d'écran</h4>
-                <p>Prenez une capture d'écran montrant l'un des fichiers essentiels ouvert dans VS Code (package.json, index.html, main.jsx ou App.jsx).</p>
-            </div>
-
-            <!-- Documentation des fichiers -->
-            <div class="file-card">
-                <h4>📄 package.json</h4>
-                <div class="code-block">
-                    <code>
-{<br>
-&nbsp;&nbsp;"name": "reactappvite",<br>
-&nbsp;&nbsp;"private": true,<br>
-&nbsp;&nbsp;"version": "0.0.0",<br>
-&nbsp;&nbsp;"type": "module",<br>
-&nbsp;&nbsp;"scripts": {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;"dev": "vite",           <span style="color: #6a9955;">// Lance le serveur de développement</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;"build": "vite build",     <span style="color: #6a9955;">// Compile pour la production</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;"preview": "vite preview"  <span style="color: #6a9955;">// Prévisualise la version buildée</span><br>
-&nbsp;&nbsp;},<br>
-&nbsp;&nbsp;"dependencies": {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;"react": "^18.2.0",      <span style="color: #6a9955;">// Bibliothèque React</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;"react-dom": "^18.2.0"   <span style="color: #6a9955;">// Rend React dans le DOM</span><br>
-&nbsp;&nbsp;},<br>
-&nbsp;&nbsp;"devDependencies": {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;"@vitejs/plugin-react": "^4.2.0", <span style="color: #6a9955;">// Plugin Vite pour React</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;"vite": "^5.1.0"                   <span style="color: #6a9955;">// Bundler ultra-rapide</span><br>
-&nbsp;&nbsp;}<br>
-}
-                    </code>
+        <div class="tp-list">
+            <!-- TP1 -->
+            <div class="tp-item">
+                <div class="tp-info">
+                    <div class="tp-title">TP1 - Introduction au scripting JavaScript</div>
+                    <div class="tp-desc">Premiers pas avec JavaScript : structure HTML, console, variables, conditions et boucles</div>
                 </div>
+                <a href="TP1.html" class="tp-link">Voir le TP →</a>
             </div>
 
-            <div class="file-card">
-                <h4>📄 index.html</h4>
-                <div class="code-block">
-                    <code>
-&lt;!DOCTYPE html&gt;<br>
-&lt;html lang="fr"&gt;<br>
-&nbsp;&nbsp;&lt;head&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;meta charset="UTF-8" /&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;link rel="icon" type="image/svg+xml" href="/vite.svg" /&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;React + Vite&lt;/title&gt;<br>
-&nbsp;&nbsp;&lt;/head&gt;<br>
-&nbsp;&nbsp;&lt;body&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #569cd6;">&lt;div id="root"&gt;&lt;/div&gt;</span>  <span style="color: #6a9955;">&lt;!-- L'application React sera montée ici --&gt;</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;script type="module" src="/src/main.jsx"&gt;&lt;/script&gt;<br>
-&nbsp;&nbsp;&lt;/body&gt;<br>
-&lt;/html&gt;
-                    </code>
+            <!-- À venir -->
+            <div class="tp-item" style="opacity: 0.6;">
+                <div class="tp-info">
+                    <div class="tp-title">TP2 - Programmation Orientée Objet (à venir)</div>
+                    <div class="tp-desc">Classes, objets, attributs, méthodes et héritage</div>
                 </div>
+                <span style="background:#ccc; padding:8px 20px; border-radius:5px; color:#666;">Bientôt</span>
             </div>
 
-            <div class="file-card">
-                <h4>📄 src/main.jsx</h4>
-                <div class="code-block">
-                    <code>
-import React from 'react'           <span style="color: #6a9955;">// Importe React</span><br>
-import ReactDOM from 'react-dom/client'  <span style="color: #6a9955;">// Importe ReactDOM pour le rendu</span><br>
-import App from './App.jsx'         <span style="color: #6a9955;">// Importe le composant principal</span><br>
-import './index.css'                <span style="color: #6a9955;">// Styles globaux</span><br><br>
-
-<span style="color: #569cd6;">ReactDOM.createRoot</span>(document.getElementById('root')).render(<br>
-&nbsp;&nbsp;&lt;React.StrictMode&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;App /&gt;      <span style="color: #6a9955;">// Affiche le composant App</span><br>
-&nbsp;&nbsp;&lt;/React.StrictMode&gt;<br>
-)
-                    </code>
+            <div class="tp-item" style="opacity: 0.6;">
+                <div class="tp-info">
+                    <div class="tp-title">TP3 - Projet final (à venir)</div>
+                    <div class="tp-desc">Application complète intégrant tous les concepts du cours</div>
                 </div>
-            </div>
-
-            <div class="file-card">
-                <h4>📄 src/App.jsx</h4>
-                <div class="code-block">
-                    <code>
-import { useState } from 'react'    <span style="color: #6a9955;">// Hook pour gérer l'état</span><br>
-import reactLogo from './assets/react.svg'<br>
-import viteLogo from '/vite.svg'<br>
-import './App.css'<br><br>
-
-<span style="color: #569cd6;">function App()</span> {<br>
-&nbsp;&nbsp;const [count, setCount] = useState(0)  <span style="color: #6a9955;">// État du compteur</span><br><br>
-
-&nbsp;&nbsp;<span style="color: #569cd6;">return</span> (<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;div className="App"&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;a href="https://vitejs.dev" target="_blank"&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;img src={viteLogo} className="logo" alt="Vite logo" /&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/a&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;a href="https://react.dev" target="_blank"&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;img src={reactLogo} className="logo react" alt="React logo" /&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/a&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;h1&gt;Vite + React&lt;/h1&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div className="card"&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;button onClick={() =&gt; setCount((count) => count + 1)}&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;count is {count}<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/button&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br>
-&nbsp;&nbsp;)<br>
-}<br><br>
-
-export default App
-                    </code>
-                </div>
-            </div>
-
-            <div class="todo">
-                <strong>📝 Travail à réaliser dans le compte rendu :</strong>
-                <p style="margin-top: 8px;">Pour chaque fichier ci-dessous, rédigez une description détaillée de son rôle dans l'application :</p>
-                <ul style="margin-left: 20px; margin-top: 8px;">
-                    <li><strong>package.json</strong> : Quelles informations contient-il ? À quoi servent les sections "dependencies", "devDependencies" et "scripts" ?</li>
-                    <li><strong>index.html</strong> : Quelle est sa structure ? Quel élément sert de point d'ancrage pour React ?</li>
-                    <li><strong>src/main.jsx</strong> : Quels sont les imports effectués ? Que fait la méthode createRoot() ?</li>
-                    <li><strong>src/App.jsx</strong> : Qu'est-ce qu'un composant React ? Quel est le rôle du useState ?</li>
-                </ul>
+                <span style="background:#ccc; padding:8px 20px; border-radius:5px; color:#666;">Bientôt</span>
             </div>
         </div>
 
-        <!-- Synthèse et commandes utiles -->
-        <hr>
         <div class="info">
-            <strong>📋 Récapitulatif des commandes essentielles :</strong>
-            <ul style="margin-left: 20px; margin-top: 8px;">
-                <li><code>npm create vite@latest nom-app -- --template react</code> → Crée une nouvelle app React</li>
-                <li><code>cd nom-app</code> → Se déplace dans le dossier du projet</li>
-                <li><code>npm install</code> → Installe toutes les dépendances listées dans package.json</li>
-                <li><code>npm run dev</code> → Lance le serveur de développement (http://localhost:5173)</li>
-                <li><code>npm run build</code> → Compile l'application pour la production (dossier dist/)</li>
-                <li><code>npm run preview</code> → Prévisualise la version de production en local</li>
-            </ul>
-        </div>
-
-        <div class="warning">
-            <strong>⚠️ Dépannage rapide :</strong>
-            <ul style="margin-left: 20px; margin-top: 8px;">
-                <li><strong>Erreur "command not found"</strong> → Node.js n'est pas installé ou pas dans le PATH. Réinstallez Node.js.</li>
-                <li><strong>Le port 5173 est déjà utilisé</strong> → Vite utilise automatiquement le prochain port disponible (5174, 5175...)</li>
-                <li><strong>Les modifications ne s'affichent pas</strong> → Rafraîchissez la page ou redémarrez le serveur (Ctrl+C puis npm run dev)</li>
-                <li><strong>Erreur lors de npm install</strong> → Supprimez node_modules et package-lock.json, puis relancez npm install</li>
-            </ul>
-        </div>
-
-        <div class="recap-screenshots">
-            <h4>📸 RÉCAPITULATIF DES CAPTURES D'ÉCRAN À FOURNIR</h4>
-            <p>Dans votre compte rendu, vous devez intégrer les 6 captures d'écran suivantes :</p>
-            <ol>
-                <li><strong>Étape 1</strong> - Interface de Visual Studio Code après installation</li>
-                <li><strong>Étape 2</strong> - Terminal avec les commandes node --version et npm --version</li>
-                <li><strong>Étape 3</strong> - Terminal pendant la création du projet (commande npm create vite@latest)</li>
-                <li><strong>Étape 4</strong> - Navigateur affichant l'application React (http://localhost:5173)</li>
-                <li><strong>Étape 5</strong> - VS Code avec l'explorateur du projet reactappvite</li>
-                <li><strong>Étape 6</strong> - VS Code montrant le contenu d'un fichier essentiel (package.json, index.html, main.jsx ou App.jsx)</li>
-            </ol>
-            <p style="margin-top: 15px;"><strong>📌 Important :</strong> Chaque capture doit être accompagnée d'une courte description expliquant ce qu'elle montre. L'ensemble des captures et des descriptions des fichiers doit être regroupé dans un compte rendu structuré.</p>
+            <strong>📌 Information :</strong> Cliquez sur "Voir le TP" pour accéder au travail pratique.
+            Les autres TP seront ajoutés progressivement.
         </div>
 
         <footer>
-            <p>⚛️ TP React avec Vite - Création d'application moderne</p>
-            <p>💡 Pour aller plus loin : explorez la documentation officielle de <a href="https://react.dev" target="_blank">React</a> et <a href="https://vitejs.dev" target="_blank">Vite</a></p>
-            <p>🛠️ Prochaine étape : Création de composants React et gestion d'état avec useState</p>
+            <p>🎓 Cours JavaScript - Tous les travaux pratiques sont à rendre sur la plateforme Google Classroom</p>
         </footer>
     </div>
 </body>
