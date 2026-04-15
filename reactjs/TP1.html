@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TP React : Création d'une application avec Vite</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Style personnalisé pour préserver les éléments spécifiques du TP (code blocks, terminal, etc.) -->
     <style>
+        /* Conservation des styles originaux pour les blocs de code, terminal, etc. */
         * {
             margin: 0;
             padding: 0;
@@ -163,10 +167,6 @@
             gap: 10px;
         }
 
-        .screenshot-task .camera-icon {
-            font-size: 1.3rem;
-        }
-
         .file-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -257,6 +257,11 @@
 
         .recap-screenshots li {
             margin: 8px 0;
+        }
+        
+        /* Styles pour la démo Tailwind du composant Home */
+        .tailwind-demo {
+            transition: all 0.3s ease;
         }
     </style>
 </head>
@@ -437,7 +442,6 @@
             <h3>3.1 - Ouvrir le dossier dans VS Code</h3>
             <div class="question">📂 Ouvrir l'application "reactappvite" dans Visual Studio Code</div>
 
-
             <div class="screenshot-task">
                 <h4>📸 Étape 5 - Capture d'écran</h4>
                 <p>Prenez une capture d'écran de VS Code avec le projet "reactappvite" ouvert (explorateur de fichiers visible).</p>
@@ -595,22 +599,197 @@ export default App
             </div>
         </div>
 
-        <!-- ÉTAPE 3 : Structure du projet et fichiers essentiels -->
-        <h2>📁 ÉTAPE 4 : Création d'un nouveau component</h2>
+        <!-- ÉTAPE 4 : Création d'un nouveau component avec Tailwind -->
+        <h2>🎨 ÉTAPE 4 : Création d'un nouveau composant avec Tailwind CSS</h2>
 
         <div class="step">
-            <h3>4.1 - Créer un nouveau fichier Home.jsx</h3>
+            <h3>4.1 - Créer un fichier Home.jsx avec décoration Tailwind</h3>
             <div class="question">
-                📂 Ouvrir le fichier Home.jsx contenant un titre H1, un sous-titre H2, un DIV contenant une paragraphe (Mettre un contenu de votre choix)
-                <br>
-                Objectif: en changeant un seul fichier, effectuer la modification nécessaire pour afficher la structure précedente (Titre, Sous titre et div avec p)
-                <br>
-                Précisez le nom du fichier.
+                📂 Créer un composant <strong>Home.jsx</strong> qui affiche : un titre H1, un sous-titre H2, un DIV contenant un paragraphe (contenu de votre choix).<br>
+                🎨 Utilisez <strong>Tailwind CSS</strong> pour décorer ce composant (couleurs, ombres, bordures, espacements, etc.).<br>
+                🔧 Ensuite, modifiez <strong>App.jsx</strong> pour afficher ce composant Home à la place du contenu par défaut.
+            </div>
+
+            <!-- Exemple de rendu du composant Home avec Tailwind -->
+            <div class="info">
+                <strong>✨ Exemple de résultat attendu (composant Home stylisé avec Tailwind) :</strong>
+            </div>
+            
+            <!-- Démo interactive du composant Home avec Tailwind (simulation) -->
+            <div class="tailwind-demo bg-gradient-to-r from-blue-50 to-indigo-100 rounded-xl shadow-lg p-8 my-4 border border-blue-200">
+                <div class="text-center">
+                    <div class="inline-block bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full p-3 shadow-md mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                    </div>
+                    <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-700 mb-2">Bienvenue sur mon application React</h1>
+                    <h2 class="text-2xl font-semibold text-gray-700 mb-4">Découvrez la puissance de Tailwind CSS</h2>
+                    <div class="bg-white rounded-lg p-6 shadow-md mt-4">
+                        <p class="text-gray-600 leading-relaxed">
+                            Ce composant Home a été créé avec React et stylisé avec Tailwind CSS. 
+                            Tailwind permet un développement rapide grâce à ses classes utilitaires, 
+                            sans quitter votre fichier JSX. Vous pouvez personnaliser les couleurs, 
+                            les espacements, les ombres et bien plus encore !
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block">
+                <strong>📄 Exemple de code pour src/Home.jsx :</strong>
+                <code>
+import React from 'react';
+
+function Home() {
+  return (
+    &lt;div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-8"&gt;
+      &lt;div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all hover:scale-105 duration-300"&gt;
+        &lt;div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-center"&gt;
+          &lt;h1 className="text-4xl font-bold text-white mb-2"&gt;Bienvenue sur React + Vite&lt;/h1&gt;
+          &lt;h2 className="text-xl text-blue-100"&gt;Avec Tailwind CSS pour un style moderne&lt;/h2&gt;
+        &lt;/div&gt;
+        &lt;div className="p-8"&gt;
+          &lt;div className="bg-gray-50 rounded-lg p-6 border-l-4 border-blue-500"&gt;
+            &lt;p className="text-gray-700 text-lg leading-relaxed"&gt;
+              Ce composant Home a été créé spécialement pour ce TP. 
+              Tailwind CSS nous permet de styliser rapidement sans écrire de CSS traditionnel. 
+              Les classes utilitaires comme bg-gradient, shadow-xl, rounded-2xl, etc., 
+              rendent le développement front-end plus efficace et amusant !
+            &lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default Home;
+                </code>
+            </div>
+
+            <div class="todo">
+                <strong>🔧 Modification de App.jsx :</strong>
+                <p>Remplacez le contenu du fichier <code>src/App.jsx</code> par :</p>
+                <div class="code-block mt-2">
+                    <code>
+import Home from './Home';
+import './App.css'
+
+function App() {
+  return &lt;Home /&gt;
+}
+
+export default App;
+                    </code>
+                </div>
+                <p class="mt-2">N'oubliez pas d'installer Tailwind CSS dans votre projet Vite (suivez la <a href="https://tailwindcss.com/docs/guides/vite" target="_blank">documentation officielle</a>).</p>
             </div>
 
             <div class="screenshot-task">
-                <h4>📸 Étape 4.2 - Capture d'écran</h4>
-                <p>Prenez une capture d'écran du fichier modifié ainsi que la nouvelle interface affichée</p>
+                <h4>📸 Étape 4.1 - Capture d'écran</h4>
+                <p>Prenez une capture d'écran du fichier Home.jsx dans VS Code et de l'interface dans le navigateur montrant le composant stylisé avec Tailwind.</p>
+            </div>
+        </div>
+
+        <!-- ÉTAPE 5 : Hook stateful pour compter le nombre de "j'aime" -->
+        <h2>❤️ ÉTAPE 5 : Ajout d'un compteur de "j'aime" avec useState</h2>
+
+        <div class="step">
+            <h3>5.1 - Implémenter un compteur de likes interactif</h3>
+            <div class="question">
+                🧮 Dans le composant <strong>Home.jsx</strong>, ajoutez un compteur de "j'aime" (likes) avec un bouton.<br>
+                📌 Utilisez le hook <strong>useState</strong> de React pour gérer l'état du compteur.<br>
+                🎨 Décorez le bouton et l'affichage du compteur avec Tailwind CSS.
+            </div>
+
+            <!-- Démo interactive du compteur de likes (simulation dynamique) -->
+            <div class="tailwind-demo bg-gradient-to-r from-pink-50 to-rose-100 rounded-xl shadow-lg p-8 my-4 border border-pink-200">
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center bg-gradient-to-r from-pink-500 to-rose-500 rounded-full p-3 shadow-md mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Compteur de j'aime</h3>
+                    <div class="bg-white rounded-xl p-6 shadow-md">
+                        <div class="text-6xl font-bold text-pink-600 mb-4" id="likeCounterDisplay">0</div>
+                        <button id="likeButton" class="bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold py-3 px-8 rounded-full hover:from-pink-600 hover:to-rose-600 transform transition-all hover:scale-105 shadow-lg">
+                            ❤️ J'aime
+                        </button>
+                        <p class="text-gray-500 text-sm mt-4">Cliquez sur le bouton pour incrémenter le compteur</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block">
+                <strong>📄 Code à ajouter dans Home.jsx (intégration du useState) :</strong>
+                <code>
+import React, { useState } from 'react';
+
+function Home() {
+  // Déclaration d'un état "likes" avec une valeur initiale à 0
+  const [likes, setLikes] = useState(0);
+
+  // Fonction pour incrémenter le nombre de likes
+  const handleLike = () => {
+    setLikes(likes + 1);
+  };
+
+  return (
+    &lt;div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-8"&gt;
+      &lt;div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden"&gt;
+        &lt;div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-center"&gt;
+          &lt;h1 className="text-4xl font-bold text-white mb-2"&gt;Bienvenue sur React + Vite&lt;/h1&gt;
+          &lt;h2 className="text-xl text-blue-100"&gt;Avec Tailwind CSS et useState&lt;/h2&gt;
+        &lt;/div&gt;
+        &lt;div className="p-8"&gt;
+          &lt;div className="bg-gray-50 rounded-lg p-6 border-l-4 border-blue-500 mb-6"&gt;
+            &lt;p className="text-gray-700 text-lg leading-relaxed"&gt;
+              Ce composant Home a été créé spécialement pour ce TP. 
+              Tailwind CSS nous permet de styliser rapidement sans écrire de CSS traditionnel.
+            &lt;/p&gt;
+          &lt;/div&gt;
+          
+          {/* Section du compteur de likes */}
+          &lt;div className="text-center bg-gradient-to-r from-pink-50 to-rose-50 rounded-xl p-6 mt-4"&gt;
+            &lt;div className="inline-flex items-center justify-center bg-gradient-to-r from-pink-500 to-rose-500 rounded-full p-3 shadow-md mb-4"&gt;
+              &lt;svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"&gt;
+                &lt;path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /&gt;
+              &lt;/svg&gt;
+            &lt;/div&gt;
+            &lt;h3 className="text-2xl font-bold text-gray-800 mb-4"&gt;Nombre de j'aime&lt;/h3&gt;
+            &lt;div className="text-6xl font-bold text-pink-600 mb-4"&gt;{likes}&lt;/div&gt;
+            &lt;button 
+              onClick={handleLike}
+              className="bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold py-3 px-8 rounded-full hover:from-pink-600 hover:to-rose-600 transform transition-all hover:scale-105 shadow-lg"
+            &gt;
+              ❤️ J'aime
+            &lt;/button&gt;
+            &lt;p className="text-gray-500 text-sm mt-4"&gt;Cliquez sur le bouton pour incrémenter le compteur&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default Home;
+                </code>
+            </div>
+
+            <div class="info">
+                <strong>🧠 Explication du useState :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li><code>const [likes, setLikes] = useState(0);</code> → Déclare une variable d'état <strong>likes</strong> initialisée à 0, et une fonction <strong>setLikes</strong> pour la modifier.</li>
+                    <li>Lorsque l'utilisateur clique sur le bouton, <code>setLikes(likes + 1)</code> est appelé, ce qui met à jour l'état et provoque un re-rendu du composant avec la nouvelle valeur.</li>
+                    <li>React gère automatiquement la mise à jour de l'interface utilisateur.</li>
+                </ul>
+            </div>
+
+            <div class="screenshot-task">
+                <h4>📸 Étape 5.1 - Capture d'écran</h4>
+                <p>Prenez une capture d'écran du navigateur montrant le compteur de likes fonctionnel (avant et après clic). Incluez également le code modifié de Home.jsx dans VS Code.</p>
             </div>
         </div>
 
@@ -622,9 +801,10 @@ export default App
                 <li><code>npm create vite@latest nom-app -- --template react</code> → Crée une nouvelle app React</li>
                 <li><code>cd nom-app</code> → Se déplace dans le dossier du projet</li>
                 <li><code>npm install</code> → Installe toutes les dépendances listées dans package.json</li>
+                <li><code>npm install -D tailwindcss postcss autoprefixer</code> → Installe Tailwind CSS</li>
+                <li><code>npx tailwindcss init -p</code> → Initialise la configuration Tailwind</li>
                 <li><code>npm run dev</code> → Lance le serveur de développement (http://localhost:5173)</li>
                 <li><code>npm run build</code> → Compile l'application pour la production (dossier dist/)</li>
-                <li><code>npm run preview</code> → Prévisualise la version de production en local</li>
             </ul>
         </div>
 
@@ -633,14 +813,14 @@ export default App
             <ul style="margin-left: 20px; margin-top: 8px;">
                 <li><strong>Erreur "command not found"</strong> → Node.js n'est pas installé ou pas dans le PATH. Réinstallez Node.js.</li>
                 <li><strong>Le port 5173 est déjà utilisé</strong> → Vite utilise automatiquement le prochain port disponible (5174, 5175...)</li>
+                <li><strong>Tailwind ne s'affiche pas</strong> → Vérifiez que vous avez bien configuré les fichiers tailwind.config.js et index.css (ajout des directives @tailwind).</li>
                 <li><strong>Les modifications ne s'affichent pas</strong> → Rafraîchissez la page ou redémarrez le serveur (Ctrl+C puis npm run dev)</li>
-                <li><strong>Erreur lors de npm install</strong> → Supprimez node_modules et package-lock.json, puis relancez npm install</li>
             </ul>
         </div>
 
         <div class="recap-screenshots">
             <h4>📸 RÉCAPITULATIF DES CAPTURES D'ÉCRAN À FOURNIR</h4>
-            <p>Dans votre compte rendu, vous devez intégrer les 6 captures d'écran suivantes :</p>
+            <p>Dans votre compte rendu, vous devez intégrer les captures d'écran suivantes :</p>
             <ol>
                 <li><strong>Étape 1</strong> - Interface de Visual Studio Code après installation</li>
                 <li><strong>Étape 2</strong> - Terminal avec les commandes node --version et npm --version</li>
@@ -648,15 +828,37 @@ export default App
                 <li><strong>Étape 4</strong> - Navigateur affichant l'application React (http://localhost:5173)</li>
                 <li><strong>Étape 5</strong> - VS Code avec l'explorateur du projet reactappvite</li>
                 <li><strong>Étape 6</strong> - VS Code montrant le contenu d'un fichier essentiel (package.json, index.html, main.jsx ou App.jsx)</li>
+                <li><strong>Étape 4.1</strong> - Composant Home stylisé avec Tailwind (code + rendu navigateur)</li>
+                <li><strong>Étape 5.1</strong> - Compteur de likes fonctionnel avec useState (avant/après clic)</li>
             </ol>
             <p style="margin-top: 15px;"><strong>📌 Important :</strong> Chaque capture doit être accompagnée d'une courte description expliquant ce qu'elle montre. L'ensemble des captures et des descriptions des fichiers doit être regroupé dans un compte rendu structuré.</p>
         </div>
 
         <footer>
             <p>⚛️ TP React avec Vite - Création d'application moderne</p>
-            <p>💡 Pour aller plus loin : explorez la documentation officielle de <a href="https://react.dev" target="_blank">React</a> et <a href="https://vitejs.dev" target="_blank">Vite</a></p>
-            <p>🛠️ Prochaine étape : Création de composants React et gestion d'état avec useState</p>
+            <p>💡 Pour aller plus loin : explorez la documentation officielle de <a href="https://react.dev" target="_blank">React</a>, <a href="https://vitejs.dev" target="_blank">Vite</a> et <a href="https://tailwindcss.com" target="_blank">Tailwind CSS</a></p>
+            <p>🛠️ Compétences acquises : Création de composants, stylisation avec Tailwind, gestion d'état avec useState</p>
         </footer>
     </div>
+
+    <!-- Script pour la démo interactive du compteur de likes -->
+    <script>
+        // Simulation du compteur pour la démonstration dans le TP (fonctionne indépendamment de React)
+        let demoLikes = 0;
+        const likeButton = document.getElementById('likeButton');
+        const likeCounterDisplay = document.getElementById('likeCounterDisplay');
+        
+        if (likeButton && likeCounterDisplay) {
+            likeButton.addEventListener('click', () => {
+                demoLikes++;
+                likeCounterDisplay.textContent = demoLikes;
+                // Animation simple
+                likeCounterDisplay.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    likeCounterDisplay.style.transform = 'scale(1)';
+                }, 200);
+            });
+        }
+    </script>
 </body>
 </html>
