@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP React : Navigation avec React Router et API Bitcoin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        h1 {
+            color: #61dafb;
+            background-color: #20232a;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #20232a;
+            border-left: 4px solid #61dafb;
+            padding-left: 15px;
+            margin: 35px 0 15px 0;
+        }
+
+        .step {
+            background-color: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            transition: box-shadow 0.2s;
+        }
+
+        .step:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .step h3 {
+            color: #61dafb;
+            background-color: #20232a;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .question {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .indice {
+            background-color: #f0f7ff;
+            border-left: 4px solid #3498db;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        .indice strong {
+            color: #2980b9;
+        }
+
+        .todo {
+            background-color: #fff8e7;
+            border-left: 4px solid #f39c12;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .code-block {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 15px 0;
+            overflow-x: auto;
+            border: 1px solid #555;
+        }
+
+        .code-block code {
+            color: #f8f8f2;
+            font-family: 'Courier New', monospace;
+        }
+
+        .info {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .warning {
+            background-color: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .terminal {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .terminal .prompt {
+            color: #4ec9b0;
+        }
+
+        .terminal .command {
+            color: #ce9178;
+        }
+
+        .screenshot-task {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .screenshot-task h4 {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .file-card h4 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        hr {
+            margin: 30px 0;
+            border: none;
+            border-top: 2px solid #eee;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            text-align: center;
+            color: #888;
+            border-top: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .objectives {
+            background-color: #fef9e7;
+            border: 1px solid #f1c40f;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .file-structure {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            margin: 15px 0;
+        }
+
+        .file-structure ul {
+            list-style-type: none;
+            margin-left: 20px;
+        }
+
+        .file-structure li {
+            margin: 5px 0;
+        }
+
+        .recap-screenshots {
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .api-response {
+            background-color: #1a1a2e;
+            color: #00ff9d;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚛️ TP React : Navigation avec React Router et API Bitcoin</h1>
+        <p>Ce travail pratique vous guidera à travers la création d'une application React multi-pages utilisant React Router DOM pour la navigation et Axios pour l'appel d'une API externe. Vous apprendrez à structurer une application React complète.</p>
+
+        <div class="objectives">
+            <strong>🎯 Objectifs de ce TP :</strong>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>Installer et configurer React Router DOM</li>
+                <li>Créer trois pages distinctes : Home, About et Bitcoin</li>
+                <li>Mettre en place la navigation entre les pages avec useNavigate et Link</li>
+                <li>Installer et utiliser Axios pour les appels API</li>
+                <li>Appeler l'API de mempool.space pour obtenir le prix du Bitcoin</li>
+                <li>Afficher dynamiquement les données reçues (EUR et USD)</li>
+                <li>Documenter son travail avec des captures d'écran</li>
+            </ul>
+        </div>
+
+        <!-- PARTIE 1 : Installation des dépendances -->
+        <h2>📦 PARTIE 1 : Installation des dépendances</h2>
+
+        <div class="step">
+            <h3>1.1 - Installation de React Router DOM</h3>
+            <div class="question">🧭 Installer la bibliothèque de navigation pour React</div>
+            <p>React Router DOM est la bibliothèque standard pour gérer la navigation entre différentes pages dans une application React. Elle permet de créer une expérience utilisateur fluide sans rechargement de la page.</p>
+            
+            <div class="indice">
+                <strong>📌 Commande à exécuter :</strong>
+            </div>
+
+            <div class="terminal">
+                <span class="prompt">$</span> <span class="command">npm install react-router-dom</span>
+            </div>
+
+            <div class="screenshot-task">
+                <h4>📸 Capture d'écran 1</h4>
+                <p>Prenez une capture d'écran du terminal après l'exécution de la commande d'installation de react-router-dom.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>1.2 - Installation d'Axios</h3>
+            <div class="question">📡 Installer la bibliothèque pour les appels API</div>
+            <p>Axios est un client HTTP basé sur les Promesses qui facilite les requêtes vers des API externes. Il est plus simple à utiliser que fetch() et offre des fonctionnalités supplémentaires.</p>
+
+            <div class="terminal">
+                <span class="prompt">$</span> <span class="command">npm install axios</span>
+            </div>
+
+            <div class="screenshot-task">
+                <h4>📸 Capture d'écran 2</h4>
+                <p>Prenez une capture d'écran du terminal après l'installation d'Axios.</p>
+            </div>
+        </div>
+
+        <!-- PARTIE 2 : Configuration du Routeur -->
+        <h2>🔧 PARTIE 2 : Configuration du routeur</h2>
+
+        <div class="step">
+            <h3>2.1 - Modification de main.jsx</h3>
+            <div class="question">📄 Envelopper l'application avec BrowserRouter</div>
+            <p>Pour utiliser React Router, toute l'application doit être enveloppée dans le composant <code>&lt;BrowserRouter&gt;</code>. C'est lui qui permet de synchroniser l'interface avec l'URL du navigateur.</p>
+
+            <div class="indice">
+                <strong>📌 À faire :</strong> Ouvrez le fichier <code>src/main.jsx</code> et modifiez-le pour ajouter BrowserRouter.
+            </div>
+
+            <div class="code-block">
+                <code>
+// Avant modification :
+ReactDOM.createRoot(document.getElementById('root')).render(
+  &lt;React.StrictMode&gt;
+    &lt;App /&gt;
+  &lt;/React.StrictMode&gt;
+)
+
+// Après modification :
+import { BrowserRouter } from 'react-router-dom'
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  &lt;React.StrictMode&gt;
+    &lt;BrowserRouter&gt;
+      &lt;App /&gt;
+    &lt;/BrowserRouter&gt;
+  &lt;/React.StrictMode&gt;
+)
+                </code>
+            </div>
+
+            <div class="screenshot-task">
+                <h4>📸 Capture d'écran 3</h4>
+                <p>Prenez une capture d'écran du fichier <code>src/main.jsx</code> après modification.</p>
+            </div>
+        </div>
+
+        <!-- PARTIE 3 : Création des pages -->
+        <h2>📄 PARTIE 3 : Création des trois pages</h2>
+
+        <div class="step">
+            <h3>3.1 - Création du dossier pages et des composants</h3>
+            <div class="question">📁 Créer trois composants : Home, About et Bitcoin</div>
+
+            <div class="indice">
+                <strong>📌 Structure à créer :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Dans le dossier <code>src/</code>, créez un dossier <code>pages/</code></li>
+                    <li>Dans <code>src/pages/</code>, créez trois fichiers :
+                        <ul>
+                            <li><code>Home.jsx</code></li>
+                            <li><code>About.jsx</code></li>
+                            <li><code>Bitcoin.jsx</code></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="file-card">
+                <h4>📄 Contenu attendu pour Home.jsx</h4>
+                <div class="code-block">
+                    <code>
+function Home() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;🏠 Accueil&lt;/h1&gt;
+      &lt;p&gt;Bienvenue sur mon application React multi-pages !&lt;/p&gt;
+      &lt;p&gt;Utilisez le menu ci-dessus pour naviguer entre les pages.&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+
+export default Home
+                    </code>
+                </div>
+            </div>
+
+            <div class="file-card">
+                <h4>📄 Contenu attendu pour About.jsx</h4>
+                <div class="code-block">
+                    <code>
+function About() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;ℹ️ À propos&lt;/h1&gt;
+      &lt;p&gt;Cette application a été créée dans le cadre d'un TP React.&lt;/p&gt;
+      &lt;p&gt;Elle utilise React Router DOM pour la navigation et Axios pour les appels API.&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+
+export default About
+                    </code>
+                </div>
+            </div>
+
+            <div class="file-card">
+                <h4>📄 Structure de base pour Bitcoin.jsx</h4>
+                <div class="code-block">
+                    <code>
+function Bitcoin() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;💰 Cours du Bitcoin&lt;/h1&gt;
+      &lt;p&gt;Page en construction... Les prix seront affichés ici après l'appel API.&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+
+export default Bitcoin
+                    </code>
+                </div>
+            </div>
+
+            <div class="screenshot-task">
+                <h4>📸 Capture d'écran 4</h4>
+                <p>Prenez une capture d'écran de VS Code montrant l'arborescence avec le dossier <code>pages/</code> et les trois fichiers.</p>
+            </div>
+        </div>
+
+        <!-- PARTIE 4 : Configuration des routes -->
+        <h2>🛣️ PARTIE 4 : Configuration des routes dans App.jsx</h2>
+
+        <div class="step">
+            <h3>4.1 - Définir les routes</h3>
+            <div class="question">🔀 Importer et configurer Routes et Route</div>
+            <p>Dans <code>App.jsx</code>, vous allez importer les trois pages et définir les routes correspondantes.</p>
+
+            <div class="indice">
+                <strong>📌 Éléments à importer depuis react-router-dom :</strong>
+                <ul style="margin-left: 20px;">
+                    <li><code>Routes</code> - conteneur pour toutes les routes</li>
+                    <li><code>Route</code> - définit une association entre un chemin URL et un composant</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+                <code>
+import { Routes, Route } from 'react-router-dom'
+import Home from './pages/Home'
+import About from './pages/About'
+import Bitcoin from './pages/Bitcoin'
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Routes&gt;
+        &lt;Route path="/" element={&lt;Home /&gt;} /&gt;
+        &lt;Route path="/about" element={&lt;About /&gt;} /&gt;
+        &lt;Route path="/bitcoin" element={&lt;Bitcoin /&gt;} /&gt;
+      &lt;/Routes&gt;
+    &lt;/div&gt;
+  )
+}
+
+export default App
+                </code>
+            </div>
+
+            <div class="screenshot-task">
+                <h4>📸 Capture d'écran 5</h4>
+                <p>Prenez une capture d'écran du fichier <code>App.jsx</code> après ajout des routes.</p>
+            </div>
+        </div>
+
+        <!-- PARTIE 5 : Menu de navigation -->
+        <h2>🧭 PARTIE 5 : Création du menu de navigation</h2>
+
+        <div class="step">
+            <h3>5.1 - Ajouter un menu avec Link ou useNavigate</h3>
+            <div class="question">🔗 Créer une barre de navigation pour changer de page</div>
+
+            <div class="indice">
+                <strong>📌 Deux approches possibles :</strong>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Link</strong> : composant qui crée un lien cliquable (recommandé pour les menus)</li>
+                    <li><strong>useNavigate</strong> : hook qui permet la navigation programmatique (utile après une action)</li>
+                </ul>
+                <br>
+                <strong>💡 Question :</strong> Quelle approche est la plus adaptée pour un menu de navigation simple ?
+            </div>
+
+            <div class="code-block">
+                <code>
+// Exemple avec Link :
+import { Link } from 'react-router-dom'
+
+&lt;nav&gt;
+  &lt;Link to="/"&gt;Accueil&lt;/Link&gt;
+  &lt;Link to="/about"&gt;À propos&lt;/Link&gt;
+  &lt;Link to="/bitcoin"&gt;Bitcoin&lt;/Link&gt;
+&lt;/nav&gt;
+
+// Exemple avec useNavigate :
+import { useNavigate } from 'react-router-dom'
+
+const navigate = useNavigate()
+&lt;button onClick={() => navigate('/')}&gt;Accueil&lt;/button&gt;
+                </code>
+            </div>
+
+            <div class="screenshot-task">
+                <h4>📸 Capture d'écran 6</h4>
+                <p>Prenez une capture d'écran du navigateur montrant le menu de navigation et la page d'accueil.</p>
+            </div>
+        </div>
+
+        <!-- PARTIE 6 : Appel API dans Bitcoin -->
+        <h2>💰 PARTIE 6 : Appel API dans la page Bitcoin</h2>
+
+        <div class="step">
+            <h3>6.1 - Structure du composant avec useState et useEffect</h3>
+            <div class="question">⚛️ Utiliser les hooks React pour gérer l'état et l'effet</div>
+
+            <div class="indice">
+                <strong>📌 Hooks à utiliser :</strong>
+                <ul style="margin-left: 20px;">
+                    <li><code>useState</code> - pour stocker les données reçues de l'API</li>
+                    <li><code>useEffect</code> - pour déclencher l'appel API au chargement du composant</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+                <code>
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+
+function Bitcoin() {
+  // État pour stocker les prix
+  const [prices, setPrices] = useState(null)
+  // État pour gérer le chargement
+  const [loading, setLoading] = useState(true)
+  // État pour gérer les erreurs
+  const [error, setError] = useState(null)
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;💰 Cours du Bitcoin&lt;/h1&gt;
+      {/* Le contenu sera affiché ici */}
+    &lt;/div&gt;
+  )
+}
+
+export default Bitcoin
+                </code>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>6.2 - L'appel API avec Axios</h3>
+            <div class="question">🌐 Appeler l'API de mempool.space pour obtenir le prix du Bitcoin</div>
+
+            <div class="indice">
+                <strong>📌 Informations sur l'API :</strong>
+                <ul style="margin-left: 20px;">
+                    <li><strong>URL :</strong> <code>https://mempool.space/api/v1/prices</code></li>
+                    <li><strong>Méthode :</strong> GET</li>
+                    <li><strong>Réponse :</strong> objet JSON contenant les prix dans différentes devises</li>
+                </ul>
+            </div>
+
+            <div class="api-response">
+                <strong>📡 Exemple de réponse de l'API :</strong><br>
+                {<br>
+                &nbsp;&nbsp;"time": 1776715504,<br>
+                &nbsp;&nbsp;"USD": 76274,<br>
+                &nbsp;&nbsp;"EUR": 64744,<br>
+                &nbsp;&nbsp;"GBP": 56376,<br>
+                &nbsp;&nbsp;"CAD": 104092,<br>
+                &nbsp;&nbsp;"CHF": 59386,<br>
+                &nbsp;&nbsp;"AUD": 106182,<br>
+                &nbsp;&nbsp;"JPY": 12129540<br>
+                }
+            </div>
+
+            <div class="todo">
+                <strong>📝 À implémenter dans useEffect :</strong>
+                <ol style="margin-left: 20px; margin-top: 8px;">
+                    <li>Créer une fonction asynchrone pour appeler l'API avec axios.get()</li>
+                    <li>Mettre à jour l'état prices avec les données reçues</li>
+                    <li>Changer l'état loading à false après la réponse</li>
+                    <li>Ajouter un try/catch pour gérer les erreurs potentielles</li>
+                    <li>Appeler cette fonction dans useEffect avec un tableau de dépendances vide</li>
+                </ol>
+            </div>
+
+            <div class="warning">
+                <strong>⚠️ Attention :</strong> N'oubliez pas de gérer les trois cas : chargement, succès, erreur.
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>6.3 - Affichage conditionnel des données</h3>
+            <div class="question">🖥️ Afficher le prix du Bitcoin en EUR et en USD</div>
+
+            <div class="indice">
+                <strong>📌 Structure d'affichage attendue :</strong>
+                <ul style="margin-left: 20px;">
+                    <li>Pendant le chargement : "Chargement des prix..."</li>
+                    <li>En cas d'erreur : "Erreur : [message d'erreur]"</li>
+                    <li>En cas de succès : 
+                        <ul>
+                            <li>Prix en USD : $XX XXX</li>
+                            <li>Prix en EUR : €XX XXX</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="screenshot-task">
+                <h4>📸 Capture d'écran 7</h4>
+                <p>Prenez une capture d'écran de la page Bitcoin avec les prix affichés correctement.</p>
+            </div>
+        </div>
+
+        <!-- Récapitulatif -->
+        <hr>
+
+        <div class="info">
+            <strong>📋 Récapitulatif des commandes utilisées dans ce TP :</strong>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+                <li><code>npm install react-router-dom</code> → Installation de React Router</li>
+                <li><code>npm install axios</code> → Installation d'Axios</li>
+                <li><code>npm run dev</code> → Lancement du serveur de développement</li>
+            </ul>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ Dépannage rapide :</strong>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+                <li><strong>Les routes ne fonctionnent pas</strong> → Vérifiez que BrowserRouter est bien présent dans main.jsx</li>
+                <li><strong>Les liens ne changent pas la page</strong> → Vérifiez l'utilisation de "to" et non "href"</li>
+                <li><strong>L'API ne répond pas</strong> → Vérifiez votre connexion internet et l'URL de l'API</li>
+                <li><strong>Les prix ne s'affichent pas</strong> → Vérifiez le nom des propriétés dans la réponse (USD, EUR)</li>
+                <li><strong>Erreur CORS</strong> → L'API mempool.space autorise les requêtes cross-origin, pas de souci normalement</li>
+            </ul>
+        </div>
+
+        <div class="recap-screenshots">
+            <h4>📸 RÉCAPITULATIF DES CAPTURES D'ÉCRAN À FOURNIR</h4>
+            <p>Dans votre compte rendu, vous devez intégrer les 7 captures d'écran suivantes :</p>
+            <ol>
+                <li><strong>Capture 1</strong> - Installation de react-router-dom dans le terminal</li>
+                <li><strong>Capture 2</strong> - Installation d'axios dans le terminal</li>
+                <li><strong>Capture 3</strong> - Fichier <code>src/main.jsx</code> avec BrowserRouter</li>
+                <li><strong>Capture 4</strong> - Arborescence du dossier <code>src/pages/</code> avec les trois fichiers</li>
+                <li><strong>Capture 5</strong> - Fichier <code>App.jsx</code> avec les routes définies</li>
+                <li><strong>Capture 6</strong> - Navigateur avec le menu de navigation et la page Accueil</li>
+                <li><strong>Capture 7</strong> - Page Bitcoin affichant les prix en EUR et USD</li>
+            </ol>
+            <p style="margin-top: 15px;"><strong>📌 Important :</strong> Chaque capture doit être accompagnée d'une courte description expliquant ce qu'elle montre. Ajoutez également les réponses aux questions posées dans les indices.</p>
+        </div>
+
+        <div class="todo" style="margin-top: 20px;">
+            <strong>📝 Questions à répondre dans le compte rendu :</strong>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>Quelle est la différence entre <code>Link</code> et <code>useNavigate</code> ? Dans quel cas utiliser l'un ou l'autre ?</li>
+                <li>Pourquoi utiliser <code>useEffect</code> avec un tableau de dépendances vide pour l'appel API ?</li>
+                <li>Que se passe-t-il si on oublie de gérer l'état "loading" ?</li>
+                <li>Quelle est la différence entre <code>fetch()</code> et <code>axios</code> pour les appels API ?</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>⚛️ TP React - Navigation avec React Router et API Bitcoin</p>
+            <p>📚 Ressources utiles : <a href="https://reactrouter.com/" target="_blank">React Router DOM Documentation</a> | <a href="https://axios-http.com/" target="_blank">Axios Documentation</a> | <a href="https://mempool.space/docs/api" target="_blank">Mempool.space API</a></p>
+        </footer>
+    </div>
+</body>
+</html>
