@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,7 +25,7 @@
             margin: 0 auto;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             padding: 30px;
         }
 
@@ -54,7 +55,7 @@
         }
 
         .step:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
         .step h3 {
@@ -250,16 +251,19 @@
         }
 
         .postman-step code {
-            background-color: rgba(255,255,255,0.2);
+            background-color: rgba(255, 255, 255, 0.2);
             padding: 2px 6px;
             border-radius: 4px;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>⚛️ TP React : Navigation avec React Router et API Bitcoin</h1>
-        <p>Ce travail pratique vous guidera à travers la création d'une application React multi-pages utilisant React Router DOM pour la navigation et Axios pour l'appel d'une API externe. Vous apprendrez à structurer une application React complète.</p>
+        <p>Ce travail pratique vous guidera à travers la création d'une application React multi-pages utilisant React
+            Router DOM pour la navigation et Axios pour l'appel d'une API externe. Vous apprendrez à structurer une
+            application React complète.</p>
 
         <div class="objectives">
             <strong>🎯 Objectifs de ce TP :</strong>
@@ -281,8 +285,10 @@
         <div class="step">
             <h3>1.1 - Installation de React Router DOM</h3>
             <div class="question">🧭 Installer la bibliothèque de navigation pour React</div>
-            <p>React Router DOM est la bibliothèque standard pour gérer la navigation entre différentes pages dans une application React. Elle permet de créer une expérience utilisateur fluide sans rechargement de la page.</p>
-            
+            <p>React Router DOM est la bibliothèque standard pour gérer la navigation entre différentes pages dans une
+                application React. Elle permet de créer une expérience utilisateur fluide sans rechargement de la page.
+            </p>
+
             <div class="indice">
                 <strong>📌 Commande à exécuter :</strong>
             </div>
@@ -293,14 +299,16 @@
 
             <div class="screenshot-task">
                 <h4>📸 Capture d'écran 1</h4>
-                <p>Prenez une capture d'écran du terminal après l'exécution de la commande d'installation de react-router-dom.</p>
+                <p>Prenez une capture d'écran du terminal après l'exécution de la commande d'installation de
+                    react-router-dom.</p>
             </div>
         </div>
 
         <div class="step">
             <h3>1.2 - Installation d'Axios</h3>
             <div class="question">📡 Installer la bibliothèque pour les appels API</div>
-            <p>Axios est un client HTTP basé sur les Promesses qui facilite les requêtes vers des API externes. Il est plus simple à utiliser que fetch() et offre des fonctionnalités supplémentaires.</p>
+            <p>Axios est un client HTTP basé sur les Promesses qui facilite les requêtes vers des API externes. Il est
+                plus simple à utiliser que fetch() et offre des fonctionnalités supplémentaires.</p>
 
             <div class="terminal">
                 <span class="prompt">$</span> <span class="command">npm install axios</span>
@@ -318,10 +326,14 @@
         <div class="step">
             <h3>2.1 - Modification de main.jsx</h3>
             <div class="question">📄 Envelopper l'application avec BrowserRouter</div>
-            <p>Pour utiliser React Router, toute l'application doit être enveloppée dans le composant <code>&lt;BrowserRouter&gt;</code>. C'est lui qui permet de synchroniser l'interface avec l'URL du navigateur.</p>
+            <p>Pour utiliser React Router, toute l'application doit être enveloppée dans le composant
+                <code>&lt;BrowserRouter&gt;</code>. C'est lui qui permet de synchroniser l'interface avec l'URL du
+                navigateur.
+            </p>
 
             <div class="indice">
-                <strong>📌 À faire :</strong> Ouvrez le fichier <code>src/main.jsx</code> et modifiez-le pour ajouter BrowserRouter.
+                <strong>📌 À faire :</strong> Ouvrez le fichier <code>src/main.jsx</code> et modifiez-le pour ajouter
+                BrowserRouter.
             </div>
 
             <div class="code-block">
@@ -431,7 +443,8 @@ export default Bitcoin
 
             <div class="screenshot-task">
                 <h4>📸 Capture d'écran 4</h4>
-                <p>Prenez une capture d'écran de VS Code montrant l'arborescence avec le dossier <code>pages/</code> et les trois fichiers.</p>
+                <p>Prenez une capture d'écran de VS Code montrant l'arborescence avec le dossier <code>pages/</code> et
+                    les trois fichiers.</p>
             </div>
         </div>
 
@@ -491,7 +504,8 @@ export default App
                 <strong>📌 Deux approches possibles :</strong>
                 <ul style="margin-left: 20px;">
                     <li><strong>Link</strong> : composant qui crée un lien cliquable (recommandé pour les menus)</li>
-                    <li><strong>useNavigate</strong> : hook qui permet la navigation programmatique (utile après une action)</li>
+                    <li><strong>useNavigate</strong> : hook qui permet la navigation programmatique (utile après une
+                        action)</li>
                 </ul>
                 <br>
                 <strong>💡 Question :</strong> Quelle approche est la plus adaptée pour un menu de navigation simple ?
@@ -529,7 +543,8 @@ const navigate = useNavigate()
         <div class="step">
             <h3>6.0 - Découverte de l'API avec Postman</h3>
             <div class="question">🔧 Tester l'API avant de l'intégrer dans React</div>
-            <p>Avant d'écrire du code, il est essentiel de comprendre comment fonctionne l'API que vous allez utiliser. Postman est un outil qui permet de tester des API facilement sans écrire une seule ligne de code.</p>
+            <p>Avant d'écrire du code, il est essentiel de comprendre comment fonctionne l'API que vous allez utiliser.
+                Postman est un outil qui permet de tester des API facilement sans écrire une seule ligne de code.</p>
 
             <div class="indice">
                 <strong>📌 Qu'est-ce que Postman ?</strong>
@@ -544,7 +559,10 @@ const navigate = useNavigate()
 
             <div class="postman-step">
                 <h4>🖥️ Étape 1 : Installation de Postman</h4>
-                <p>Rendez-vous sur <a href="https://www.postman.com/downloads/" target="_blank" style="color: white; text-decoration: underline;">https://www.postman.com/downloads/</a> et téléchargez la version correspondant à votre système d'exploitation. Lancez l'installation et ouvrez Postman.</p>
+                <p>Rendez-vous sur <a href="https://www.postman.com/downloads/" target="_blank"
+                        style="color: white; text-decoration: underline;">https://www.postman.com/downloads/</a> et
+                    téléchargez la version correspondant à votre système d'exploitation. Lancez l'installation et ouvrez
+                    Postman.</p>
             </div>
 
             <div class="postman-step">
@@ -578,49 +596,54 @@ const navigate = useNavigate()
             </div>
 
             <div class="postman-step">
-                <h4>🔍 Étape 4 : Analyse de la réponse</div></h4>
-                <p>Observez attentivement la structure de la réponse :</p>
-                <ul style="margin-left: 20px;">
-                    <li>La réponse est un objet JSON</li>
-                    <li>Il contient la clé <code>time</code> (timestamp Unix)</li>
-                    <li>Il contient des clés pour chaque devise : <code>USD</code>, <code>EUR</code>, <code>GBP</code>, etc.</li>
-                    <li>Les valeurs sont des nombres (prix du Bitcoin dans la devise correspondante)</li>
-                </ul>
-                <br>
-                <p><strong>💡 Questions de réflexion :</strong></p>
-                <ul style="margin-left: 20px;">
-                    <li>Quel est le prix actuel du Bitcoin en euros (EUR) ?</li>
-                    <li>Quel est le prix actuel du Bitcoin en dollars (USD) ?</li>
-                    <li>Que représente la clé "time" ?</li>
-                </ul>
+                <h4>🔍 Étape 4 : Analyse de la réponse
             </div>
-
-            <div class="postman-step">
-                <h4>📸 Étape 5 : Sauvegarde et capture</h4>
-                <p>Sauvegardez votre requête en cliquant sur <strong>"Save"</strong>. Donnez-lui un nom comme <strong>"Bitcoin Price API"</strong>.</p>
-                <p>Prenez une capture d'écran montrant :</p>
-                <ul style="margin-left: 20px;">
-                    <li>L'URL de la requête</li>
-                    <li>La méthode GET sélectionnée</li>
-                    <li>La réponse de l'API dans le panneau inférieur</li>
-                </ul>
-            </div>
-
-            <div class="screenshot-task">
-                <h4>📸 Capture d'écran 7 - Test API avec Postman</h4>
-                <p>Prenez une capture d'écran de Postman montrant la requête GET vers l'API et la réponse reçue.</p>
-            </div>
-
-            <div class="info">
-                <strong>ℹ️ Pourquoi tester avec Postman ?</strong>
-                <ul style="margin-left: 20px; margin-top: 8px;">
-                    <li>Vérifier que l'API fonctionne correctement avant de coder</li>
-                    <li>Comprendre la structure exacte des données renvoyées</li>
-                    <li>Tester différentes configurations sans modifier le code</li>
-                    <li>Identifier les problèmes potentiels (CORS, erreurs, timeout)</li>
-                </ul>
-            </div>
+            </h4>
+            <p>Observez attentivement la structure de la réponse :</p>
+            <ul style="margin-left: 20px;">
+                <li>La réponse est un objet JSON</li>
+                <li>Il contient la clé <code>time</code> (timestamp Unix)</li>
+                <li>Il contient des clés pour chaque devise : <code>USD</code>, <code>EUR</code>, <code>GBP</code>, etc.
+                </li>
+                <li>Les valeurs sont des nombres (prix du Bitcoin dans la devise correspondante)</li>
+            </ul>
+            <br>
+            <p><strong>💡 Questions de réflexion :</strong></p>
+            <ul style="margin-left: 20px;">
+                <li>Quel est le prix actuel du Bitcoin en euros (EUR) ?</li>
+                <li>Quel est le prix actuel du Bitcoin en dollars (USD) ?</li>
+                <li>Que représente la clé "time" ?</li>
+            </ul>
         </div>
+
+        <div class="postman-step">
+            <h4>📸 Étape 5 : Sauvegarde et capture</h4>
+            <p>Sauvegardez votre requête en cliquant sur <strong>"Save"</strong>. Donnez-lui un nom comme
+                <strong>"Bitcoin Price API"</strong>.
+            </p>
+            <p>Prenez une capture d'écran montrant :</p>
+            <ul style="margin-left: 20px;">
+                <li>L'URL de la requête</li>
+                <li>La méthode GET sélectionnée</li>
+                <li>La réponse de l'API dans le panneau inférieur</li>
+            </ul>
+        </div>
+
+        <div class="screenshot-task">
+            <h4>📸 Capture d'écran 7 - Test API avec Postman</h4>
+            <p>Prenez une capture d'écran de Postman montrant la requête GET vers l'API et la réponse reçue.</p>
+        </div>
+
+        <div class="info">
+            <strong>ℹ️ Pourquoi tester avec Postman ?</strong>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>Vérifier que l'API fonctionne correctement avant de coder</li>
+                <li>Comprendre la structure exacte des données renvoyées</li>
+                <li>Tester différentes configurations sans modifier le code</li>
+                <li>Identifier les problèmes potentiels (CORS, erreurs, timeout)</li>
+            </ul>
+        </div>
+    
 
         <div class="step">
             <h3>6.1 - Structure du composant avec useState et useEffect</h3>
@@ -636,27 +659,27 @@ const navigate = useNavigate()
 
             <div class="code-block">
                 <code>
-import { useState, useEffect } from 'react'
-import axios from 'axios'
+    import { useState, useEffect } from 'react'
+    import axios from 'axios'
 
-function Bitcoin() {
-  // État pour stocker les prix
-  const [prices, setPrices] = useState(null)
-  // État pour gérer le chargement
-  const [loading, setLoading] = useState(true)
-  // État pour gérer les erreurs
-  const [error, setError] = useState(null)
+    function Bitcoin() {
+    // État pour stocker les prix
+    const [prices, setPrices] = useState(null)
+    // État pour gérer le chargement
+    const [loading, setLoading] = useState(true)
+    // État pour gérer les erreurs
+    const [error, setError] = useState(null)
 
-  return (
-    &lt;div&gt;
-      &lt;h1&gt;💰 Cours du Bitcoin&lt;/h1&gt;
-      {/* Le contenu sera affiché ici */}
-    &lt;/div&gt;
-  )
-}
+    return (
+        &lt;div&gt;
+        &lt;h1&gt;💰 Cours du Bitcoin&lt;/h1&gt;
+        {/* Le contenu sera affiché ici */}
+        &lt;/div&gt;
+    )
+    }
 
-export default Bitcoin
-                </code>
+    export default Bitcoin
+                    </code>
             </div>
         </div>
 
@@ -698,7 +721,7 @@ export default Bitcoin
                 <ul style="margin-left: 20px;">
                     <li>Pendant le chargement : "Chargement des prix..."</li>
                     <li>En cas d'erreur : "Erreur : [message d'erreur]"</li>
-                    <li>En cas de succès : 
+                    <li>En cas de succès :
                         <ul>
                             <li>Prix en USD : $XX XXX</li>
                             <li>Prix en EUR : €XX XXX</li>
@@ -728,11 +751,14 @@ export default Bitcoin
         <div class="warning">
             <strong>⚠️ Dépannage rapide :</strong>
             <ul style="margin-left: 20px; margin-top: 8px;">
-                <li><strong>Les routes ne fonctionnent pas</strong> → Vérifiez que BrowserRouter est bien présent dans main.jsx</li>
+                <li><strong>Les routes ne fonctionnent pas</strong> → Vérifiez que BrowserRouter est bien présent dans
+                    main.jsx</li>
                 <li><strong>Les liens ne changent pas la page</strong> → Vérifiez l'utilisation de "to" et non "href"</li>
                 <li><strong>L'API ne répond pas</strong> → Vérifiez votre connexion internet et l'URL de l'API</li>
-                <li><strong>Les prix ne s'affichent pas</strong> → Vérifiez le nom des propriétés dans la réponse (USD, EUR)</li>
-                <li><strong>Erreur CORS</strong> → L'API mempool.space autorise les requêtes cross-origin, pas de souci normalement</li>
+                <li><strong>Les prix ne s'affichent pas</strong> → Vérifiez le nom des propriétés dans la réponse (USD, EUR)
+                </li>
+                <li><strong>Erreur CORS</strong> → L'API mempool.space autorise les requêtes cross-origin, pas de souci
+                    normalement</li>
                 <li><strong>Postman affiche une erreur</strong> → Vérifiez l'URL et votre connexion internet</li>
             </ul>
         </div>
@@ -744,19 +770,23 @@ export default Bitcoin
                 <li><strong>Capture 1</strong> - Installation de react-router-dom dans le terminal</li>
                 <li><strong>Capture 2</strong> - Installation d'axios dans le terminal</li>
                 <li><strong>Capture 3</strong> - Fichier <code>src/main.jsx</code> avec BrowserRouter</li>
-                <li><strong>Capture 4</strong> - Arborescence du dossier <code>src/pages/</code> avec les trois fichiers</li>
+                <li><strong>Capture 4</strong> - Arborescence du dossier <code>src/pages/</code> avec les trois fichiers
+                </li>
                 <li><strong>Capture 5</strong> - Fichier <code>App.jsx</code> avec les routes définies</li>
                 <li><strong>Capture 6</strong> - Navigateur avec le menu de navigation et la page Accueil</li>
                 <li><strong>Capture 7</strong> - Postman avec la requête GET et la réponse de l'API Bitcoin</li>
                 <li><strong>Capture 8</strong> - Page Bitcoin affichant les prix en EUR et USD</li>
             </ol>
-            <p style="margin-top: 15px;"><strong>📌 Important :</strong> Chaque capture doit être accompagnée d'une courte description expliquant ce qu'elle montre. Ajoutez également les réponses aux questions posées dans les indices.</p>
+            <p style="margin-top: 15px;"><strong>📌 Important :</strong> Chaque capture doit être accompagnée d'une courte
+                description expliquant ce qu'elle montre. Ajoutez également les réponses aux questions posées dans les
+                indices.</p>
         </div>
 
         <div class="todo" style="margin-top: 20px;">
             <strong>📝 Questions à répondre dans le compte rendu :</strong>
             <ul style="margin-left: 20px; margin-top: 8px;">
-                <li>Quelle est la différence entre <code>Link</code> et <code>useNavigate</code> ? Dans quel cas utiliser l'un ou l'autre ?</li>
+                <li>Quelle est la différence entre <code>Link</code> et <code>useNavigate</code> ? Dans quel cas utiliser
+                    l'un ou l'autre ?</li>
                 <li>Pourquoi utiliser <code>useEffect</code> avec un tableau de dépendances vide pour l'appel API ?</li>
                 <li>Que se passe-t-il si on oublie de gérer l'état "loading" ?</li>
                 <li>Quelle est la différence entre <code>fetch()</code> et <code>axios</code> pour les appels API ?</li>
@@ -767,8 +797,12 @@ export default Bitcoin
 
         <footer>
             <p>⚛️ TP React - Navigation avec React Router et API Bitcoin</p>
-            <p>📚 Ressources utiles : <a href="https://reactrouter.com/" target="_blank">React Router DOM Documentation</a> | <a href="https://axios-http.com/" target="_blank">Axios Documentation</a> | <a href="https://www.postman.com/" target="_blank">Postman</a> | <a href="https://mempool.space/docs/api" target="_blank">Mempool.space API</a></p>
+            <p>📚 Ressources utiles : <a href="https://reactrouter.com/" target="_blank">React Router DOM Documentation</a>
+                | <a href="https://axios-http.com/" target="_blank">Axios Documentation</a> | <a
+                    href="https://www.postman.com/" target="_blank">Postman</a> | <a href="https://mempool.space/docs/api"
+                    target="_blank">Mempool.space API</a></p>
         </footer>
     </div>
 </body>
+
 </html>
