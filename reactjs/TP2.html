@@ -232,6 +232,28 @@
             font-family: monospace;
             margin: 15px 0;
         }
+
+        .postman-step {
+            background-color: #ff6c37;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .postman-step h4 {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .postman-step code {
+            background-color: rgba(255,255,255,0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -246,6 +268,7 @@
                 <li>Créer trois pages distinctes : Home, About et Bitcoin</li>
                 <li>Mettre en place la navigation entre les pages avec useNavigate et Link</li>
                 <li>Installer et utiliser Axios pour les appels API</li>
+                <li>Tester une API avec Postman avant de l'intégrer</li>
                 <li>Appeler l'API de mempool.space pour obtenir le prix du Bitcoin</li>
                 <li>Afficher dynamiquement les données reçues (EUR et USD)</li>
                 <li>Documenter son travail avec des captures d'écran</li>
@@ -289,7 +312,7 @@
             </div>
         </div>
 
-        <!-- PARTIE 2 : Configuration du Routeur -->
+        <!-- PARTIE 2 : Configuration du routeur -->
         <h2>🔧 PARTIE 2 : Configuration du routeur</h2>
 
         <div class="step">
@@ -502,6 +525,103 @@ const navigate = useNavigate()
         <!-- PARTIE 6 : Appel API dans Bitcoin -->
         <h2>💰 PARTIE 6 : Appel API dans la page Bitcoin</h2>
 
+        <!-- NOUVEAU : Sous-partie Postman -->
+        <div class="step">
+            <h3>6.0 - Découverte de l'API avec Postman</h3>
+            <div class="question">🔧 Tester l'API avant de l'intégrer dans React</div>
+            <p>Avant d'écrire du code, il est essentiel de comprendre comment fonctionne l'API que vous allez utiliser. Postman est un outil qui permet de tester des API facilement sans écrire une seule ligne de code.</p>
+
+            <div class="indice">
+                <strong>📌 Qu'est-ce que Postman ?</strong>
+                <p>Postman est une application qui permet de :</p>
+                <ul style="margin-left: 20px;">
+                    <li>Envoyer des requêtes HTTP (GET, POST, PUT, DELETE...)</li>
+                    <li>Visualiser les réponses des API</li>
+                    <li>Tester les paramètres et les en-têtes</li>
+                    <li>Debugger et comprendre la structure des données</li>
+                </ul>
+            </div>
+
+            <div class="postman-step">
+                <h4>🖥️ Étape 1 : Installation de Postman</h4>
+                <p>Rendez-vous sur <a href="https://www.postman.com/downloads/" target="_blank" style="color: white; text-decoration: underline;">https://www.postman.com/downloads/</a> et téléchargez la version correspondant à votre système d'exploitation. Lancez l'installation et ouvrez Postman.</p>
+            </div>
+
+            <div class="postman-step">
+                <h4>📡 Étape 2 : Création d'une nouvelle requête</h4>
+                <p>Dans Postman, cliquez sur le bouton <strong>"New"</strong> puis <strong>"HTTP Request"</strong>.</p>
+                <p>Configurez la requête comme suit :</p>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li><strong>Méthode HTTP :</strong> <code>GET</code> (défiler ou cliquer sur le dropdown)</li>
+                    <li><strong>URL :</strong> <code>https://mempool.space/api/v1/prices</code></li>
+                </ul>
+            </div>
+
+            <div class="postman-step">
+                <h4>🚀 Étape 3 : Envoi de la requête</h4>
+                <p>Cliquez sur le bouton bleu <strong>"Send"</strong>.</p>
+                <p>Observez la réponse qui apparaît dans la partie inférieure.</p>
+            </div>
+
+            <div class="api-response">
+                <strong>📡 Réponse normale de l'API :</strong><br>
+                {<br>
+                &nbsp;&nbsp;"time": 1776715504,<br>
+                &nbsp;&nbsp;"USD": 76274,<br>
+                &nbsp;&nbsp;"EUR": 64744,<br>
+                &nbsp;&nbsp;"GBP": 56376,<br>
+                &nbsp;&nbsp;"CAD": 104092,<br>
+                &nbsp;&nbsp;"CHF": 59386,<br>
+                &nbsp;&nbsp;"AUD": 106182,<br>
+                &nbsp;&nbsp;"JPY": 12129540<br>
+                }
+            </div>
+
+            <div class="postman-step">
+                <h4>🔍 Étape 4 : Analyse de la réponse</div></h4>
+                <p>Observez attentivement la structure de la réponse :</p>
+                <ul style="margin-left: 20px;">
+                    <li>La réponse est un objet JSON</li>
+                    <li>Il contient la clé <code>time</code> (timestamp Unix)</li>
+                    <li>Il contient des clés pour chaque devise : <code>USD</code>, <code>EUR</code>, <code>GBP</code>, etc.</li>
+                    <li>Les valeurs sont des nombres (prix du Bitcoin dans la devise correspondante)</li>
+                </ul>
+                <br>
+                <p><strong>💡 Questions de réflexion :</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Quel est le prix actuel du Bitcoin en euros (EUR) ?</li>
+                    <li>Quel est le prix actuel du Bitcoin en dollars (USD) ?</li>
+                    <li>Que représente la clé "time" ?</li>
+                </ul>
+            </div>
+
+            <div class="postman-step">
+                <h4>📸 Étape 5 : Sauvegarde et capture</h4>
+                <p>Sauvegardez votre requête en cliquant sur <strong>"Save"</strong>. Donnez-lui un nom comme <strong>"Bitcoin Price API"</strong>.</p>
+                <p>Prenez une capture d'écran montrant :</p>
+                <ul style="margin-left: 20px;">
+                    <li>L'URL de la requête</li>
+                    <li>La méthode GET sélectionnée</li>
+                    <li>La réponse de l'API dans le panneau inférieur</li>
+                </ul>
+            </div>
+
+            <div class="screenshot-task">
+                <h4>📸 Capture d'écran 7 - Test API avec Postman</h4>
+                <p>Prenez une capture d'écran de Postman montrant la requête GET vers l'API et la réponse reçue.</p>
+            </div>
+
+            <div class="info">
+                <strong>ℹ️ Pourquoi tester avec Postman ?</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Vérifier que l'API fonctionne correctement avant de coder</li>
+                    <li>Comprendre la structure exacte des données renvoyées</li>
+                    <li>Tester différentes configurations sans modifier le code</li>
+                    <li>Identifier les problèmes potentiels (CORS, erreurs, timeout)</li>
+                </ul>
+            </div>
+        </div>
+
         <div class="step">
             <h3>6.1 - Structure du composant avec useState et useEffect</h3>
             <div class="question">⚛️ Utiliser les hooks React pour gérer l'état et l'effet</div>
@@ -553,20 +673,6 @@ export default Bitcoin
                 </ul>
             </div>
 
-            <div class="api-response">
-                <strong>📡 Exemple de réponse de l'API :</strong><br>
-                {<br>
-                &nbsp;&nbsp;"time": 1776715504,<br>
-                &nbsp;&nbsp;"USD": 76274,<br>
-                &nbsp;&nbsp;"EUR": 64744,<br>
-                &nbsp;&nbsp;"GBP": 56376,<br>
-                &nbsp;&nbsp;"CAD": 104092,<br>
-                &nbsp;&nbsp;"CHF": 59386,<br>
-                &nbsp;&nbsp;"AUD": 106182,<br>
-                &nbsp;&nbsp;"JPY": 12129540<br>
-                }
-            </div>
-
             <div class="todo">
                 <strong>📝 À implémenter dans useEffect :</strong>
                 <ol style="margin-left: 20px; margin-top: 8px;">
@@ -602,7 +708,7 @@ export default Bitcoin
             </div>
 
             <div class="screenshot-task">
-                <h4>📸 Capture d'écran 7</h4>
+                <h4>📸 Capture d'écran 8</h4>
                 <p>Prenez une capture d'écran de la page Bitcoin avec les prix affichés correctement.</p>
             </div>
         </div>
@@ -627,12 +733,13 @@ export default Bitcoin
                 <li><strong>L'API ne répond pas</strong> → Vérifiez votre connexion internet et l'URL de l'API</li>
                 <li><strong>Les prix ne s'affichent pas</strong> → Vérifiez le nom des propriétés dans la réponse (USD, EUR)</li>
                 <li><strong>Erreur CORS</strong> → L'API mempool.space autorise les requêtes cross-origin, pas de souci normalement</li>
+                <li><strong>Postman affiche une erreur</strong> → Vérifiez l'URL et votre connexion internet</li>
             </ul>
         </div>
 
         <div class="recap-screenshots">
             <h4>📸 RÉCAPITULATIF DES CAPTURES D'ÉCRAN À FOURNIR</h4>
-            <p>Dans votre compte rendu, vous devez intégrer les 7 captures d'écran suivantes :</p>
+            <p>Dans votre compte rendu, vous devez intégrer les 8 captures d'écran suivantes :</p>
             <ol>
                 <li><strong>Capture 1</strong> - Installation de react-router-dom dans le terminal</li>
                 <li><strong>Capture 2</strong> - Installation d'axios dans le terminal</li>
@@ -640,7 +747,8 @@ export default Bitcoin
                 <li><strong>Capture 4</strong> - Arborescence du dossier <code>src/pages/</code> avec les trois fichiers</li>
                 <li><strong>Capture 5</strong> - Fichier <code>App.jsx</code> avec les routes définies</li>
                 <li><strong>Capture 6</strong> - Navigateur avec le menu de navigation et la page Accueil</li>
-                <li><strong>Capture 7</strong> - Page Bitcoin affichant les prix en EUR et USD</li>
+                <li><strong>Capture 7</strong> - Postman avec la requête GET et la réponse de l'API Bitcoin</li>
+                <li><strong>Capture 8</strong> - Page Bitcoin affichant les prix en EUR et USD</li>
             </ol>
             <p style="margin-top: 15px;"><strong>📌 Important :</strong> Chaque capture doit être accompagnée d'une courte description expliquant ce qu'elle montre. Ajoutez également les réponses aux questions posées dans les indices.</p>
         </div>
@@ -652,12 +760,14 @@ export default Bitcoin
                 <li>Pourquoi utiliser <code>useEffect</code> avec un tableau de dépendances vide pour l'appel API ?</li>
                 <li>Que se passe-t-il si on oublie de gérer l'état "loading" ?</li>
                 <li>Quelle est la différence entre <code>fetch()</code> et <code>axios</code> pour les appels API ?</li>
+                <li>Quel est l'intérêt d'utiliser Postman avant d'intégrer une API dans son code ?</li>
+                <li>D'après la réponse de l'API, quel est le prix actuel du Bitcoin en dollars et en euros ?</li>
             </ul>
         </div>
 
         <footer>
             <p>⚛️ TP React - Navigation avec React Router et API Bitcoin</p>
-            <p>📚 Ressources utiles : <a href="https://reactrouter.com/" target="_blank">React Router DOM Documentation</a> | <a href="https://axios-http.com/" target="_blank">Axios Documentation</a> | <a href="https://mempool.space/docs/api" target="_blank">Mempool.space API</a></p>
+            <p>📚 Ressources utiles : <a href="https://reactrouter.com/" target="_blank">React Router DOM Documentation</a> | <a href="https://axios-http.com/" target="_blank">Axios Documentation</a> | <a href="https://www.postman.com/" target="_blank">Postman</a> | <a href="https://mempool.space/docs/api" target="_blank">Mempool.space API</a></p>
         </footer>
     </div>
 </body>
