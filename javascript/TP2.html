@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP2 JavaScript : Manipulation du DOM et Événements</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f0f4f8;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 30px;
+        }
+
+        h1 {
+            color: #0d6efd;
+            background-color: #e7f1ff;
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 40px;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        h2 {
+            color: #0a58ca;
+            border-left: 5px solid #0d6efd;
+            padding-left: 15px;
+            margin: 40px 0 20px 0;
+            font-size: 1.5rem;
+        }
+
+        .exercise {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+            transition: box-shadow 0.2s, transform 0.1s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .exercise:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+
+        .exercise h3 {
+            color: #0d6efd;
+            background-color: #e7f1ff;
+            display: inline-block;
+            padding: 5px 16px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            margin-bottom: 18px;
+        }
+
+        .question {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            color: #1e2a3e;
+        }
+
+        .indice {
+            background-color: #f8f9fc;
+            border-left: 4px solid #0d6efd;
+            padding: 14px;
+            margin: 15px 0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+        }
+
+        .todo {
+            background-color: #fff3e0;
+            border-left: 4px solid #fd7e14;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .demo-area {
+            background-color: #f8f9fa;
+            border: 2px dashed #adb5bd;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            transition: all 0.2s;
+        }
+
+        .demo-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #495057;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        button {
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.2s, transform 0.1s;
+            margin: 5px 5px 5px 0;
+        }
+
+        button:hover {
+            background-color: #0b5ed7;
+            transform: translateY(-1px);
+        }
+
+        button.danger {
+            background-color: #dc3545;
+        }
+        button.danger:hover {
+            background-color: #bb2d3b;
+        }
+        button.success {
+            background-color: #198754;
+        }
+        button.success:hover {
+            background-color: #157347;
+        }
+        button.warning {
+            background-color: #ffc107;
+            color: #000;
+        }
+        button.warning:hover {
+            background-color: #ffca2c;
+        }
+
+        input, select, textarea {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 20px;
+            margin: 5px 0;
+            font-size: 0.9rem;
+            width: auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 12px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+        }
+
+        .item-list {
+            list-style: none;
+            padding: 0;
+        }
+        .item-list li {
+            background: #f1f3f5;
+            margin: 8px 0;
+            padding: 10px 15px;
+            border-radius: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .highlight {
+            background-color: #fff3cd !important;
+            border-left: 5px solid #ffc107;
+            padding: 8px;
+            transition: 0.1s;
+        }
+
+        .info {
+            background-color: #e2f3e4;
+            border-left: 4px solid #198754;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            text-align: center;
+            color: #6c757d;
+            border-top: 2px solid #e9ecef;
+            font-size: 0.9rem;
+        }
+        kbd {
+            background-color: #e9ecef;
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-family: monospace;
+            font-weight: bold;
+        }
+        .live-preview {
+            background-color: #fff;
+            border-radius: 12px;
+            margin-top: 12px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📌 TP2 JavaScript : DOM & Événements</h1>
+    <p>Ce TP explore la manipulation du DOM : récupération, modification, insertion, suppression d'éléments, et gestion d'événements (<strong>click, keyup, focus, submit</strong>). Ouvrez la console (<kbd>F12</kbd>) pour observer les logs.</p>
+
+    <!-- OBJECTIFS -->
+    <div style="background: #e7f1ff; padding: 15px; border-radius: 16px; margin-bottom: 20px;">
+        <strong>🎯 Objectifs :</strong>
+        <ul style="margin-left: 20px; margin-top: 8px;">
+            <li>Utiliser <code>getElementById</code>, <code>querySelector</code>, <code>getElementsByClassName</code></li>
+            <li>Modifier contenu, attributs, styles CSS</li>
+            <li>Créer et insérer des éléments (<code>createElement</code>, <code>appendChild</code>, <code>insertAdjacentHTML</code>)</li>
+            <li>Supprimer des éléments (<code>remove()</code>, <code>removeChild</code>)</li>
+            <li>Gérer événements : click, keyup, focus, submit</li>
+        </ul>
+    </div>
+
+    <!-- ==================== EXERCICE 1 : getElementById, récupération et modification ==================== -->
+    <div class="exercise">
+        <h3>📌 Exercice 1 : getElementById & modification de contenu</h3>
+        <div class="question">🎯 Récupérer un élément par son ID et modifier son texte / style</div>
+        <div class="indice">
+            <strong>Méthodes :</strong> <code>document.getElementById('id')</code>, <code>innerText</code>, <code>style.property</code>
+        </div>
+        <div class="demo-area">
+            <div class="demo-title">🔹 Zone de démonstration</div>
+            <p id="demoText1">🌟 Message initial : Bienvenue dans le DOM !</p>
+            <button id="changeTextBtn">📝 Changer le texte</button>
+            <button id="resetTextBtn">🔄 Réinitialiser</button>
+            <button id="highlightBtn">✨ Mettre en surbrillance</button>
+        </div>
+        <div class="todo">
+            ✅ <strong>À faire dans le script :</strong> Récupérer l'élément #demoText1, modifier son texte avec .innerText, changer la couleur de fond via style.backgroundColor.
+        </div>
+    </div>
+
+    <!-- ==================== EXERCICE 2 : querySelector / querySelectorAll et classes ==================== -->
+    <div class="exercise">
+        <h3>📌 Exercice 2 : querySelector & querySelectorAll</h3>
+        <div class="question">🎯 Sélectionner des éléments avec des sélecteurs CSS et appliquer des modifications</div>
+        <div class="indice">
+            <strong>Méthodes :</strong> <code>document.querySelector('.class')</code>, <code>document.querySelectorAll('div.item')</code>
+        </div>
+        <div class="demo-area">
+            <div class="demo-title">📦 Liste d'articles (classe "item")</div>
+            <div class="item" style="padding:8px; margin:5px; background:#e9ecef; border-radius:12px;">📦 Article 1 - Smartphone</div>
+            <div class="item" style="padding:8px; margin:5px; background:#e9ecef; border-radius:12px;">📦 Article 2 - Ordinateur</div>
+            <div class="item" style="padding:8px; margin:5px; background:#e9ecef; border-radius:12px;">📦 Article 3 - Casque audio</div>
+            <button id="colorAllItemsBtn">🎨 Changer couleur tous les items</button>
+            <button id="firstItemBorderBtn">🔲 Ajouter une bordure au premier item</button>
+        </div>
+        <div class="todo">
+            ✅ <strong>À faire :</strong> Utiliser querySelectorAll pour modifier le style de tous les éléments .item. Utiliser querySelector pour modifier le premier .item.
+        </div>
+    </div>
+
+    <!-- ==================== EXERCICE 3 : Création et insertion d'élément ==================== -->
+    <div class="exercise">
+        <h3>📌 Exercice 3 : Créer et insérer des éléments</h3>
+        <div class="question">🎯 <code>createElement</code>, <code>appendChild</code>, <code>insertAdjacentHTML</code></div>
+        <div class="indice">
+            <strong>Méthodes :</strong> <code>document.createElement('div')</code>, <code>parent.appendChild(newElement)</code>, <code>insertAdjacentHTML</code>
+        </div>
+        <div class="demo-area">
+            <div class="demo-title">➕ Liste de tâches dynamique</div>
+            <ul id="taskList" class="item-list">
+                <li>📌 Apprendre JavaScript DOM <button class="remove-li" style="background:#dc3545; padding:4px 12px;">❌</button></li>
+                <li>📌 Comprendre les événements <button class="remove-li" style="background:#dc3545; padding:4px 12px;">❌</button></li>
+            </ul>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+                <input type="text" id="newTaskInput" placeholder="Nouvelle tâche..." style="flex:1;">
+                <button id="addTaskBtn">➕ Ajouter tâche</button>
+            </div>
+            <button id="insertHTMLBtn" class="success">✨ Insérer un paragraphe informatif (insertAdjacentHTML)</button>
+        </div>
+        <div class="todo">
+            ✅ <strong>Objectif :</strong> Créer dynamiquement des <code>&lt;li&gt;</code> avec un bouton supprimer. Utiliser createElement, setAttribute, appendChild. Puis insérer du HTML via insertAdjacentHTML.
+        </div>
+    </div>
+
+    <!-- ==================== EXERCICE 4 : Suppression d'éléments ==================== -->
+    <div class="exercise">
+        <h3>📌 Exercice 4 : Supprimer des éléments</h3>
+        <div class="question">🎯 Utiliser <code>remove()</code> et <code>removeChild</code></div>
+        <div class="demo-area">
+            <div class="demo-title">🗑️ Zone à vider / supprimer</div>
+            <div id="deleteZone">
+                <p>📄 Paragraphe 1 - Je peux être supprimé</p>
+                <p>📄 Paragraphe 2 - Moi aussi</p>
+                <div id="specialCard" class="card">💳 Carte spéciale (suppression ciblée)</div>
+            </div>
+            <button id="removeLastP">❌ Supprimer le dernier paragraphe</button>
+            <button id="removeSpecialCard">🗑️ Supprimer la carte spéciale</button>
+            <button id="clearZoneBtn" class="danger">⚠️ Vider toute la zone</button>
+            <button id="resetZoneBtn" class="success">🔄 Réinitialiser la zone</button>
+        </div>
+        <div class="todo">
+            ✅ <strong>À faire :</strong> Supprimer des enfants via removeChild ou remove(). Gérer la suppression d'éléments spécifiques.
+        </div>
+    </div>
+
+    <!-- ==================== EXERCICE 5 : Événements click, keyup, focus ==================== -->
+    <div class="exercise">
+        <h3>📌 Exercice 5 : Événements interactifs (click, keyup, focus)</h3>
+        <div class="question">🎯 Gérer <code>click</code>, <code>keyup</code>, <code>focus</code> / <code>blur</code></div>
+        <div class="demo-area">
+            <div class="demo-title">⌨️ Saisie en direct + compteur</div>
+            <input type="text" id="liveInput" placeholder="Tapez quelque chose..." style="width: 70%;">
+            <p>🖊️ Texte en temps réel : <span id="livePreview">(rien)</span></p>
+            <p>📏 Longueur du texte : <span id="charCount">0</span> caractères</p>
+            <button id="clickCounterBtn">🔘 Cliquez-moi</button>
+            <p>🖱️ Nombre de clics : <span id="clickCountDisplay">0</span></p>
+            <div class="info" id="focusMessage">💡 Placez le curseur dans le champ ci-dessus pour voir l'événement focus.</div>
+        </div>
+        <div class="todo">
+            ✅ <strong>Objectifs :</strong> click → incrémente compteur ; keyup → afficher la valeur et longueur ; focus → changer le style du champ ou afficher un message.
+        </div>
+    </div>
+
+    <!-- ==================== EXERCICE 6 : Gestion d'événement submit sur un formulaire ==================== -->
+    <div class="exercise">
+        <h3>📌 Exercice 6 : Formulaire et événement submit</h3>
+        <div class="question">🎯 Intercepter la soumission, empêcher le rechargement, récupérer les données</div>
+        <div class="demo-area">
+            <div class="demo-title">📝 Formulaire d'inscription simple</div>
+            <form id="demoForm">
+                <div class="form-group">
+                    <label>Nom complet :</label>
+                    <input type="text" id="fullname" placeholder="Votre nom" required>
+                </div>
+                <div class="form-group">
+                    <label>Email :</label>
+                    <input type="email" id="email" placeholder="exemple@domaine.fr" required>
+                </div>
+                <div class="form-group">
+                    <label>Ville :</label>
+                    <input type="text" id="city" placeholder="Votre ville">
+                </div>
+                <button type="submit" style="background:#198754;">✅ Envoyer</button>
+                <button type="reset" style="background:#6c757d;">🗑️ Réinitialiser</button>
+            </form>
+            <div id="formFeedback" style="margin-top: 15px; padding: 10px; background: #e9ecef; border-radius: 12px;"></div>
+        </div>
+        <div class="todo">
+            ✅ <strong>À réaliser :</strong> Écouter l'événement 'submit', empêcher le comportement par défaut (preventDefault), récupérer les valeurs des champs et les afficher dans la console + dans le div #formFeedback.
+        </div>
+    </div>
+
+    <!-- ==================== EXERCICE 7 : Bonus - Insertion / suppression dynamique avancée ==================== -->
+    <div class="exercise">
+        <h3>📌 Exercice 7 : Manipulation avancée et délégation d'événements</h3>
+        <div class="question">🎯 Gérer les boutons supprimer sur des éléments créés dynamiquement (délégation)</div>
+        <div class="indice">
+            Les boutons "❌" dans la liste des tâches (Exercice 3) doivent fonctionner même pour les nouvelles tâches. Utiliser <strong>event delegation</strong> sur le parent.
+        </div>
+        <div class="demo-area">
+            <div class="demo-title">🌟 Délégation d'événements - Liste dynamique</div>
+            <p>Les tâches ajoutées via l'input de l'exercice 3 doivent pouvoir être supprimées via leur bouton. (Déjà prévu dans l'exercice 3, mais assurez-vous que la suppression fonctionne pour toutes)</p>
+            <button id="addMultipleDemo" class="warning">➕ Ajouter tâche exemple rapide</button>
+        </div>
+        <div class="todo">
+            ✅ Ajouter un écouteur sur <code>#taskList</code> pour capturer les clics sur les boutons .remove-li. Supprimer le <code>&lt;li&gt;</code> parent.
+        </div>
+    </div>
+
+    <footer>
+        <p>📘 TP2 DOM & Événements - Implémentez chaque exercice dans la balise <code>&lt;script&gt;</code> ci-dessous.</p>
+        <p>🛠️ Toutes les interactions doivent être codées en JavaScript pur (pas de bibliothèques). Utilisez la console pour vérifier.</p>
+    </footer>
+</div>
+
+<!-- Script principal pour le TP2 -->
+<script>
+    // --------------------------------------------------------------
+    // EXERCICE 1 : getElementById et modification
+    // --------------------------------------------------------------
+    const demoText = document.getElementById('demoText1');
+    const changeBtn = document.getElementById('changeTextBtn');
+    const resetBtn = document.getElementById('resetTextBtn');
+    const highlight = document.getElementById('highlightBtn');
+
+    if(changeBtn) {
+        changeBtn.addEventListener('click', () => {
+            demoText.innerText = '🔥 Texte modifié via getElementById !';
+            console.log('Exercice1 : Texte changé');
+        });
+    }
+    if(resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            demoText.innerText = '🌟 Message initial : Bienvenue dans le DOM !';
+            demoText.style.backgroundColor = '';
+            console.log('Exercice1 : Réinitialisation');
+        });
+    }
+    if(highlight) {
+        highlight.addEventListener('click', () => {
+            demoText.style.backgroundColor = '#fff3cd';
+            demoText.style.padding = '8px';
+            demoText.style.borderRadius = '8px';
+            console.log('Exercice1 : Surbrillance ajoutée');
+        });
+    }
+
+    // --------------------------------------------------------------
+    // EXERCICE 2 : querySelector & querySelectorAll
+    // --------------------------------------------------------------
+    const colorAllBtn = document.getElementById('colorAllItemsBtn');
+    const firstBorderBtn = document.getElementById('firstItemBorderBtn');
+
+    if(colorAllBtn) {
+        colorAllBtn.addEventListener('click', () => {
+            const items = document.querySelectorAll('.item');
+            items.forEach((item, idx) => {
+                item.style.backgroundColor = '#d1e7dd';
+                item.style.transition = '0.2s';
+            });
+            console.log('Exercice2 : Tous les items modifiés (couleur)');
+        });
+    }
+    if(firstBorderBtn) {
+        firstBorderBtn.addEventListener('click', () => {
+            const firstItem = document.querySelector('.item');
+            if(firstItem) {
+                firstItem.style.border = '3px solid #0d6efd';
+                firstItem.style.borderRadius = '12px';
+                console.log('Exercice2 : Bordure ajoutée au premier item');
+            }
+        });
+    }
+
+    // --------------------------------------------------------------
+    // EXERCICE 3 : Création et insertion d'éléments (ajout tâches)
+    // --------------------------------------------------------------
+    const taskList = document.getElementById('taskList');
+    const newTaskInput = document.getElementById('newTaskInput');
+    const addTaskBtn = document.getElementById('addTaskBtn');
+    const insertHTMLBtn = document.getElementById('insertHTMLBtn');
+
+    function createTaskItem(taskText) {
+        const li = document.createElement('li');
+        li.innerHTML = `📌 ${taskText} <button class="remove-li" style="background:#dc3545; padding:4px 12px; border:none; color:white; border-radius:20px;">❌</button>`;
+        return li;
+    }
+
+    if(addTaskBtn) {
+        addTaskBtn.addEventListener('click', () => {
+            const taskValue = newTaskInput.value.trim();
+            if(taskValue === "") {
+                alert("Veuillez saisir une tâche");
+                return;
+            }
+            const newLi = createTaskItem(taskValue);
+            taskList.appendChild(newLi);
+            newTaskInput.value = "";
+            console.log(`Exercice3 : Tâche ajoutée : ${taskValue}`);
+        });
+    }
+
+    if(insertHTMLBtn) {
+        insertHTMLBtn.addEventListener('click', () => {
+            const demoAreaEx3 = document.querySelector('#taskList').parentElement;
+            const infoPara = document.createElement('div');
+            infoPara.className = 'info';
+            infoPara.innerText = '✅ Insertion via insertAdjacentHTML : nouvelle info ajoutée !';
+            // insertAdjacentHTML example
+            const refNode = document.querySelector('#taskList');
+            refNode.insertAdjacentHTML('afterend', '<div class="info" style="margin-top:8px;">✨ Élément inséré avec insertAdjacentHTML (après la liste)</div>');
+            console.log("Exercice3 : insertAdjacentHTML utilisé");
+        });
+    }
+
+    // --------------------------------------------------------------
+    // EXERCICE 4 : Suppression d'éléments
+    // --------------------------------------------------------------
+    const deleteZone = document.getElementById('deleteZone');
+    const removeLastP = document.getElementById('removeLastP');
+    const removeSpecialCard = document.getElementById('removeSpecialCard');
+    const clearZoneBtn = document.getElementById('clearZoneBtn');
+    const resetZoneBtn = document.getElementById('resetZoneBtn');
+
+    function resetZoneContent() {
+        if(deleteZone) {
+            deleteZone.innerHTML = `
+                <p>📄 Paragraphe 1 - Je peux être supprimé</p>
+                <p>📄 Paragraphe 2 - Moi aussi</p>
+                <div id="specialCard" class="card">💳 Carte spéciale (suppression ciblée)</div>
+            `;
+        }
+    }
+
+    if(removeLastP) {
+        removeLastP.addEventListener('click', () => {
+            const allP = deleteZone.querySelectorAll('p');
+            if(allP.length > 0) {
+                allP[allP.length-1].remove();
+                console.log("Exercice4 : Dernier paragraphe supprimé");
+            } else {
+                console.log("Plus de paragraphes");
+            }
+        });
+    }
+    if(removeSpecialCard) {
+        removeSpecialCard.addEventListener('click', () => {
+            const card = document.getElementById('specialCard');
+            if(card) card.remove();
+            else console.log("Carte déjà supprimée");
+        });
+    }
+    if(clearZoneBtn) {
+        clearZoneBtn.addEventListener('click', () => {
+            while(deleteZone.firstChild) {
+                deleteZone.removeChild(deleteZone.firstChild);
+            }
+            console.log("Exercice4 : Zone entière vidée");
+        });
+    }
+    if(resetZoneBtn) {
+        resetZoneBtn.addEventListener('click', () => {
+            resetZoneContent();
+            console.log("Exercice4 : Zone réinitialisée");
+        });
+    }
+
+    // --------------------------------------------------------------
+    // EXERCICE 5 : Événements click, keyup, focus
+    // --------------------------------------------------------------
+    let clickCounter = 0;
+    const clickCounterBtn = document.getElementById('clickCounterBtn');
+    const clickCountDisplay = document.getElementById('clickCountDisplay');
+    const liveInput = document.getElementById('liveInput');
+    const livePreviewSpan = document.getElementById('livePreview');
+    const charCountSpan = document.getElementById('charCount');
+    const focusMessageDiv = document.getElementById('focusMessage');
+
+    if(clickCounterBtn) {
+        clickCounterBtn.addEventListener('click', () => {
+            clickCounter++;
+            clickCountDisplay.innerText = clickCounter;
+            console.log(`Clics : ${clickCounter}`);
+        });
+    }
+    if(liveInput) {
+        liveInput.addEventListener('keyup', (e) => {
+            const value = e.target.value;
+            livePreviewSpan.innerText = value !== "" ? value : "(rien)";
+            charCountSpan.innerText = value.length;
+            console.log(`keyup -> valeur: ${value}, longueur: ${value.length}`);
+        });
+        liveInput.addEventListener('focus', () => {
+            liveInput.style.backgroundColor = '#fff0b5';
+            focusMessageDiv.innerText = '🎯 Focus actif : vous pouvez taper !';
+            focusMessageDiv.style.backgroundColor = '#cfe2ff';
+            console.log("Événement focus déclenché");
+        });
+        liveInput.addEventListener('blur', () => {
+            liveInput.style.backgroundColor = '';
+            focusMessageDiv.innerText = '💡 Le champ a perdu le focus.';
+            setTimeout(() => {
+                if(focusMessageDiv) focusMessageDiv.innerText = '💡 Placez le curseur dans le champ ci-dessus pour voir l\'événement focus.';
+            }, 1500);
+        });
+    }
+
+    // --------------------------------------------------------------
+    // EXERCICE 6 : Gestion événement submit
+    // --------------------------------------------------------------
+    const demoForm = document.getElementById('demoForm');
+    const formFeedback = document.getElementById('formFeedback');
+
+    if(demoForm) {
+        demoForm.addEventListener('submit', (e) => {
+            e.preventDefault();  // empêche rechargement
+            const fullname = document.getElementById('fullname').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const city = document.getElementById('city').value.trim();
+
+            if(fullname === "" || email === "") {
+                formFeedback.innerHTML = '<div class="error-message">⚠️ Le nom et l\'email sont requis !</div>';
+                console.warn("Formulaire invalide : champs manquants");
+                return;
+            }
+            const message = `✅ Formulaire soumis avec succès !<br> Nom : ${fullname}<br> Email : ${email}<br> Ville : ${city || "Non précisée"}`;
+            formFeedback.innerHTML = `<div style="background:#d1e7dd; padding:10px; border-radius:12px;">${message}</div>`;
+            console.log("Submit intercepté : ", {fullname, email, city});
+            // Optionnel: réinitialiser ou laisser
+            // demoForm.reset();  (décommenter si besoin)
+        });
+    }
+
+    // --------------------------------------------------------------
+    // EXERCICE 7 + Gestion délégation pour boutons supprimer (les tâches)
+    // Tous les boutons .remove-li existants ou futurs : suppression du <li> parent
+    // --------------------------------------------------------------
+    if(taskList) {
+        taskList.addEventListener('click', (event) => {
+            const btn = event.target;
+            if(btn.classList && btn.classList.contains('remove-li')) {
+                const li = btn.closest('li');
+                if(li) {
+                    li.remove();
+                    console.log("Tâche supprimée via délégation");
+                }
+            }
+        });
+    }
+
+    // petit bonus pour l'exercice7 : ajout rapide d'une tâche démo
+    const addMultipleDemo = document.getElementById('addMultipleDemo');
+    if(addMultipleDemo) {
+        addMultipleDemo.addEventListener('click', () => {
+            const demoTask = createTaskItem("Tâche de démonstration (supprimable)");
+            taskList.appendChild(demoTask);
+            console.log("Ajout d'une tâche test (délégation active)");
+        });
+    }
+
+    // S'assurer que les boutons "remove-li" déjà présents dans le HTML initial fonctionnent aussi
+    // (délégation déjà active)
+    console.log("TP2 DOM chargé - Tous les événements sont prêts. Ouvrez la console pour tester !");
+</script>
+</body>
+</html>
