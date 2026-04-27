@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP Express JS : Création d'une API REST</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        h1 {
+            color: #000000;
+            background-color: #68a063;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #20232a;
+            border-left: 4px solid #68a063;
+            padding-left: 15px;
+            margin: 35px 0 15px 0;
+        }
+
+        .step {
+            background-color: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            transition: box-shadow 0.2s;
+        }
+
+        .step:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .step h3 {
+            color: #68a063;
+            background-color: #2c2c2c;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .question {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .indice {
+            background-color: #f0f7ff;
+            border-left: 4px solid #3498db;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        .indice strong {
+            color: #2980b9;
+        }
+
+        .todo {
+            background-color: #fff8e7;
+            border-left: 4px solid #f39c12;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .info {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .warning {
+            background-color: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .terminal {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .terminal .prompt {
+            color: #4ec9b0;
+        }
+
+        .terminal .command {
+            color: #ce9178;
+        }
+
+        .screenshot-task {
+            background: linear-gradient(135deg, #68a063 0%, #2c2c2c 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .screenshot-task h4 {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .file-card {
+            background: linear-gradient(135deg, #68a063 0%, #2c2c2c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        hr {
+            margin: 30px 0;
+            border: none;
+            border-top: 2px solid #eee;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            text-align: center;
+            color: #888;
+            border-top: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .objectives {
+            background-color: #fef9e7;
+            border: 1px solid #f1c40f;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .file-structure {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            margin: 15px 0;
+        }
+
+        .recap-screenshots {
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .help {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🟢 TP Express JS : Création d'une API REST</h1>
+        <p>Ce travail pratique vous guidera dans la création d'une API REST avec Express.js. Vous apprendrez à configurer un serveur, créer des endpoints et tester votre API avec Postman.</p>
+
+        <div class="objectives">
+            <strong>🎯 Objectifs de ce TP :</strong>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>Initialiser un projet Node.js</li>
+                <li>Installer et configurer Express.js</li>
+                <li>Créer un serveur HTTP avec Express</li>
+                <li>Comprendre les routes GET et POST</li>
+                <li>Développer une API de calcul (somme de deux nombres)</li>
+                <li>Tester les endpoints avec Postman</li>
+                <li>Comprendre les codes de statut HTTP</li>
+                <li>Documenter son travail avec des captures d'écran</li>
+            </ul>
+        </div>
+
+        <!-- ÉTAPE 1 : Initialisation -->
+        <h2>📦 ÉTAPE 1 : Initialisation du projet</h2>
+
+        <div class="step">
+            <h3>1.1 - Créer et initialiser le projet Node.js</h3>
+            <div class="question">💻 Créer un dossier "express-api" et initialiser un projet Node.js</div>
+
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Créez un dossier nommé "express-api"</li>
+                    <li>Ouvrez un terminal dans ce dossier</li>
+                    <li>Utilisez <code>npm init -y</code> pour initialiser le projet</li>
+                    <li>Le fichier <strong>package.json</strong> est créé. À votre avis, quel est son rôle ?</li>
+                </ul>
+            </div>
+
+            <div class="help">
+                💡 <strong>Aide :</strong> Le fichier package.json contient les métadonnées du projet et la liste des dépendances. Le flag -y accepte toutes les valeurs par défaut.
+            </div>
+
+            <div class="screenshot-task">
+                <h4>📸 Capture d'écran n°1</h4>
+                <p>Capturez le terminal après l'exécution de <code>npm init -y</code>, montrant la création du fichier package.json.</p>
+            </div>
+        </div>
+
+        <!-- ÉTAPE 2 : Installation d'Express -->
+        <h2>📦 ÉTAPE 2 : Installation d'Express.js</h2>
+
+        <div class="step">
+            <h3>2.1 - Installer Express</h3>
+            <div class="question">📦 Installer le framework Express.js</div>
+
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Exécutez <code>npm install express</code></li>
+                    <li>Observez l'apparition du dossier <strong>node_modules</strong> et du fichier <strong>package-lock.json</strong></li>
+                </ul>
+            </div>
+
+            <div class="help">
+                💡 <strong>Aide :</strong> Express est un framework minimaliste pour Node.js qui facilite la création d'API et d'applications web. Que contient le dossier node_modules ?
+            </div>
+
+            <div class="step">
+                <h3>2.2 - Installer nodemon (optionnel mais recommandé)</h3>
+                <div class="question">🔄 Installer nodemon pour le développement</div>
+
+                <div class="indice">
+                    <strong>📌 Indications :</strong>
+                    <ul style="margin-left: 20px; margin-top: 8px;">
+                        <li>Exécutez <code>npm install --save-dev nodemon</code></li>
+                        <li>Nodemon redémarre automatiquement le serveur à chaque modification</li>
+                    </ul>
+                </div>
+
+                <div class="help">
+                    💡 <strong>Aide :</strong> --save-dev indique que nodemon n'est utile qu'en développement, pas en production.
+                </div>
+            </div>
+
+            <div class="screenshot-task">
+                <h4>📸 Capture d'écran n°2</h4>
+                <p>Capturez le terminal montrant l'installation d'Express et de nodemon.</p>
+            </div>
+        </div>
+
+        <!-- ÉTAPE 3 : Configuration des scripts -->
+        <div class="step">
+            <h3>2.3 - Configurer les scripts dans package.json</h3>
+            <div class="question">📝 Modifier le fichier package.json pour ajouter des scripts de démarrage</div>
+
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Dans la section "scripts" du package.json, ajoutez :</li>
+                    <li><code>"start": "node server.js"</code> (pour la production)</li>
+                    <li><code>"dev": "nodemon server.js"</code> (pour le développement)</li>
+                </ul>
+            </div>
+
+            <div class="help">
+                💡 <strong>Aide :</strong> Les scripts permettent de lancer votre application facilement avec <code>npm run dev</code> ou <code>npm start</code>.
+            </div>
+        </div>
+
+        <!-- ÉTAPE 3 : Création du serveur -->
+        <h2>🚀 ÉTAPE 3 : Création du serveur Express</h2>
+
+        <div class="step">
+            <h3>3.1 - Créer le fichier server.js</h3>
+            <div class="question">📝 Créer un fichier server.js contenant un serveur Express de base</div>
+
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Importez express avec <code>require('express')</code></li>
+                    <li>Créez une instance de l'application</li>
+                    <li>Définissez un port (ex: 3000)</li>
+                    <li>Créez une route GET à la racine "/" qui renvoie "Hello World"</li>
+                    <li>Démarrez le serveur avec <code>app.listen()</code></li>
+                </ul>
+            </div>
+
+            <div class="help">
+                💡 <strong>Aide :</strong> La méthode <code>app.get()</code> définit une route pour les requêtes HTTP GET. 
+                Le premier paramètre est l'URL, le second une fonction avec <code>req</code> (requête) et <code>res</code> (réponse).
+                Utilisez <code>res.send()</code> pour renvoyer une réponse.
+            </div>
+
+            <div class="screenshot-task">
+                <h4>📸 Capture d'écran n°3</h4>
+                <p>Capturez le code de votre fichier server.js dans VS Code.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>3.2 - Démarrer le serveur</h3>
+            <div class="question">🚀 Lancer le serveur et vérifier son fonctionnement</div>
+
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Exécutez <code>npm run dev</code> dans le terminal</li>
+                    <li>Ouvrez votre navigateur à l'adresse <code>http://localhost:3000</code></li>
+                </ul>
+            </div>
+
+            <div class="help">
+                💡 <strong>Aide :</strong> Si vous voyez "Hello World", votre serveur fonctionne ! Pour arrêter le serveur : <kbd>Ctrl + C</kbd>.
+            </div>
+
+            <div class="screenshot-task">
+                <h4>📸 Capture d'écran n°4</h4>
+                <p>Capturez le navigateur affichant le message "Hello World" à l'adresse localhost:3000.</p>
+            </div>
+        </div>
+
+        <!-- ÉTAPE 4 : API de somme - GET -->
+        <h2>➕ ÉTAPE 4 : API de calcul de somme (GET)</h2>
+
+        <div class="step">
+            <h3>4.1 - Créer l'endpoint GET /somme</h3>
+            <div class="question">📝 Créer une route GET qui calcule la somme de deux nombres</div>
+
+            <div class="indice">
+                <strong>📌 Spécifications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>URL : <code>/somme</code></li>
+                    <li>Paramètres : <code>a</code> et <code>b</code> (transmis en query string)</li>
+                    <li>Exemple : <code>/somme?a=5&b=3</code></li>
+                    <li>Réponse JSON contenant a, b et le résultat</li>
+                    <li>Gérer les cas d'erreur (paramètres manquants ou non numériques)</li>
+                </ul>
+            </div>
+
+            <div class="help">
+                💡 <strong>Aides :</strong>
+                <ul style="margin-left: 20px;">
+                    <li>Les paramètres query sont accessibles via <code>req.query</code></li>
+                    <li>Utilisez <code>parseFloat()</code> pour convertir en nombre</li>
+                    <li><code>isNaN()</code> permet de vérifier si une valeur est un nombre valide</li>
+                    <li>En cas d'erreur, utilisez <code>res.status(400).json({ error: "message" })</code></li>
+                    <li>Pour une réponse réussie : <code>res.json({ a, b, somme })</code></li>
+                </ul>
+            </div>
+
+            <div class="screenshot-task">
+                <h4>📸 Capture d'écran n°5</h4>
+                <p>Capturez le code de votre route /somme dans VS Code.</p>
+            </div>
+        </div>
+
+        <!-- ÉTAPE 5 : Découverte de Postman -->
+        <h2>🛠️ ÉTAPE 5 : Test de l'API avec Postman</h2>
+
+        <div class="step">
+            <h3>5.1 - Installer et découvrir Postman</h3>
+            <div class="question">📥 Installer Postman pour tester les API</div>
+
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Téléchargez Postman sur <a href="https://www.postman.com/downloads/" target="_blank">postman.com/downloads</a></li>
+                    <li>Installez et lancez l'application</li>
+                    <li>Créez un nouveau workspace ou utilisez le workspace par défaut</li>
+                </ul>
+            </div>
+
+            <div class="help">
+                💡 <strong>Aide :</strong> Postman est un outil indispensable pour tester les API sans avoir à créer d'interface utilisateur.
+            </div>
+
+            <div class="screenshot-task">
+                <h4>📸 Capture d'écran n°6</h4>
+                <p>Capturez l'interface de Postman après installation.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>5.2 - Tester la route GET /somme avec Postman</h3>
+            <div class="question">🧪 Tester l'API somme avec Postman</div>
+
+            <div class="indice">
+                <strong>📌 Indications pour le test :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Méthode : GET</li>
+                    <li>URL : <code>http://localhost:3000/somme?a=10&b=5</code></li>
+                    <li>Cliquez sur "Send"</li>
+                    <li>Observez la réponse dans le panneau inférieur</li>
+                </ul>
+            </div>
+
+            <div class="help">
+                💡 <strong>À tester également :</strong>
+                <ul style="margin-left: 20px;">
+                    <li><code>/somme?a=2.5&b=3.7</code> → nombres décimaux</li>
+                    <li><code>/somme?a=10</code> → paramètre b manquant</li>
+                    <li><code>/somme?a=abc&b=5</code> → paramètre non numérique</li>
+                    <li><code>/somme?a=-5&b=12</code> → nombres négatifs</li>
+                </ul>
+            </div>
+
+            <div class="screenshot-task">
+                <h4>📸 Capture d'écran n°7</h4>
+                <p>Capturez Postman montrant une requête GET /somme et la réponse obtenue.</p>
+            </div>
+        </div>
+
+        <!-- ÉTAPE 6 : API POST -->
+        <h2>📤 ÉTAPE 6 : API de somme en méthode POST</h2>
+
+        <div class="step">
+            <h3>6.1 - Ajouter le middleware express.json()</h3>
+            <div class="question">⚙️ Configurer Express pour lire le JSON du body</div>
+
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Ajoutez <code>app.use(express.json())</code> avant vos routes</li>
+                    <li>Ce middleware permet de parser automatiquement le JSON reçu</li>
+                </ul>
+            </div>
+
+            <div class="help">
+                💡 <strong>Aide :</strong> Sans ce middleware, <code>req.body</code> serait undefined.
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>6.2 - Créer la route POST /somme</h3>
+            <div class="question">📝 Créer une route POST qui calcule la somme à partir du body</div>
+
+            <div class="indice">
+                <strong>📌 Spécifications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Méthode : POST</li>
+                    <li>URL : <code>/somme</code></li>
+                    <li>Body (JSON) : <code>{"a": 5, "b": 3}</code></li>
+                    <li>Réponse : identique à la version GET</li>
+                    <li>Gestion d'erreur similaire</li>
+                </ul>
+            </div>
+
+            <div class="help">
+                💡 <strong>Aide :</strong> 
+                <ul style="margin-left: 20px;">
+                    <li>Les données du body sont accessibles via <code>req.body</code></li>
+                    <li>Utilisez <code>app.post()</code> au lieu de <code>app.get()</code></li>
+                    <li>Pensez à vérifier l'existence des champs : <code>if (a === undefined || b === undefined)</code></li>
+                </ul>
+            </div>
+
+            <div class="screenshot-task">
+                <h4>📸 Capture d'écran n°8</h4>
+                <p>Capturez le code de votre route POST /somme.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>6.3 - Tester la route POST avec Postman</h3>
+            <div class="question">🧪 Tester l'API POST /somme avec Postman</div>
+
+            <div class="indice">
+                <strong>📌 Indications pour le test POST :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Méthode : POST</li>
+                    <li>URL : <code>http://localhost:3000/somme</code></li>
+                    <li>Onglet "Body" → sélectionner "raw" → format "JSON"</li>
+                    <li>Saisir : <code>{"a": 15, "b": 7}</code></li>
+                    <li>Cliquez sur "Send"</li>
+                </ul>
+            </div>
+
+            <div class="help">
+                💡 <strong>Cas à tester :</strong>
+                <ul style="margin-left: 20px;">
+                    <li>Body valide avec deux nombres</li>
+                    <li>Body avec un champ manquant</li>
+                    <li>Body avec des chaînes de caractères</li>
+                    <li>Body vide</li>
+                </ul>
+            </div>
+
+            <div class="screenshot-task">
+                <h4>📸 Capture d'écran n°9</h4>
+                <p>Capturez Postman montrant une requête POST /somme avec le body JSON et la réponse.</p>
+            </div>
+        </div>
+
+        <!-- ÉTAPE 7 : Compréhension -->
+        <h2>📖 ÉTAPE 7 : Analyse et compréhension</h2>
+
+        <div class="step">
+            <h3>7.1 - Questions de réflexion</h3>
+            <div class="question">🤔 Répondre aux questions suivantes dans votre compte rendu</div>
+
+            <div class="todo">
+                <strong>📝 Questions :</strong>
+                <ol style="margin-left: 20px; margin-top: 8px;">
+                    <li>À quoi sert le fichier package.json ?</li>
+                    <li>Quelle est la différence entre une route GET et une route POST ?</li>
+                    <li>Comment récupère-t-on les paramètres dans une requête GET ? Et dans une requête POST ?</li>
+                    <li>À quoi sert le middleware express.json() ?</li>
+                    <li>Que signifie le code HTTP 400 ? Et le code 200 ?</li>
+                    <li>Quel est l'intérêt d'utiliser Postman plutôt qu'un navigateur pour tester une API ?</li>
+                </ol>
+            </div>
+
+            <div class="screenshot-task">
+                <h4>📸 Capture d'écran n°10</h4>
+                <p>Capturez la structure complète de votre projet dans l'explorateur VS Code.</p>
+            </div>
+        </div>
+
+        <!-- Structure attendue -->
+        <div class="file-structure">
+            <strong>📁 Structure attendue du projet :</strong>
+            <ul>
+                <li>📁 express-api/</li>
+                <li>&nbsp;&nbsp;📁 node_modules/</li>
+                <li>&nbsp;&nbsp;📄 server.js</li>
+                <li>&nbsp;&nbsp;📄 package.json</li>
+                <li>&nbsp;&nbsp;📄 package-lock.json</li>
+            </ul>
+        </div>
+
+        <!-- Récapitulatif Postman -->
+        <div class="info">
+            <strong>📋 Récapitulatif des tests à effectuer avec Postman :</strong>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+                <li><strong>GET /</strong> → Hello World</li>
+                <li><strong>GET /somme?a=10&b=5</strong> → {"a":10,"b":5,"somme":15}</li>
+                <li><strong>GET /somme?a=10</strong> → Erreur 400 (paramètre manquant)</li>
+                <li><strong>POST /somme</strong> avec body {"a":8,"b":12} → {"a":8,"b":12,"somme":20}</li>
+                <li><strong>POST /somme</strong> avec body {"a":"abc","b":5} → Erreur 400</li>
+            </ul>
+        </div>
+
+        <!-- Dépannage -->
+        <div class="warning">
+            <strong>⚠️ Dépannage rapide :</strong>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+                <li><strong>Port déjà utilisé</strong> → Changez le port (3001, 4000, etc.) dans server.js</li>
+                <li><strong>req.body est undefined</strong> → Avez-vous ajouté <code>app.use(express.json())</code> ?</li>
+                <li><strong>Postman n'arrive pas à se connecter</strong> → Vérifiez que le serveur tourne (npm run dev)</li>
+                <li><strong>Erreur 404</strong> → Vérifiez l'URL et la méthode HTTP utilisée</li>
+            </ul>
+        </div>
+
+        <!-- Récap captures -->
+        <div class="recap-screenshots">
+            <h4>📸 RÉCAPITULATIF DES CAPTURES D'ÉCRAN</h4>
+            <p>Dans votre compte rendu, intégrez les 10 captures suivantes :</p>
+            <ol>
+                <li>Terminal après <code>npm init -y</code></li>
+                <li>Terminal après installation d'Express et nodemon</li>
+                <li>Code du fichier server.js (version de base)</li>
+                <li>Navigateur avec "Hello World" à localhost:3000</li>
+                <li>Code de la route GET /somme</li>
+                <li>Interface Postman après installation</li>
+                <li>Postman : requête GET /somme avec réponse</li>
+                <li>Code de la route POST /somme</li>
+                <li>Postman : requête POST /somme avec body JSON et réponse</li>
+                <li>Structure du projet dans VS Code</li>
+            </ol>
+            <p style="margin-top: 15px;"><strong>📌 Important :</strong> Chaque capture doit être accompagnée d'une légende expliquant ce qu'elle montre.</p>
+        </div>
+
+        <footer>
+            <p>🟢 TP Express JS - Création d'une API REST</p>
+            <p>🛠️ Outils utilisés : Node.js, Express.js, Postman</p>
+            <p>📚 Pour aller plus loin : <a href="https://expressjs.com/fr/" target="_blank">Documentation Express.js</a> | <a href="https://learning.postman.com/" target="_blank">Documentation Postman</a></p>
+        </footer>
+    </div>
+</body>
+</html>
