@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP JavaScript : Programmation Orientée Objet & API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        h1 {
+            color: #f7df1e;
+            background-color: #323330;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #323330;
+            border-left: 4px solid #f7df1e;
+            padding-left: 15px;
+            margin: 35px 0 15px 0;
+        }
+
+        .exercise {
+            background-color: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            transition: box-shadow 0.2s;
+        }
+
+        .exercise:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .exercise h3 {
+            color: #f7df1e;
+            background-color: #323330;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .question {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .indice {
+            background-color: #f0f7ff;
+            border-left: 4px solid #3498db;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        .indice strong {
+            color: #2980b9;
+        }
+
+        .todo {
+            background-color: #fff8e7;
+            border-left: 4px solid #f39c12;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .code-placeholder {
+            background-color: #2d2d2d;
+            color: #ddd;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 15px 0;
+            border: 1px dashed #555;
+            overflow-x: auto;
+        }
+
+        .info {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .demo-area {
+            background-color: #fef9e7;
+            border: 1px solid #f1c40f;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .demo-area button {
+            background-color: #f7df1e;
+            color: #323330;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: transform 0.1s;
+        }
+
+        .demo-area button:hover {
+            transform: scale(1.02);
+            background-color: #e5cd1a;
+        }
+
+        .bitcoin-card {
+            background: linear-gradient(135deg, #f7931a 0%, #ffae00 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .bitcoin-card h4 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .bitcoin-price {
+            font-size: 2rem;
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .currency-select {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .result-display {
+            background-color: #2d2d2d;
+            color: #f7df1e;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        hr {
+            margin: 30px 0;
+            border: none;
+            border-top: 2px solid #eee;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            text-align: center;
+            color: #888;
+            border-top: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        kbd {
+            background-color: #f4f4f4;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            padding: 2px 6px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .objectives {
+            background-color: #fef9e7;
+            border: 1px solid #f1c40f;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TP JavaScript : POO, JSON & API</h1>
+        <p>Ce travail pratique vous guidera à travers les concepts avancés de JavaScript : Programmation Orientée Objet, manipulation du JSON, et appel à une API externe. N'oubliez pas d'utiliser la console du navigateur (<kbd>F12</kbd>) pour tester et déboguer votre code.</p>
+
+        <!-- Objectifs du TP -->
+        <div class="objectives">
+            <strong>🎯 Objectifs de ce TP :</strong>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>Créer une classe JavaScript avec constructeur, getters et setters</li>
+                <li>Instancier des objets à partir d'une classe</li>
+                <li>Créer et manipuler des objets JSON</li>
+                <li>Utiliser l'API Fetch pour récupérer des données en temps réel</li>
+                <li>Afficher dynamiquement des données dans la page HTML</li>
+            </ul>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- EXERCICE 1 : Classe, getters, setters       -->
+        <!-- ========================================== -->
+        <div class="exercise">
+            <h3>Exercice 1</h3>
+            <div class="question">🎯 Créer une classe "Personne" avec getters et setters, puis l'instancier</div>
+            <p>Vous allez créer une classe JavaScript représentant une personne, avec des propriétés privées, des getters et des setters, puis instancier cette classe.</p>
+            
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Créez une classe <code>Personne</code> avec un constructeur prenant <code>nom</code>, <code>prenom</code> et <code>age</code></li>
+                    <li>Utilisez des propriétés privées (avec <code>#</code>) ou des conventions (ex: <code>_nom</code>)</li>
+                    <li>Créez des getters : <code>get nom()</code>, <code>get prenom()</code>, <code>get age()</code></li>
+                    <li>Créez des setters : <code>set nom(valeur)</code>, <code>set prenom(valeur)</code>, <code>set age(valeur)</code></li>
+                    <li>Dans le setter de l'âge, vérifiez que l'âge est un nombre positif</li>
+                    <li>Ajoutez une méthode <code>sePresenter()</code> qui retourne une phrase de présentation</li>
+                    <li>Instanciez un objet <code>personne1</code> avec vos propres informations</li>
+                    <li>Affichez le résultat dans la console et dans la page HTML</li>
+                </ul>
+            </div>
+
+            <div class="todo">
+                💡 <strong>À faire :</strong> Écrivez la classe Personne, instanciez-la, et affichez sa présentation.
+            </div>
+
+            <div class="code-placeholder" id="code-exo1">
+                // À écrire dans votre fichier script.js ou dans une balise &lt;script&gt;<br><br>
+                class Personne {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;#nom;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;#prenom;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;#age;<br><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;constructor(nom, prenom, age) {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.nom = nom;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.prenom = prenom;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.age = age;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;}<br><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;// Getters<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;get nom() { return this.#nom; }<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;// Setters avec validation<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;set nom(valeur) { this.#nom = valeur; }<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;// ... à compléter<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;sePresenter() { ... }<br>
+                }
+            </div>
+
+            <!-- Zone de démonstration pour l'exercice 1 -->
+            <div class="demo-area">
+                <strong>🧪 Test de l'exercice 1 :</strong><br>
+                <button id="btnInstancier">Instancier une Personne</button>
+                <button id="btnModifierNom">Modifier le nom</button>
+                <div id="resultExo1" class="result-display" style="margin-top: 10px;">
+                    ⚡ Cliquez sur un bouton pour tester la classe
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- EXERCICE 2 : Objet JSON                    -->
+        <!-- ========================================== -->
+        <div class="exercise">
+            <h3>Exercice 2</h3>
+            <div class="question">🎯 Créer un objet JSON décrivant une personne (nom, prénom, âge)</div>
+            <p>Vous allez créer un objet au format JSON, le manipuler, le convertir en chaîne et le parser.</p>
+            
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Créez un objet JavaScript classique avec les propriétés : nom, prenom, age</li>
+                    <li>Convertissez cet objet en chaîne JSON avec <code>JSON.stringify()</code></li>
+                    <li>Affichez la chaîne JSON dans la console</li>
+                    <li>Reconvertissez la chaîne en objet JavaScript avec <code>JSON.parse()</code></li>
+                    <li>Ajoutez une nouvelle propriété "ville" à l'objet et affichez le JSON modifié</li>
+                    <li>Affichez les résultats dans la page HTML</li>
+                </ul>
+            </div>
+
+            <div class="todo">
+                💡 <strong>À faire :</strong> Manipulez le format JSON pour comprendre sa structure.
+            </div>
+
+            <div class="code-placeholder" id="code-exo2">
+                // Exemple de manipulation JSON :<br><br>
+                const personne = {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;nom: "Dupont",<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;prenom: "Marie",<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;age: 28<br>
+                };<br><br>
+                const jsonString = JSON.stringify(personne);<br>
+                console.log("JSON :", jsonString);<br>
+                const parsed = JSON.parse(jsonString);<br>
+                console.log("Objet reconstruit :", parsed);<br>
+            </div>
+
+            <div class="demo-area">
+                <strong>🧪 Test de l'exercice 2 :</strong><br>
+                <button id="btnJson">Manipuler JSON</button>
+                <div id="resultExo2" class="result-display">
+                    ⚡ Cliquez pour voir la manipulation JSON
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- EXERCICE 3 : API Bitcoin                   -->
+        <!-- ========================================== -->
+        <div class="exercise">
+            <h3>Exercice 3</h3>
+            <div class="question">🎯 Utiliser l'API Mempool pour afficher la valeur du Bitcoin selon la devise</div>
+            <p>Vous allez appeler une API publique qui donne le prix du Bitcoin en temps réel, et afficher le prix dans différentes devises.</p>
+            
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>API à utiliser : <code>https://mempool.space/api/v1/prices</code></li>
+                    <li>Cette API renvoie un objet JSON avec les prix en USD, EUR, GBP, CAD, CHF, AUD, JPY</li>
+                    <li>Utilisez <code>fetch()</code> pour récupérer les données</li>
+                    <li>Affichez le prix en USD par défaut</li>
+                    <li>Créez une liste déroulante (<code>&lt;select&gt;</code>) pour choisir la devise</li>
+                    <li>Affichez le prix mis à jour lorsque l'utilisateur change de devise</li>
+                    <li>Gérez les erreurs (API inaccessible, etc.)</li>
+                    <li>Affichez un message de chargement pendant la récupération des données</li>
+                </ul>
+            </div>
+
+            <div class="todo">
+                💡 <strong>À faire :</strong> Afficher le prix du Bitcoin en temps réel avec sélecteur de devise.
+            </div>
+
+            <div class="code-placeholder" id="code-exo3">
+                // Exemple d'appel API avec fetch :<br><br>
+                async function getBitcoinPrice() {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;try {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const response = await fetch('https://mempool.space/api/v1/prices');<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const data = await response.json();<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log(data);<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// {USD: 76074, EUR: 64944, ...}<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;} catch (error) {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.error("Erreur:", error);<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                }
+            </div>
+
+            <!-- Zone de démonstration Bitcoin -->
+            <div class="bitcoin-card">
+                <h4>₿ Bitcoin Price Tracker</h4>
+                <div id="bitcoinPriceDisplay" class="bitcoin-price">--</div>
+                <select id="currencySelect" class="currency-select">
+                    <option value="USD">USD - Dollar américain</option>
+                    <option value="EUR">EUR - Euro</option>
+                    <option value="GBP">GBP - Livre sterling</option>
+                    <option value="CAD">CAD - Dollar canadien</option>
+                    <option value="CHF">CHF - Franc suisse</option>
+                    <option value="AUD">AUD - Dollar australien</option>
+                    <option value="JPY">JPY - Yen japonais</option>
+                </select>
+                <div style="margin-top: 15px;">
+                    <button id="refreshPriceBtn" style="background-color: white; color: #f7931a;">⟳ Actualiser</button>
+                </div>
+                <div id="bitcoinTimestamp" style="font-size: 0.8rem; margin-top: 10px; opacity: 0.8;"></div>
+            </div>
+            <div id="bitcoinError" class="info" style="display: none; background-color: #ffebee; border-left-color: #f44336; margin-top: 10px;">
+                ❌ Erreur de chargement des données. Vérifiez votre connexion internet.
+            </div>
+        </div>
+
+        <!-- Rappel sur la console -->
+        <hr>
+        <div class="info">
+            <strong>🔍 Rappel important :</strong> La console du navigateur (accessible avec <kbd>F12</kbd>) est votre outil principal pour ce TP. Utilisez-la pour :
+            <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>Voir les messages <code>console.log()</code></li>
+                <li>Voir les objets JSON et les réponses de l'API</li>
+                <li>Déboguer vos classes et vos fonctions</li>
+                <li>Tester des extraits de code</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>📝 TP JavaScript - 3 exercices sur la POO, JSON et les API</p>
+            <p>💡 N'oubliez pas : chaque exercice doit être testé dans le navigateur avant de passer au suivant</p>
+            <p>🛠️ Besoin d'aide ? Utilisez la console (F12) pour voir les erreurs et les messages</p>
+        </footer>
+    </div>
+
+    <script>
+        // ==========================================
+        // EXERCICE 1 : CLASSE PERSONNE
+        // ==========================================
+        class Personne {
+            #nom;
+            #prenom;
+            #age;
+
+            constructor(nom, prenom, age) {
+                this.nom = nom;     // Utilisation du setter
+                this.prenom = prenom;
+                this.age = age;
+            }
+
+            // Getters
+            get nom() {
+                return this.#nom;
+            }
+
+            get prenom() {
+                return this.#prenom;
+            }
+
+            get age() {
+                return this.#age;
+            }
+
+            // Setters avec validation
+            set nom(valeur) {
+                if (typeof valeur === 'string' && valeur.trim().length > 0) {
+                    this.#nom = valeur.trim();
+                } else {
+                    console.error("Le nom doit être une chaîne non vide");
+                    this.#nom = "Inconnu";
+                }
+            }
+
+            set prenom(valeur) {
+                if (typeof valeur === 'string' && valeur.trim().length > 0) {
+                    this.#prenom = valeur.trim();
+                } else {
+                    console.error("Le prénom doit être une chaîne non vide");
+                    this.#prenom = "Inconnu";
+                }
+            }
+
+            set age(valeur) {
+                const ageNum = Number(valeur);
+                if (!isNaN(ageNum) && ageNum > 0 && ageNum < 150) {
+                    this.#age = ageNum;
+                } else {
+                    console.error("L'âge doit être un nombre positif entre 1 et 149");
+                    this.#age = 0;
+                }
+            }
+
+            // Méthode de présentation
+            sePresenter() {
+                return `Bonjour, je m'appelle ${this.#prenom} ${this.#nom} et j'ai ${this.#age} ans.`;
+            }
+        }
+
+        // Variable globale pour stocker l'instance
+        let personneInstance;
+
+        // Bouton Instancier
+        document.getElementById('btnInstancier').addEventListener('click', () => {
+            personneInstance = new Personne("Dupont", "Jean", 30);
+            const resultDiv = document.getElementById('resultExo1');
+            resultDiv.innerHTML = `✅ Instance créée : ${personneInstance.sePresenter()}<br>
+                                   📌 Détails via getters : Nom = ${personneInstance.nom}, Prénom = ${personneInstance.prenom}, Âge = ${personneInstance.age}`;
+            console.log("Instance de Personne créée :", personneInstance);
+            console.log("Présentation :", personneInstance.sePresenter());
+        });
+
+        // Bouton Modifier le nom
+        document.getElementById('btnModifierNom').addEventListener('click', () => {
+            if (!personneInstance) {
+                document.getElementById('resultExo1').innerHTML = "⚠️ Veuillez d'abord instancier une personne !";
+                return;
+            }
+            const nouveauNom = prompt("Entrez un nouveau nom :", "Martin");
+            if (nouveauNom) {
+                personneInstance.nom = nouveauNom;
+                document.getElementById('resultExo1').innerHTML = `✅ Nom modifié : ${personneInstance.sePresenter()}<br>
+                                                                   📌 Nouveau nom via getter : ${personneInstance.nom}`;
+                console.log("Après modification du nom :", personneInstance.sePresenter());
+            }
+        });
+
+        // ==========================================
+        // EXERCICE 2 : MANIPULATION JSON
+        // ==========================================
+        document.getElementById('btnJson').addEventListener('click', () => {
+            // Création objet JS
+            const personneObj = {
+                nom: "Lefebvre",
+                prenom: "Sophie",
+                age: 25
+            };
+
+            // Conversion en JSON
+            const jsonString = JSON.stringify(personneObj, null, 2);
+            console.log("JSON stringify :", jsonString);
+
+            // Reconversion en objet
+            const parsedObj = JSON.parse(jsonString);
+            console.log("Objet après parse :", parsedObj);
+
+            // Ajout d'une propriété ville
+            parsedObj.ville = "Lyon";
+            const newJsonString = JSON.stringify(parsedObj, null, 2);
+
+            // Affichage dans la page
+            document.getElementById('resultExo2').innerHTML = `
+                <strong>📦 Objet initial :</strong><br>
+                ${JSON.stringify(personneObj)}<br><br>
+                <strong>🔗 En JSON (stringify) :</strong><br>
+                <code>${jsonString}</code><br><br>
+                <strong>🔄 Après parse et ajout de "ville" :</strong><br>
+                <code>${newJsonString}</code>
+            `;
+        });
+
+        // ==========================================
+        // EXERCICE 3 : API BITCOIN
+        // ==========================================
+        let currentBitcoinData = null;
+
+        async function fetchBitcoinPrice() {
+            const errorDiv = document.getElementById('bitcoinError');
+            const priceDisplay = document.getElementById('bitcoinPriceDisplay');
+            const timestampDiv = document.getElementById('bitcoinTimestamp');
+            
+            // Afficher chargement
+            priceDisplay.innerHTML = "⏳ Chargement...";
+            priceDisplay.style.opacity = "0.7";
+            errorDiv.style.display = "none";
+
+            try {
+                const response = await fetch('https://mempool.space/api/v1/prices');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                currentBitcoinData = data;
+                
+                // Mettre à jour l'affichage avec la devise sélectionnée
+                updatePriceDisplay();
+                
+                // Afficher l'horodatage
+                if (data.time) {
+                    const date = new Date(data.time * 1000);
+                    timestampDiv.innerHTML = `🕐 Dernière mise à jour : ${date.toLocaleString()}`;
+                } else {
+                    timestampDiv.innerHTML = `🕐 Mis à jour en temps réel`;
+                }
+                
+                console.log("Données Bitcoin reçues :", data);
+                priceDisplay.style.opacity = "1";
+                
+            } catch (error) {
+                console.error("Erreur lors de l'appel API :", error);
+                priceDisplay.innerHTML = "❌ Erreur";
+                errorDiv.style.display = "block";
+                priceDisplay.style.opacity = "1";
+                currentBitcoinData = null;
+            }
+        }
+
+        function updatePriceDisplay() {
+            if (!currentBitcoinData) {
+                document.getElementById('bitcoinPriceDisplay').innerHTML = "❌ Aucune donnée";
+                return;
+            }
+            
+            const currency = document.getElementById('currencySelect').value;
+            const price = currentBitcoinData[currency];
+            
+            if (price !== undefined) {
+                // Formatage du nombre avec séparateurs de milliers
+                const formattedPrice = price.toLocaleString();
+                const symbol = getCurrencySymbol(currency);
+                document.getElementById('bitcoinPriceDisplay').innerHTML = `${symbol} ${formattedPrice}`;
+            } else {
+                document.getElementById('bitcoinPriceDisplay').innerHTML = "❌ Devise non disponible";
+            }
+        }
+
+        function getCurrencySymbol(currency) {
+            const symbols = {
+                USD: "$",
+                EUR: "€",
+                GBP: "£",
+                CAD: "C$",
+                CHF: "CHF",
+                AUD: "A$",
+                JPY: "¥"
+            };
+            return symbols[currency] || currency;
+        }
+
+        // Événements pour l'exercice 3
+        document.getElementById('currencySelect').addEventListener('change', () => {
+            updatePriceDisplay();
+        });
+
+        document.getElementById('refreshPriceBtn').addEventListener('click', () => {
+            fetchBitcoinPrice();
+        });
+
+        // Chargement automatique au démarrage de la page
+        fetchBitcoinPrice();
+
+        // Affichage dans la console des informations de l'API (pour le débogage)
+        console.log("TP JavaScript - POO, JSON & API - Prêt !");
+        console.log("Classe Personne disponible, exemples d'utilisation en console :");
+        console.log("  const p = new Personne('Dupont', 'Marie', 28);");
+        console.log("  console.log(p.sePresenter());");
+        console.log("  p.age = 35;");
+        console.log("");
+        console.log("Manipulation JSON : vous pouvez tester JSON.stringify() et JSON.parse()");
+        console.log("");
+        console.log("API Bitcoin : les données se chargent automatiquement");
+    </script>
+</body>
+</html>
