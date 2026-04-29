@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP React Native : Création d'une première application mobile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        h1 {
+            color: #61DAFB;
+            background-color: #20232A;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #20232A;
+            border-left: 4px solid #61DAFB;
+            padding-left: 15px;
+            margin: 35px 0 15px 0;
+        }
+
+        .exercise {
+            background-color: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            transition: box-shadow 0.2s;
+        }
+
+        .exercise:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .exercise h3 {
+            color: #61DAFB;
+            background-color: #20232A;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .question {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .indice {
+            background-color: #f0f7ff;
+            border-left: 4px solid #3498db;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        .indice strong {
+            color: #2980b9;
+        }
+
+        .todo {
+            background-color: #fff8e7;
+            border-left: 4px solid #f39c12;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .code-placeholder {
+            background-color: #2d2d2d;
+            color: #888;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 15px 0;
+            border: 1px dashed #555;
+        }
+
+        .info {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .editor-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+
+        .editor-section h3 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+
+        .editor-grid {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .editor-card {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .editor-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .editor-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .editor-card p {
+            font-size: 0.9rem;
+            margin: 10px 0;
+        }
+
+        .command-box {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            border-left: 4px solid #61DAFB;
+        }
+
+        .command-box code {
+            color: #61DAFB;
+        }
+
+        hr {
+            margin: 30px 0;
+            border: none;
+            border-top: 2px solid #eee;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            text-align: center;
+            color: #888;
+            border-top: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        kbd {
+            background-color: #f4f4f4;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            padding: 2px 6px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .objectives {
+            background-color: #fef9e7;
+            border: 1px solid #f1c40f;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .warning {
+            background-color: #fef3e8;
+            border-left: 4px solid #e74c3c;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .success {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .mobile-preview {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            border: 2px solid #e9ecef;
+        }
+
+        .mobile-frame {
+            background-color: #fff;
+            border-radius: 20px;
+            padding: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 TP React Native : Création d'une première application mobile</h1>
+        <p>Ce travail pratique vous guidera à travers les concepts fondamentaux de React Native. Vous allez créer votre première application mobile fonctionnelle avec Expo, un framework qui simplifie le développement React Native.</p>
+
+        <!-- Section : Prérequis -->
+        <div class="editor-section">
+            <h3>🛠️ Prérequis nécessaires</h3>
+            <p>Avant de commencer, assurez-vous d'avoir installé les outils suivants :</p>
+            <div class="editor-grid">
+                <div class="editor-card">
+                    <h4>📦 Node.js</h4>
+                    <p>Version 16 ou supérieure nécessaire pour React Native</p>
+                    <a href="https://nodejs.org/" target="_blank" class="download-btn">Télécharger Node.js</a>
+                </div>
+                <div class="editor-card">
+                    <h4>📱 Expo Go</h4>
+                    <p>Application mobile pour tester sur votre smartphone</p>
+                    <a href="https://expo.dev/go" target="_blank" class="download-btn">Télécharger Expo Go</a>
+                </div>
+                <div class="editor-card">
+                    <h4>💻 VS Code</h4>
+                    <p>IDE recommandé pour le développement React Native</p>
+                    <a href="https://code.visualstudio.com/download" target="_blank" class="download-btn">Télécharger VS Code</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Objectifs du TP -->
+        <div class="objectives">
+            <strong>🎯 Objectifs de ce TP :</strong>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>Installer et configurer un projet React Native avec Expo</li>
+                <li>Comprendre la structure d'une application React Native</li>
+                <li>Créer des composants fonctionnels avec JSX</li>
+                <li>Gérer l'état avec useState</li>
+                <li>Ajouter des interactions tactiles et des événements</li>
+                <li>Lancer l'application sur un émulateur ou un appareil physique</li>
+            </ul>
+        </div>
+
+        <!-- Exercice 1 : Création du projet -->
+        <div class="exercise">
+            <h3>Exercice 1</h3>
+            <div class="question">🎯 Créer un nouveau projet React Native avec Expo</div>
+            <p>La première étape consiste à créer un projet React Native en utilisant Expo.</p>
+            
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Ouvrez votre terminal (invité de commandes ou PowerShell)</li>
+                    <li>Exécutez la commande : <code>npx create-expo-app MonPremierProjet</code></li>
+                    <li>Attendez que l'installation des dépendances se termine</li>
+                    <li>Naviguez dans le dossier : <code>cd MonPremierProjet</code></li>
+                    <li>Ouvrez le dossier dans VS Code : <code>code .</code></li>
+                </ul>
+            </div>
+
+            <div class="todo">
+                💡 <strong>À faire :</strong> Créez votre projet et explorez sa structure de dossiers.
+            </div>
+
+            <div class="command-box">
+                <strong>📝 Commandes à exécuter :</strong><br><br>
+                <code>npx create-expo-app MaPremiereApp</code><br>
+                <code>cd MaPremiereApp</code><br>
+                <code>code .</code>
+            </div>
+        </div>
+
+        <!-- Exercice 2 : Lancement de l'application -->
+        <div class="exercise">
+            <h3>Exercice 2</h3>
+            <div class="question">🎯 Lancer l'application avec npx expo start</div>
+            <p>Découvrez comment démarrer votre application et la visualiser sur votre appareil.</p>
+            
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Dans le terminal (assurez-vous d'être dans le dossier du projet)</li>
+                    <li>Lancez la commande : <code>npx expo start</code></li>
+                    <li>Attendez que le Metro Bundler se lance (un QR code apparaît dans le terminal)</li>
+                    <li>Sur votre smartphone : Ouvrez l'application <strong>Expo Go</strong></li>
+                    <li>Scannez le QR code avec l'application Expo Go</li>
+                    <li>L'application devrait s'afficher sur votre téléphone !</li>
+                </ul>
+            </div>
+
+            <div class="todo">
+                💡 <strong>À faire :</strong> Lancez l'application et vérifiez qu'elle fonctionne correctement.
+            </div>
+
+            <div class="warning">
+                ⚠️ <strong>Astuce :</strong> Assurez-vous que votre ordinateur et votre smartphone sont sur le même réseau Wi-Fi. Si des problèmes persistent, utilisez l'option "Tunnel" en appuyant sur 't' dans le terminal.
+            </div>
+
+            <div class="command-box">
+                <strong>🎮 Commandes utiles pendant l'exécution :</strong><br><br>
+                • <kbd>a</kbd> - Lancer sur Android (émulateur)<br>
+                • <kbd>i</kbd> - Lancer sur iOS (simulateur)<br>
+                • <kbd>w</kbd> - Lancer sur navigateur Web<br>
+                • <kbd>r</kbd> - Recharger l'application<br>
+                • <kbd>m</kbd> - Ouvrir le menu développeur
+            </div>
+        </div>
+
+        <!-- Exercice 3 : Structure du projet -->
+        <div class="exercise">
+            <h3>Exercice 3</h3>
+            <div class="question">🎯 Analyser la structure du projet et comprendre App.js</div>
+            <p>Explorez les fichiers générés automatiquement et modifiez le contenu de l'application.</p>
+            
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Ouvrez le fichier <code>App.js</code> dans VS Code</li>
+                    <li>Observez la structure : imports, composant fonctionnel, export</li>
+                    <li>Identifiez les éléments JSX : <code>&lt;View&gt;</code>, <code>&lt;Text&gt;</code>, <code>&lt;StatusBar&gt;</code></li>
+                    <li>Copiez le code ci-dessous pour remplacer le contenu par défaut</li>
+                </ul>
+            </div>
+
+            <div class="code-placeholder">
+                <strong>📄 Fichier : App.js (version simplifiée)</strong><br><br>
+                <span style="color: #61DAFB;">import</span> { StatusBar } <span style="color: #61DAFB;">from</span> 'expo-status-bar';<br>
+                <span style="color: #61DAFB;">import</span> { StyleSheet, Text, View } <span style="color: #61DAFB;">from</span> 'react-native';<br><br>
+                <span style="color: #61DAFB;">export default function</span> App() {<br>
+                &nbsp;&nbsp;<span style="color: #61DAFB;">return</span> (<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&lt;View style={styles.container}&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Text&gt;Ma première application React Native !&lt;/Text&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;StatusBar style="auto" /&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&lt;/View&gt;<br>
+                &nbsp;&nbsp;);<br>
+                }<br><br>
+                <span style="color: #61DAFB;">const</span> styles = StyleSheet.create({<br>
+                &nbsp;&nbsp;container: {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;flex: 1,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;backgroundColor: '#fff',<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;alignItems: 'center',<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;justifyContent: 'center',<br>
+                &nbsp;&nbsp;},<br>
+                });
+            </div>
+
+            <div class="todo">
+                💡 <strong>À faire :</strong> Remplacez le contenu de App.js par ce code, sauvegardez et observez les changements sur votre téléphone (rechargement automatique).
+            </div>
+        </div>
+
+        <!-- Exercice 4 : Création d'un composant personnalisé -->
+        <div class="exercise">
+            <h3>Exercice 4</h3>
+            <div class="question">🎯 Créer un composant personnalisé "WelcomeCard"</div>
+            <p>Apprenez à créer des composants réutilisables avec des propriétés (props).</p>
+            
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Créez un nouveau dossier <code>components</code> à la racine du projet</li>
+                    <li>Créez un fichier <code>WelcomeCard.js</code> dans ce dossier</li>
+                    <li>Créez un composant qui affiche une carte avec nom et description</li>
+                    <li>Importez et utilisez ce composant dans App.js</li>
+                </ul>
+            </div>
+
+            <div class="code-placeholder">
+                <strong>📄 Fichier : components/WelcomeCard.js</strong><br><br>
+                <span style="color: #61DAFB;">import</span> { View, Text, StyleSheet } <span style="color: #61DAFB;">from</span> 'react-native';<br><br>
+                <span style="color: #61DAFB;">export default function</span> WelcomeCard({ name, description }) {<br>
+                &nbsp;&nbsp;<span style="color: #61DAFB;">return</span> (<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&lt;View style={styles.card}&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Text style={styles.name}&gt;👋 {name}&lt;/Text&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Text style={styles.description}&gt;{description}&lt;/Text&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&lt;/View&gt;<br>
+                &nbsp;&nbsp;);<br>
+                }<br><br>
+                <span style="color: #61DAFB;">const</span> styles = StyleSheet.create({<br>
+                &nbsp;&nbsp;card: {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;backgroundColor: '#f8f9fa',<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;padding: 20,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;borderRadius: 10,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;margin: 15,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;shadowColor: '#000',<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;shadowOffset: { width: 0, height: 2 },<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;shadowOpacity: 0.1,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;shadowRadius: 4,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;elevation: 3,<br>
+                &nbsp;&nbsp;},<br>
+                &nbsp;&nbsp;name: { fontSize: 20, fontWeight: 'bold', marginBottom: 5 },<br>
+                &nbsp;&nbsp;description: { fontSize: 14, color: '#666' },<br>
+                });<br>
+            </div>
+
+            <div class="code-placeholder">
+                <strong>📄 Mise à jour de App.js (dans le return)</strong><br><br>
+                <span style="color: #61DAFB;">import</span> WelcomeCard <span style="color: #61DAFB;">from</span> './components/WelcomeCard';<br><br>
+                <span style="color: #888;">// Dans le return :</span><br>
+                &lt;WelcomeCard<br>
+                &nbsp;&nbsp;name="Étudiant React Native"<br>
+                &nbsp;&nbsp;description="Découvrez la puissance du développement mobile avec React Native !"<br>
+                /&gt;
+            </div>
+
+            <div class="todo">
+                💡 <strong>À faire :</strong> Créez ce composant et utilisez-le dans votre application avec vos propres informations.
+            </div>
+        </div>
+
+        <!-- Exercice 5 : État et interaction -->
+        <div class="exercise">
+            <h3>Exercice 5</h3>
+            <div class="question">🎯 Ajouter un compteur avec useState et un bouton tactile</div>
+            <p>Apprenez à gérer l'état local d'un composant avec le hook useState.</p>
+            
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Importez <code>useState</code> depuis 'react-native'</li>
+                    <li>Ajoutez un état <code>count</code> initialisé à 0</li>
+                    <li>Créez une fonction <code>incrementCount</code> qui augmente le compteur</li>
+                    <li>Ajoutez un composant <code>TouchableOpacity</code> ou <code>Button</code></li>
+                    <li>Affichez la valeur du compteur</li>
+                </ul>
+            </div>
+
+            <div class="code-placeholder">
+                <strong>📄 Code à ajouter dans App.js</strong><br><br>
+                <span style="color: #61DAFB;">import</span> { ..., TouchableOpacity, Button } <span style="color: #61DAFB;">from</span> 'react-native';<br><br>
+                <span style="color: #61DAFB;">const</span> [count, setCount] = useState(0);<br><br>
+                <span style="color: #61DAFB;">const</span> incrementCount = () => {<br>
+                &nbsp;&nbsp;setCount(count + 1);<br>
+                };<br><br>
+                <span style="color: #888;">// Dans le JSX (après WelcomeCard) :</span><br>
+                &lt;View style={styles.counterContainer}&gt;<br>
+                &nbsp;&nbsp;&lt;Text style={styles.countText}&gt;Compteur : {count}&lt;/Text&gt;<br>
+                &nbsp;&nbsp;&lt;TouchableOpacity style={styles.button} onPress={incrementCount}&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&lt;Text style={styles.buttonText}&gt;Appuyez-moi ! 🎯&lt;/Text&gt;<br>
+                &nbsp;&nbsp;&lt;/TouchableOpacity&gt;<br>
+                &lt;/View&gt;
+            </div>
+
+            <div class="todo">
+                💡 <strong>À faire :</strong> Ajoutez ce compteur interactif. Testez-le sur votre appareil en appuyant sur le bouton.
+            </div>
+        </div>
+
+        <!-- Exercice 6 : Déploiement et partage -->
+        <div class="exercise">
+            <h3>Exercice 6 - Extra</h3>
+            <div class="question">🎯 Générer un build de partage avec Expo</div>
+            <p>Apprenez à créer un fichier APK ou IPA pour partager votre application.</p>
+            
+            <div class="indice">
+                <strong>📌 Indications :</strong>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Installez EAS CLI : <code>npm install -g eas-cli</code></li>
+                    <li>Connectez-vous : <code>eas login</code></li>
+                    <li>Configurez le projet : <code>eas build:configure</code></li>
+                    <li>Générez un build Android : <code>eas build -p android --profile preview</code></li>
+                    <li>Téléchargez et partagez votre fichier APK</li>
+                </ul>
+            </div>
+
+            <div class="command-box">
+                <strong>📱 Commandes pour générer un APK :</strong><br><br>
+                <code>npm install -g eas-cli</code><br>
+                <code>eas login</code><br>
+                <code>eas build:configure</code><br>
+                <code>eas build -p android --profile preview</code><br><br>
+                <strong>🎉 Félicitations ! Vous avez créé votre première application React Native.</strong>
+            </div>
+
+            <div class="success">
+                ✅ <strong>Récapitulatif des acquis :</strong><br>
+                • Création d'un projet React Native avec Expo<br>
+                • Lancement de l'application sur appareil physique<br>
+                • Création de composants réutilisables<br>
+                • Gestion de l'état avec useState<br>
+                • Build et partage de l'application
+            </div>
+
+            <div class="todo">
+                💡 <strong>À faire final :</strong> Générez un build APK et partagez votre application avec vos camarades.
+            </div>
+        </div>
+
+        <!-- Ressources supplémentaires -->
+        <hr>
+        <div class="info">
+            <strong>🔍 Ressources utiles pour continuer :</strong>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>📖 <a href="https://reactnative.dev/docs/getting-started">Documentation officielle React Native</a></li>
+                <li>⚡ <a href="https://docs.expo.dev/">Documentation Expo</a></li>
+                <li>🎨 <a href="https://reactnative.dev/docs/components-and-apis">Composants et API React Native</a></li>
+                <li>🧭 <a href="https://reactnavigation.org/docs/getting-started/">React Navigation - Guide complet</a></li>
+                <li>📱 <a href="https://icons.expo.fyi/">Expo Icons - Bibliothèque d'icônes</a></li>
+            </ul>
+        </div>
+
+        <!-- Problèmes courants -->
+        <div class="warning">
+            <strong>⚠️ Problèmes courants et solutions :</strong>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+                <li><strong>Erreur de connexion :</strong> Vérifiez que votre téléphone et ordinateur sont sur le même Wi-Fi</li>
+                <li><strong>Metro Bundler ne démarre pas :</strong> Fermez le terminal et réessayez <code>npx expo start --tunnel</code></li>
+                <li><strong>Erreur de dépendances :</strong> Supprimez node_modules et package-lock.json, puis <code>npm install</code></li>
+                <li><strong>Build échoue :</strong> Vérifiez votre connexion internet et réessayez avec <code>eas build --clear-cache</code></li>
+                <li><strong>Le QR code ne scanne pas :</strong> Utilisez l'option 't' dans le terminal pour passer en mode tunnel</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>📱 TP React Native - Création d'une première application mobile</p>
+            <p>🎯 Objectif final : Avoir une application fonctionnelle avec navigation, état et interactions</p>
+            <p>💡 Conseil : Testez chaque fonctionnalité au fur et à mesure sur votre appareil</p>
+            <p>🏆 Bravo pour avoir complété ce TP complet de React Native !</p>
+        </footer>
+    </div>
+</body>
+</html>
