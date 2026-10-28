@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="TP Big Data 2 : installation d'Apache Spark sur Ubuntu 26.04 LTS, cluster Master et deux Workers, application PySpark et exercices sur un dataset d'un million d'étudiants.">
+<title>TP — Cluster Apache Spark sur Ubuntu 26.04 LTS</title>
+<style>
+:root {
+  --ink: #1d2939;
+  --muted: #667085;
+  --brand: #2457a7;
+  --brand-dark: #17365d;
+  --line: #d9e2ef;
+  --panel: #f5f8fc;
+  --green: #27845b;
+  --code: #111827;
+  --code-ink: #e5edf7;
+  --warning: #fff7e6;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background: #f1f4f8;
+  font: 16px/1.65 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+a { color: var(--brand); }
+.page { max-width: 1120px; margin: 0 auto; background: white; min-height: 100vh; box-shadow: 0 8px 40px #10213b12; }
+.hero {
+  padding: 48px clamp(22px, 5vw, 64px) 42px;
+  color: white;
+  background: linear-gradient(125deg, #17365d, #2457a7);
+}
+.eyebrow { margin: 0 0 10px; text-transform: uppercase; letter-spacing: .12em; font-size: .78rem; font-weight: 800; opacity: .85; }
+h1 { max-width: 850px; margin: 0 0 14px; line-height: 1.15; font-size: clamp(2rem, 4vw, 3.25rem); }
+.hero p { max-width: 800px; margin: 0; font-size: 1.08rem; opacity: .94; }
+.meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.meta span { border: 1px solid #ffffff55; background: #ffffff12; border-radius: 999px; padding: 5px 12px; font-size: .88rem; }
+.layout { display: grid; grid-template-columns: 245px minmax(0, 1fr); gap: 34px; padding: 32px clamp(18px, 4vw, 48px) 56px; }
+nav { align-self: start; position: sticky; top: 18px; max-height: calc(100vh - 36px); overflow: auto; border: 1px solid var(--line); border-radius: 14px; padding: 18px; background: #fbfcfe; }
+nav strong { display: block; margin-bottom: 10px; }
+nav a { display: block; padding: 5px 0; color: #344054; font-size: .9rem; text-decoration: none; line-height: 1.4; }
+nav a:hover { color: var(--brand); text-decoration: underline; }
+main { min-width: 0; }
+section { margin: 0 0 42px; scroll-margin-top: 20px; }
+h2 { margin: 0 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--line); color: var(--brand-dark); font-size: clamp(1.45rem, 2.5vw, 1.9rem); line-height: 1.3; }
+h3 { margin: 24px 0 10px; font-size: 1.17rem; color: #263f62; }
+h4 { margin: 18px 0 8px; font-size: 1rem; }
+p { margin: 9px 0 13px; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 5px 0; }
+.lead { font-size: 1.06rem; }
+.note, .warning, .success {
+  margin: 16px 0; padding: 14px 16px; border-radius: 10px; border-left: 4px solid var(--brand);
+  background: #edf4ff;
+}
+.warning { background: var(--warning); border-color: #d99a18; }
+.success { background: #eef9f2; border-color: var(--green); }
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 18px 0; }
+.card { padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+.card h3 { margin: 0 0 5px; font-size: 1.02rem; }
+.card p { margin: 3px 0; color: var(--muted); font-size: .93rem; }
+.architecture { border: 1px solid var(--line); border-radius: 14px; padding: 18px; background: var(--panel); margin: 18px 0; }
+.node { border: 1px solid #cbd7e7; background: white; border-radius: 10px; text-align: center; padding: 14px; }
+.node.master { background: var(--brand-dark); border-color: var(--brand-dark); color: white; }
+.node strong { display: block; font-size: 1.08rem; }
+.node small { display: block; color: inherit; opacity: .82; }
+.arrow { text-align: center; padding: 7px; color: var(--muted); font-weight: 700; }
+.workers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.node.worker { border-top: 4px solid var(--green); }
+table { width: 100%; border-collapse: collapse; margin: 14px 0 20px; font-size: .94rem; }
+th, td { border: 1px solid var(--line); text-align: left; padding: 9px 11px; vertical-align: top; }
+th { background: #f0f4fa; color: #233b5b; }
+tr:nth-child(even) td { background: #fcfdff; }
+pre { position: relative; overflow: auto; background: var(--code); color: var(--code-ink); border-radius: 10px; padding: 17px; font: .87rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; tab-size: 2; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+:not(pre) > code { background: #eef2f7; border: 1px solid #e1e7ef; padding: 1px 5px; border-radius: 5px; color: #263f62; overflow-wrap: anywhere; }
+.code-label { display: inline-block; margin: 12px 0 -7px; color: var(--muted); font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.checklist { list-style: none; padding-left: 0; }
+.checklist li { position: relative; padding-left: 28px; margin: 10px 0; }
+.checklist li::before { content: "□"; position: absolute; left: 0; top: -1px; font-size: 1.2rem; color: var(--brand); }
+.exercise { border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin: 14px 0; }
+.exercise h3 { margin-top: 0; }
+footer { border-top: 1px solid var(--line); padding: 22px clamp(18px, 4vw, 48px); color: var(--muted); font-size: .9rem; }
+.toplink { display: inline-block; margin-top: 10px; font-size: .9rem; }
+@media (max-width: 820px) {
+  .layout { grid-template-columns: 1fr; }
+  nav { position: static; max-height: none; }
+  nav .nav-grid { columns: 2; }
+  .cards { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+  .workers { grid-template-columns: 1fr; }
+  nav .nav-grid { columns: 1; }
+  table { display: block; overflow-x: auto; white-space: normal; }
+  pre { font-size: .8rem; }
+}
+@media print {
+  body { background: white; }
+  .page { box-shadow: none; max-width: none; }
+  .layout { display: block; padding: 20px; }
+  nav { position: static; max-height: none; margin-bottom: 25px; break-inside: avoid; }
+  nav .nav-grid { columns: 3; }
+  .hero { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  pre, .node.master { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  section { break-inside: avoid-page; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+</head>
+<body id="top">
+<div class="page">
+<header class="hero">
+  <p class="eyebrow">Big Data 2 · TP1</p>
+  <h1>Installation et déploiement d’un cluster Apache Spark</h1>
+  <p>Ubuntu 26.04 LTS · Un Master et deux Workers sur un réseau local · Application PySpark d’analyse d’un million d’étudiants</p>
+  <div class="meta">
+    <span>Durée indicative : 1 à 3 heures</span>
+    <span>Niveau : initiation</span>
+    <span>Architecture distribuée</span>
+  </div>
+</header>
+
+<div class="layout">
+<nav aria-label="Sommaire">
+  <strong>Sommaire du TP</strong>
+  <div class="nav-grid">
+    <a href="#objectifs">1. Objectifs</a>
+    <a href="#architecture">2. Architecture</a>
+    <a href="#preparation">3. Préparation des serveurs</a>
+    <a href="#installation">4. Installer Spark</a>
+    <a href="#reseau">5. Réseau et communication</a>
+    <a href="#configuration">6. Configurer Master et Workers</a>
+    <a href="#demarrage">7. Démarrer le cluster</a>
+    <a href="#dataset">8. Préparer le dataset</a>
+    <a href="#application">9. Application PySpark</a>
+    <a href="#execution">10. Exécuter l’application</a>
+    <a href="#arret">11. Arrêt du cluster</a>
+  </div>
+</nav>
+
+<main>
+<section id="objectifs">
+<h2>1. Objectifs du TP</h2>
+<p class="lead">Installer Apache Spark sur un serveur Ubuntu 26.04 LTS, configurer un cluster distribué composé d’un Master et de deux Workers situés sur des machines distinctes du même réseau local, puis développer une application PySpark pour analyser un dataset de 1 000 000 d’étudiants.</p>
+<p>À la fin du TP, l’étudiant devra être capable de :</p>
+<ul>
+  <li>Installer Java, Python et Apache Spark sur Ubuntu.</li>
+  <li>Configurer la communication entre les nœuds d’un cluster Spark.</li>
+  <li>Déployer un Master et deux Workers sur trois machines.</li>
+  <li>Soumettre une application PySpark au cluster.</li>
+  <li>Effectuer des calculs statistiques et des agrégations sur un grand volume de données.</li>
+  <li>Observer l’exécution distribuée et interpréter les résultats.</li>
+</ul>
+</section>
+
+<section id="architecture">
+<h2>2. Architecture cible</h2>
+<p>Le TP utilise trois machines Ubuntu reliées au même réseau local. Les adresses IP ci-dessous sont des exemples à remplacer par celles du réseau réel.</p>
+<div class="architecture">
+  <div class="node master">
+    <strong>Serveur 1 — Master</strong>
+    <span>192.168.1.10</span>
+    <small>Gestion du cluster et lancement des tâches · TCP 7077 · Interface Web 8080</small>
+  </div>
+  <div class="arrow">↓ Distribution des tâches</div>
+  <div class="workers">
+    <div class="node worker">
+      <strong>Serveur 2 — Worker 1</strong>
+      <span>192.168.1.11</span>
+      <small>Exécution des tâches · Interface Web 8081</small>
+    </div>
+    <div class="node worker">
+      <strong>Serveur 3 — Worker 2</strong>
+      <span>192.168.1.12</span>
+      <small>Exécution des tâches · Interface Web 8082</small>
+    </div>
+  </div>
+  <div class="arrow">↓</div>
+  <div class="node">
+    <strong>Dataset des étudiants</strong>
+    <small>1 000 000 de lignes CSV · Copie accessible au même chemin sur les trois machines</small>
+  </div>
+</div>
+<table>
+<thead><tr><th>Ressource indicative</th><th>Master</th><th>Chaque Worker</th></tr></thead>
+<tbody>
+<tr><td>Processeur</td><td>2 cœurs</td><td>4 cœurs</td></tr>
+<tr><td>Mémoire RAM</td><td>4 Go</td><td>8 Go</td></tr>
+<tr><td>Stockage libre</td><td>20 Go</td><td>20 Go</td></tr>
+<tr><td>Système</td><td colspan="2">Ubuntu 26.04 LTS 64 bits</td></tr>
+</tbody>
+</table>
+<div class="note"><strong>À retenir :</strong> le Master coordonne les ressources ; les Workers hébergent les executors qui effectuent les calculs. Le processus <em>driver</em> pilote l’application. Deux Workers ne garantissent pas à eux seuls un temps d’exécution deux fois plus court.</div>
+</section>
+
+<section id="preparation">
+<h2>3. Préparation des trois serveurs</h2>
+<h3>3.1 Identifier les adresses IP</h3>
+<p>Sur chaque machine, exécuter :</p>
+<pre><code>hostname
+ip -br address</code></pre>
+<table>
+<thead><tr><th>Rôle</th><th>Nom de machine</th><th>Adresse IP d’exemple</th></tr></thead>
+<tbody>
+<tr><td>Master</td><td><code>spark-master</code></td><td><code>192.168.1.10</code></td></tr>
+<tr><td>Worker 1</td><td><code>spark-worker1</code></td><td><code>192.168.1.11</code></td></tr>
+<tr><td>Worker 2</td><td><code>spark-worker2</code></td><td><code>192.168.1.12</code></td></tr>
+</tbody>
+</table>
+<p>Utiliser des adresses IP fixes ou des réservations DHCP. Sur les trois machines, modifier <code>/etc/hosts</code> :</p>
+<pre><code>sudo nano /etc/hosts</code></pre>
+<p>Ajouter les lignes suivantes :</p>
+<pre><code>192.168.1.10 spark-master
+192.168.1.11 spark-worker1
+192.168.1.12 spark-worker2</code></pre>
+<p>Tester la résolution des noms depuis les trois machines :</p>
+<pre><code>ping -c 3 spark-master
+ping -c 3 spark-worker1
+ping -c 3 spark-worker2</code></pre>
+<p>En cas d’échec, vérifier les adresses IP, le masque réseau, le routage et le contenu de <code>/etc/hosts</code>.</p>
+
+<h3>3.2 Installer Java et Python</h3>
+<p>Sur chaque machine :</p>
+<pre><code>sudo apt update
+sudo apt install -y openjdk-21-jdk python3 python3-venv python3-pip openssh-client</code></pre>
+<p>Vérifier les installations :</p>
+<pre><code>java -version
+javac -version
+python3 --version
+readlink -f "$(which java)"</code></pre>
+<p>Le chemin de <code>JAVA_HOME</code> correspond au répertoire Java situé avant <code>/bin/java</code>. Sur une installation Ubuntu AMD64 standard, il peut être :</p>
+<pre><code>/usr/lib/jvm/java-21-openjdk-amd64</code></pre>
+<p>Vérifier le chemin réel sur chaque serveur avant de le configurer.</p>
+</section>
+
+<section id="installation">
+<h2>4. Installer Apache Spark</h2>
+<p>Nous utiliserons le mode <strong>Standalone</strong>, le gestionnaire de cluster intégré à Spark. Il permet de déployer un Master et plusieurs Workers sans installer Hadoop YARN.</p>
+<p>Sur chaque serveur, consulter la <a href="https://spark.apache.org/downloads.html" target="_blank" rel="noopener">page officielle de téléchargement Apache Spark</a>. Choisir une version stable compatible avec l’environnement Java/Python du TP et utiliser la même distribution sur les trois machines.</p>
+<p>Télécharger l’archive proposée par le site officiel sur les trois machines, ou la transférer depuis une machine de téléchargement. L’exemple ci-dessous suppose que l’archive s’appelle <code>spark-4.2.0-bin-hadoop3.tgz</code> ; adapter le nom au fichier réellement téléchargé.</p>
+<pre><code>sudo tar -xzf spark-4.2.0-bin-hadoop3.tgz -C /opt/
+sudo ln -sfn /opt/spark-4.2.0-bin-hadoop3 /opt/spark
+sudo chown -R "$USER":"$(id -gn)" /opt/spark-4.2.0-bin-hadoop3</code></pre>
+<h3>4.1 Configurer les variables d’environnement</h3>
+<p>Sur chaque serveur :</p>
+<pre><code>nano ~/.bashrc</code></pre>
+<p>Ajouter les lignes suivantes, en adaptant <code>JAVA_HOME</code> au chemin réel :</p>
+<pre><code>export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+export SPARK_HOME=/opt/spark
+export PATH="$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin"</code></pre>
+<p>Appliquer et vérifier :</p>
+<pre><code>source ~/.bashrc
+echo "$JAVA_HOME"
+echo "$SPARK_HOME"
+spark-submit --version</code></pre>
+<div class="warning"><strong>Compatibilité :</strong> la version de Spark, Java et Python doit être vérifiée sur la documentation officielle correspondant à la version choisie. Si le nom de l’archive ou les versions disponibles diffèrent, adapter les commandes à la distribution effectivement installée.</div>
+</section>
+
+<section id="reseau">
+<h2>5. Configurer le réseau et la communication</h2>
+<h3>5.1 Vérifier la connectivité</h3>
+<p>Depuis le Master :</p>
+<pre><code>ping -c 3 spark-worker1
+ping -c 3 spark-worker2</code></pre>
+<p>Si UFW est actif, les communications doivent être autorisées entre les trois machines sur le réseau local de confiance.</p>
+<pre><code>sudo ufw allow from 192.168.1.0/24</code></pre>
+<div class="warning">Cette règle autorise tout le trafic provenant du sous-réseau indiqué. Elle ne convient qu’à un réseau de TP maîtrisé. En production, limiter les règles aux ports nécessaires et aux adresses des nœuds.</div>
+<table>
+<thead><tr><th>Port</th><th>Fonction</th></tr></thead>
+<tbody>
+<tr><td>7077/TCP</td><td>Connexion au Master Spark</td></tr>
+<tr><td>8080/TCP</td><td>Interface Web du Master</td></tr>
+<tr><td>8081/TCP</td><td>Interface Web du Worker 1, par défaut dans ce TP</td></tr>
+<tr><td>8082/TCP</td><td>Interface Web du Worker 2, après configuration</td></tr>
+<tr><td>Ports supplémentaires</td><td>Communication driver/executors, transferts de blocs et données</td></tr>
+</tbody>
+</table>
+<p>Les ports des executors et du driver peuvent être dynamiques. Le pare-feu doit permettre les communications requises entre les nœuds sans exposer les interfaces d’administration à des réseaux non fiables.</p>
+<h3>5.2 Lancement des Workers</h3>
+<p>Le TP démarre les Workers manuellement. Cette méthode évite de configurer une connexion SSH sans mot de passe entre le Master et les Workers. Le démarrage distant automatisé par SSH pourra être étudié dans un TP ultérieur.</p>
+</section>
+
+<section id="configuration">
+<h2>6. Configurer le Master et les Workers</h2>
+<h3>6.1 Configuration du Master</h3>
+<p>Sur <code>spark-master</code> :</p>
+<pre><code>nano "$SPARK_HOME/conf/spark-env.sh"</code></pre>
+<p>Ajouter :</p>
+<pre><code>export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+export SPARK_MASTER_HOST=spark-master
+export SPARK_MASTER_PORT=7077
+export SPARK_MASTER_WEBUI_PORT=8080</code></pre>
+
+<h3>6.2 Configuration du Worker 1</h3>
+<p>Sur <code>spark-worker1</code>, créer ou modifier <code>$SPARK_HOME/conf/spark-env.sh</code> :</p>
+<pre><code>export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+export SPARK_LOCAL_IP=192.168.1.11
+export SPARK_WORKER_CORES=4
+export SPARK_WORKER_MEMORY=6g
+export SPARK_WORKER_WEBUI_PORT=8081</code></pre>
+
+<h3>6.3 Configuration du Worker 2</h3>
+<p>Sur <code>spark-worker2</code>, créer ou modifier le même fichier :</p>
+<pre><code>export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+export SPARK_LOCAL_IP=192.168.1.12
+export SPARK_WORKER_CORES=4
+export SPARK_WORKER_MEMORY=6g
+export SPARK_WORKER_WEBUI_PORT=8082</code></pre>
+<p>Les valeurs de quatre cœurs et 6 Go de mémoire sont des exemples. Les adapter aux ressources de chaque machine. La mémoire annoncée au cluster doit laisser suffisamment de RAM au système d’exploitation.</p>
+</section>
+
+<section id="demarrage">
+<h2>7. Démarrer le cluster distribué</h2>
+<h3>7.1 Démarrer le Master</h3>
+<p>Sur <code>spark-master</code> :</p>
+<pre><code>start-master.sh
+jps</code></pre>
+<p>Le processus <code>Master</code> doit apparaître. Ouvrir l’interface Web depuis un navigateur du réseau local : <a href="http://192.168.1.10:8080" target="_blank" rel="noopener">http://192.168.1.10:8080</a>.</p>
+<p>L’URL Spark du cluster doit ressembler à :</p>
+<pre><code>spark://spark-master:7077</code></pre>
+<h3>7.2 Démarrer le Worker 1</h3>
+<p>Sur <code>spark-worker1</code> :</p>
+<pre><code>start-worker.sh spark://spark-master:7077
+jps</code></pre>
+<p>Le processus <code>Worker</code> doit apparaître.</p>
+<h3>7.3 Démarrer le Worker 2</h3>
+<p>Sur <code>spark-worker2</code> :</p>
+<pre><code>start-worker.sh spark://spark-master:7077
+jps</code></pre>
+<h3>7.4 Vérifier le cluster</h3>
+<p>Revenir sur l’interface Web du Master : <a href="http://192.168.1.10:8080" target="_blank" rel="noopener">http://192.168.1.10:8080</a>.</p>
+<ul>
+<li>Le Master est actif.</li>
+<li>Deux Workers sont enregistrés.</li>
+<li>Les cœurs et la mémoire annoncés par chaque Worker sont visibles.</li>
+<li>Chaque Worker possède l’état <code>ALIVE</code>.</li>
+</ul>
+<div class="success"><strong>Validation :</strong> le cluster est opérationnel lorsque les deux Workers sont enregistrés auprès du Master et actifs. Le démarrage des processus sur les machines ne suffit pas : leur enregistrement doit être confirmé dans l’interface Web.</div>
+</section>
+
+<section id="dataset">
+<h2>8. Préparer le dataset sur les trois machines</h2>
+<p>Le fichier CSV doit être accessible depuis le driver et depuis les Workers qui exécutent les tâches de lecture. Pour ce TP, la solution simple consiste à copier le même fichier sur les trois machines, au même chemin local.</p>
+
+<p>Lien de téléchargement du dataset : <a href="https://www.kaggle.com/datasets/nabeelqureshitiii/student-performance-dataset/data" target="_blank" rel="noopener">Student Performance Dataset</a>.</p>
+
+<h3>8.1 Créer le répertoire</h3>
+<p>Sur les trois serveurs :</p>
+<pre><code>sudo mkdir -p /data/spark
+sudo chown "$USER":"$(id -gn)" /data/spark</code></pre>
+<h3>8.2 Copier le fichier CSV</h3>
+<p>Supposons que le fichier complet soit disponible sur le Master sous <code>/data/spark/students.csv</code>. Depuis le Master :</p>
+<pre><code>scp /data/spark/students.csv \
+    "$USER"@spark-worker1:/data/spark/students.csv
+
+scp /data/spark/students.csv \
+    "$USER"@spark-worker2:/data/spark/students.csv</code></pre>
+<p>Si les noms d’utilisateurs diffèrent, remplacer <code>$USER</code> par le compte approprié pour chaque destination.</p>
+<p>Sur chaque machine, vérifier le fichier :</p>
+<pre><code>wc -l /data/spark/students.csv
+head -n 2 /data/spark/students.csv
+sha256sum /data/spark/students.csv</code></pre>
+<p>Pour un CSV d’un million d’étudiants avec une ligne d’en-tête, <code>wc -l</code> doit afficher <code>1000001</code>. Les empreintes SHA-256 des trois copies doivent être identiques.</p>
+<div class="note"><strong>Remarque :</strong> cette méthode suppose que les copies locales sont identiques et restent synchronisées. Pour des volumes plus importants ou un environnement durable, un stockage partagé ou distribué comme HDFS est préférable.</div>
+</section>
+
+<section id="application">
+<h2>9. Créer l’application PySpark</h2>
+<p>Sur le Master, créer le répertoire de travail :</p>
+<pre><code>mkdir -p ~/td-spark/app
+cd ~/td-spark/app
+nano students_analysis.py</code></pre>
+<p>Enregistrer le programme ci-dessous dans <code>students_analysis.py</code>.</p>
+<pre><code>from time import perf_counter
+
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import (
+    avg, count, col, round as spark_round,
+    min as spark_min, max as spark_max, desc
+)
+from pyspark.sql.types import (
+    StructType, StructField, IntegerType,
+    DoubleType, StringType
+)
+
+spark = (
+    SparkSession.builder
+    .appName("AnalyseEtudiants")
+    .getOrCreate()
+)
+
+spark.sparkContext.setLogLevel("WARN")
+
+schema = StructType([
+    StructField("student_id", IntegerType(), False),
+    StructField("weekly_self_study_hours", DoubleType(), True),
+    StructField("attendance_percentage", DoubleType(), True),
+    StructField("class_participation", DoubleType(), True),
+    StructField("total_score", DoubleType(), True),
+    StructField("grade", StringType(), True)
+])
+
+# Le CSV existe à ce chemin sur le driver et les Workers.
+csv_path = "file:///data/spark/students.csv"
+
+start = perf_counter()
+
+df = (
+    spark.read
+    .option("header", True)
+    .schema(schema)
+    .csv(csv_path)
+)
+
+print("=== SCHEMA ===")
+df.printSchema()
+
+print("=== EXEMPLE DE DONNEES ===")
+df.show(10, truncate=False)
+
+print("=== NOMBRE D'ETUDIANTS ===")
+total = df.count()
+print(total)
+
+print("=== STATISTIQUES GLOBALES ===")
+df.select(
+    spark_round(
+        avg("weekly_self_study_hours"), 2
+    ).alias("heures_etude_moyennes"),
+    spark_round(
+        avg("attendance_percentage"), 2
+    ).alias("presence_moyenne"),
+    spark_round(
+        avg("class_participation"), 2
+    ).alias("participation_moyenne"),
+    spark_round(
+        avg("total_score"), 2
+    ).alias("score_moyen"),
+    spark_min("total_score").alias("score_minimum"),
+    spark_max("total_score").alias("score_maximum")
+).show()
+
+print("=== EFFECTIFS ET SCORES PAR MENTION ===")
+df.groupBy("grade").agg(
+    count("*").alias("effectif"),
+    spark_round(
+        avg("total_score"), 2
+    ).alias("score_moyen")
+).orderBy("grade").show()
+
+print("=== LES 10 MEILLEURS ETUDIANTS ===")
+df.orderBy(
+    desc("total_score")
+).select(
+    "student_id",
+    "weekly_self_study_hours",
+    "attendance_percentage",
+    "total_score",
+    "grade"
+).show(10, truncate=False)
+
+print("=== ETUDIANTS EN DIFFICULTE ===")
+df.filter(
+    (col("attendance_percentage") &lt; 70)
+    &amp; (col("total_score") &lt; 50)
+).select(
+    "student_id",
+    "attendance_percentage",
+    "total_score",
+    "grade"
+).show(20, truncate=False)
+
+print("=== CORRELATION HEURES D'ETUDE / SCORE ===")
+correlation = df.stat.corr(
+    "weekly_self_study_hours",
+    "total_score"
+)
+print(correlation)
+
+print(f"Temps écoulé : {perf_counter() - start:.2f} s")
+
+spark.stop()</code></pre>
+<h3>Comprendre les principales instructions</h3>
+<table>
+<thead><tr><th>Instruction</th><th>Fonction</th></tr></thead>
+<tbody>
+<tr><td><code>SparkSession.builder</code></td><td>Crée la session Spark de l’application.</td></tr>
+<tr><td><code>spark.read.csv()</code></td><td>Charge le dataset CSV.</td></tr>
+<tr><td><code>df.count()</code></td><td>Compte les lignes du dataset.</td></tr>
+<tr><td><code>df.select()</code></td><td>Sélectionne les colonnes et calcule les statistiques.</td></tr>
+<tr><td><code>df.groupBy()</code></td><td>Regroupe les étudiants par mention.</td></tr>
+<tr><td><code>df.filter()</code></td><td>Filtre les étudiants selon une condition.</td></tr>
+<tr><td><code>df.orderBy()</code></td><td>Trie les étudiants selon leur score.</td></tr>
+<tr><td><code>df.stat.corr()</code></td><td>Calcule la corrélation de Pearson.</td></tr>
+</tbody>
+</table>
+<p>L’API DataFrame est adaptée aux données structurées. Les agrégations et les tris peuvent provoquer des échanges de données entre executors ; leur coût dépend du volume, du partitionnement et des ressources disponibles.</p>
+</section>
+
+<section id="execution">
+<h2>10. Soumettre l’application au cluster</h2>
+<p>Depuis le Master, exécuter :</p>
+<pre><code>spark-submit \
+  --master spark://spark-master:7077 \
+  --deploy-mode client \
+  --conf spark.driver.host=192.168.1.10 \
+  --conf spark.driver.bindAddress=0.0.0.0 \
+  --executor-cores 2 \
+  --executor-memory 2g \
+  --total-executor-cores 8 \
+  ~/td-spark/app/students_analysis.py</code></pre>
+<table>
+<thead><tr><th>Paramètre</th><th>Signification</th></tr></thead>
+<tbody>
+<tr><td><code>--master</code></td><td>Adresse du Master auquel l’application se connecte.</td></tr>
+<tr><td><code>--deploy-mode client</code></td><td>Le driver s’exécute sur la machine qui lance la commande.</td></tr>
+<tr><td><code>--executor-cores 2</code></td><td>Deux cœurs par executor.</td></tr>
+<tr><td><code>--executor-memory 2g</code></td><td>Jusqu’à 2 Go de mémoire configurée par executor.</td></tr>
+<tr><td><code>--total-executor-cores 8</code></td><td>Limite de huit cœurs d’executor pour l’application.</td></tr>
+</tbody>
+</table>
+<p>Avec deux Workers configurés à quatre cœurs chacun, cette configuration vise à utiliser les huit cœurs disponibles. L’allocation effective dépend des ressources réelles et de la planification du cluster.</p>
+<p>Pendant l’exécution, consulter :</p>
+<ul>
+<li>Interface du Master : <a href="http://192.168.1.10:8080" target="_blank" rel="noopener">http://192.168.1.10:8080</a></li>
+<li>Interface de l’application Spark : <a href="http://192.168.1.10:4040" target="_blank" rel="noopener">http://192.168.1.10:4040</a></li>
+</ul>
+<p>L’interface de l’application permet de consulter les jobs, stages, tâches, executors et durées d’exécution.</p>
+<div class="warning"><strong>En cas d’échec :</strong> vérifier le pare-feu, les adresses IP annoncées, l’accès au fichier CSV sur les Workers et les ports de communication du driver/executors. En mode client, les Workers doivent pouvoir joindre le driver sur le Master.</div>
+</section>
+
+<section id="arret">
+<h2>11. Arrêter le cluster</h2>
+<p>Sur le Worker 1 :</p>
+<pre><code>stop-worker.sh</code></pre>
+<p>Sur le Worker 2 :</p>
+<pre><code>stop-worker.sh</code></pre>
+<p>Sur le Master :</p>
+<pre><code>stop-master.sh</code></pre>
+<p>Ces commandes arrêtent les démons Spark lancés avec les scripts correspondants. Pour une installation persistante, un TP ultérieur pourra étudier la création de services <code>systemd</code> pour démarrer automatiquement le Master et les Workers après un redémarrage.</p>
+</section>
+
+<section id="references">
+<h2>Références officielles</h2>
+<ul>
+<li><a href="https://spark.apache.org/docs/latest/spark-standalone.html" target="_blank" rel="noopener">Apache Spark — Standalone Mode</a></li>
+<li><a href="https://spark.apache.org/downloads.html" target="_blank" rel="noopener">Apache Spark — Downloads</a></li>
+<li><a href="https://ubuntu.com/developers/docs/reference/availability/java/" target="_blank" rel="noopener">Ubuntu — Versions de Java disponibles</a></li>
+</ul>
+<p><a class="toplink" href="#top">↑ Revenir en haut de la page</a></p>
+</section>
+</main>
+</div>
+<footer>
+  <div>TP Big Data 2 — Installation et utilisation d’Apache Spark sur Ubuntu 26.04 LTS.</div>
+  <div>Document HTML autonome, consultable dans un navigateur et imprimable en PDF.</div>
+</footer>
+</div>
+</body>
+</html>
