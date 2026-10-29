@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TP Spring Boot MVC — JSP, JSTL, Validation et Intercepteurs</title>
+<style>
+  :root { --ink:#172033; --muted:#5b6577; --line:#d9e0ea; --soft:#f4f7fb; --blue:#174ea6; --blue-soft:#eaf2ff; --green:#146c43; --orange:#8a4b08; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:Arial, Helvetica, sans-serif; color:var(--ink); background:#eef2f7; line-height:1.6; }
+  main { max-width:1050px; margin:28px auto; padding:0 18px 36px; }
+  header { background:#173b72; color:#fff; padding:34px 38px; border-radius:16px; }
+  header h1 { margin:0 0 10px; font-size:2rem; line-height:1.2; }
+  header p { margin:6px 0; color:#e3ecff; }
+  .meta { display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
+  .meta span { border:1px solid #7595c7; border-radius:20px; padding:5px 11px; font-size:.9rem; }
+  section { background:#fff; margin-top:20px; padding:25px 30px; border:1px solid var(--line); border-radius:14px; }
+  h2 { margin:0 0 14px; color:#173b72; font-size:1.5rem; }
+  h3 { margin:23px 0 8px; font-size:1.12rem; color:#243b5b; }
+  p { margin:8px 0 12px; }
+  ul, ol { padding-left:24px; }
+  li { margin:5px 0; }
+  code { font-family:Consolas, "Courier New", monospace; font-size:.94em; }
+  pre { background:#111827; color:#e5edf8; padding:17px 19px; border-radius:10px; overflow:auto; font-size:.9rem; line-height:1.5; }
+  .note { background:var(--blue-soft); border-left:4px solid var(--blue); padding:12px 15px; border-radius:6px; margin:14px 0; }
+  .warning { background:#fff5e8; border-left:4px solid #c77719; padding:12px 15px; border-radius:6px; margin:14px 0; }
+  .success { background:#eaf7ef; border-left:4px solid #218653; padding:12px 15px; border-radius:6px; margin:14px 0; }
+  table { width:100%; border-collapse:collapse; margin:12px 0 18px; }
+  th, td { text-align:left; padding:10px 12px; border:1px solid var(--line); vertical-align:top; }
+  th { background:var(--soft); }
+  .tag { display:inline-block; background:#e9eef7; color:#24436e; padding:3px 8px; border-radius:5px; font-size:.85rem; font-weight:bold; }
+  .checklist li { list-style:"☐  "; padding-left:5px; }
+  footer { text-align:center; color:var(--muted); padding:22px 10px 0; font-size:.9rem; }
+  @media print {
+    body { background:#fff; }
+    main { margin:0; max-width:none; padding:0; }
+    header, section { border-radius:0; break-inside:avoid; }
+    section { border:1px solid #bbb; }
+    pre { white-space:pre-wrap; }
+  }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>Travaux pratiques : Application Web MVC avec Spring Boot</h1>
+  <p><strong>Thème :</strong> Gestion des inscriptions des étudiants</p>
+  <p>JSP · JSTL · Validation des formulaires · HandlerInterceptor</p>
+  <div class="meta">
+    <span>Durée indicative : 2 à 3 heures</span>
+    <span>Niveau : intermédiaire</span>
+    <span>Travail : individuel</span>
+  </div>
+</header>
+
+<section>
+  <h2>Contexte et objectifs</h2>
+  <p>Vous devez développer une application Web MVC permettant de consulter une page d’accueil et d’inscrire des étudiants. L’application utilisera Spring Boot MVC pour le contrôleur, JSP pour les vues, JSTL pour le rendu conditionnel et les fonctions de présentation, Jakarta Bean Validation pour contrôler les formulaires, ainsi qu’un intercepteur pour observer le cycle de traitement des requêtes.</p>
+  <h3>Compétences visées</h3>
+  <ul>
+    <li>Créer un contrôleur Spring MVC et transmettre des données à une JSP</li>
+    <li>Utiliser JSTL Core : <code>c:if</code>, <code>c:choose</code>, <code>c:when</code>, <code>c:otherwise</code>, <code>c:set</code> et <code>c:url</code>.</li>
+    <li>Formater une date et manipuler une chaîne avec JSTL Functions.</li>
+    <li>Créer et valider un objet de formulaire avec <code>@Valid</code> et <code>BindingResult</code>.</li>
+    <li>Afficher les erreurs de validation dans une JSP.</li>
+    <li>Implémenter et enregistrer un <code>HandlerInterceptor</code>.</li>
+  </ul>
+  <div class="warning"><strong>Compatibilité :</strong> les exemples ci-dessous ciblent Spring Boot 3 et Java 17 ou plus récent. Utilisez les imports <code>jakarta.validation.*</code>. JSP nécessite une configuration et des dépendances compatibles avec le conteneur Servlet ; un déploiement WAR sur Tomcat est généralement le choix le plus sûr avec Spring Boot. Les URI JSTL ci-dessous correspondent à JSTL 1.2 ; si votre projet utilise Jakarta Tags 3.x, adaptez les dépendances et les URI à cette version.</div>
+</section>
+
+<section>
+  <h2>Préparation du projet</h2>
+  <h3>1. Dépendances principales</h3>
+  <p>Créez un projet Spring Boot avec Spring Web MVC et la validation. Ajoutez les dépendances JSP/JSTL compatibles avec votre version de Spring Boot et du conteneur. Exemple de dépendance de validation :</p>
+  <pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-validation&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+  <p>Pour un projet JSP, prévoyez également le moteur JSP (par exemple Jasper dans un environnement Tomcat compatible), JSTL et le packaging adapté.</p>
+  <h3>2. Configuration des vues JSP</h3>
+  <p>Placez les vues dans <code>src/main/webapp/WEB-INF/jsp/</code>, puis configurez <code>application.properties</code> :</p>
+  <pre><code>spring.mvc.view.prefix=/WEB-INF/jsp/
+spring.mvc.view.suffix=.jsp</code></pre>
+  <h3>3. Organisation indicative</h3>
+  <pre><code>src/main/java/.../
+  controller/
+    AccueilController.java
+    InscriptionController.java
+  form/
+    EtudiantForm.java
+  interceptor/
+    JournalInterceptor.java
+  config/
+    WebConfig.java
+
+src/main/webapp/WEB-INF/jsp/
+  accueil.jsp
+  inscription.jsp
+  confirmation.jsp</code></pre>
+</section>
+
+<section>
+  <h2>Partie 1 — JSP et JSTL : conditions, variables, dates et fonctions</h2>
+  <p><span class="tag">Objectif</span> Créer une page d’accueil dynamique qui utilise les balises et fonctions JSTL demandées.</p>
+  <h3>Travail à réaliser</h3>
+  <ol>
+    <li>Créer une route <code>GET /accueil</code> dans un contrôleur Spring MVC.</li>
+    <li>Utiliser <code>c:url</code> pour naviguer vers une deuxième page JSP (N'oublier pas d'ajouter le nouveau chemin dans un controlleur).</li>
+    <li>Transmettre à la vue les attributs <code>nom</code>, <code>date</code> et <code>filiere</code>. Utiliser par exemple un nom contenant des majuscules et une chaîne contenant un caractère à remplacer.</li>
+    <li>Dans <code>accueil.jsp</code>, déclarer les bibliothèques JSTL nécessaires.</li>
+    <li>Utiliser <code>c:set</code> pour définir une variable <code>message</code> contenant « Bienvenue » et afficher cette variable.</li>
+    <li>Utiliser <code>c:if</code> pour afficher un message si le nom n’est pas vide.</li>
+    <li>Utiliser <code>c:choose</code>, <code>c:when</code> et <code>c:otherwise</code> pour afficher un message différent selon la filière transmise par le contrôleur.</li>
+    <li>Afficher la date au format jour/mois/année avec <code>fmt:formatDate</code>.</li>
+    <li>Afficher la longueur du nom avec <code>fn:length()</code>, le nom en minuscules avec <code>fn:toLowerCase()</code> et une version transformée de la filière avec <code>fn:replace()</code>.</li>
+  </ol>
+  <h3>Déclarations des bibliothèques JSTL (syntaxe JSTL 1.2)</h3>
+  <pre><code>&lt;%@ taglib prefix="c"
+    uri="http://java.sun.com/jsp/jstl/core" %&gt;
+
+&lt;%@ taglib prefix="fmt"
+    uri="http://java.sun.com/jsp/jstl/fmt" %&gt;
+
+&lt;%@ taglib prefix="fn"
+    uri="http://java.sun.com/jsp/jstl/functions" %&gt;</code></pre>
+  <h3>Exemple à intégrer dans la JSP</h3>
+  <pre><code>&lt;c:set var="message" value="Bienvenue"/&gt;
+&lt;p&gt;${message}, ${nom}&lt;/p&gt;
+
+&lt;c:if test="${not empty nom}"&gt;
+    &lt;p&gt;Le nom a été renseigné.&lt;/p&gt;
+&lt;/c:if&gt;
+
+&lt;c:choose&gt;
+    &lt;c:when test="${filiere == 'Informatique'}"&gt;
+        &lt;p&gt;Filière informatique.&lt;/p&gt;
+    &lt;/c:when&gt;
+    &lt;c:when test="${filiere == 'Réseaux'}"&gt;
+        &lt;p&gt;Filière réseaux.&lt;/p&gt;
+    &lt;/c:when&gt;
+    &lt;c:otherwise&gt;
+        &lt;p&gt;Autre filière.&lt;/p&gt;
+    &lt;/c:otherwise&gt;
+&lt;/c:choose&gt;
+
+&lt;p&gt;Date : &lt;fmt:formatDate value="${date}"
+    pattern="dd/MM/yyyy"/&gt;&lt;/p&gt;
+
+&lt;p&gt;Longueur du nom : ${fn:length(nom)}&lt;/p&gt;
+&lt;p&gt;Nom en minuscules : ${fn:toLowerCase(nom)}&lt;/p&gt;
+&lt;p&gt;Filière transformée :
+    ${fn:replace(filiere, ' ', '-')}&lt;/p&gt;</code></pre>
+  <div class="note"><strong>À vérifier :</strong> l’attribut <code>date</code> transmis à <code>fmt:formatDate</code> doit être un objet date compatible, par exemple <code>java.util.Date</code>. La fonction <code>fn:replace()</code> remplace ici les espaces par des tirets.</div>
+  <h3>Questions</h3>
+  <ol>
+    <li>Quelle est la différence entre <code>c:if</code> et <code>c:choose</code> ?</li>
+    <li>Quel est le rôle de <code>c:set</code> ?</li>
+    <li>Pourquoi utilise-t-on les préfixes <code>c</code>, <code>fmt</code> et <code>fn</code> ?</li>
+    <li>Quelle valeur est renvoyée par <code>fn:length(nom)</code> ?</li>
+    <li>Que se passe-t-il si la filière ne correspond à aucun des deux cas prévus ?</li>
+  </ol>
+</section>
+
+<section>
+  <h2>Partie 2 — Formulaire d’inscription et validation</h2>
+  <p><span class="tag">Objectif</span> Créer un formulaire d’inscription d’étudiant avec quatre champs textuels et un choix de sexe par boutons radio, puis afficher les erreurs de validation.</p>
+  <h3>Champs obligatoires</h3>
+  <table>
+    <thead><tr><th>Champ</th><th>Type de saisie</th><th>Règles de validation minimales</th></tr></thead>
+    <tbody>
+      <tr><td>Nom</td><td>Texte</td><td>Obligatoire, entre 2 et 50 caractères</td></tr>
+      <tr><td>Prénom</td><td>Texte</td><td>Obligatoire, entre 2 et 50 caractères</td></tr>
+      <tr><td>Téléphone</td><td>Texte</td><td>Obligatoire, format marocain défini par une expression régulière et expliqué dans le rapport</td></tr>
+      <tr><td>E-mail</td><td>E-mail</td><td>Obligatoire et format valide</td></tr>
+      <tr><td>Sexe</td><td>Radio buttons</td><td>Un choix obligatoire, par exemple « Féminin » ou « Masculin »</td></tr>
+    </tbody>
+  </table>
+  <h3>A. Créer la classe <code>EtudiantForm</code></h3>
+  <p>Créez une classe Java contenant les cinq propriétés, les getters et setters nécessaires, et les contraintes de validation. Utilisez notamment :</p>
+  <ul>
+    <li><code>@NotBlank</code> pour le nom, le prénom, le téléphone et l’e-mail ;</li>
+    <li><code>@Size</code> pour limiter la longueur du nom et du prénom ;</li>
+    <li><code>@Email</code> pour l’e-mail ;</li>
+    <li><code>@Pattern</code> pour le téléphone ;</li>
+    <li><code>@NotBlank</code> ou une contrainte adaptée pour le sexe.</li>
+  </ul>
+  <p>Ajoutez un message explicite à chaque contrainte, par exemple <code>@NotBlank(message = "Le nom est obligatoire")</code>.</p>
+  <h3>B. Créer le contrôleur</h3>
+  <p>Dans <code>InscriptionController</code>, implémentez :</p>
+  <ul>
+    <li><code>GET /inscription</code> : afficher un formulaire vide ;</li>
+    <li><code>POST /inscription</code> : valider et traiter les données soumises ;</li>
+    <li>en cas de succès, afficher une page de confirmation reprenant les données validées.</li>
+  </ul>
+  <p>La méthode POST doit utiliser les éléments suivants, dans cet ordre logique :</p>
+  <pre><code>@Valid @ModelAttribute("etudiant") EtudiantForm etudiant,
+BindingResult result
+
+if (result.hasErrors()) {
+    return "inscription";
+}</code></pre>
+  <ol>
+    <li><code>@Valid</code> déclenche l’évaluation des contraintes de l’objet.</li>
+    <li><code>BindingResult</code> contient les erreurs de binding et de validation.</li>
+    <li><code>result.hasErrors()</code> indique si des erreurs ont été détectées.</li>
+    <li><code>return "inscription"</code> réaffiche le formulaire avec les erreurs.</li>
+  </ol>
+  <div class="warning">Placez <code>BindingResult</code> immédiatement après le paramètre annoté avec <code>@Valid</code>. Si des erreurs existent, ne poursuivez pas vers l’enregistrement.</div>
+  <h3>C. Créer la vue <code>inscription.jsp</code></h3>
+  <p>Utilisez les balises Spring Form :</p>
+  <ul>
+    <li><code>&lt;form:form&gt;</code> pour le formulaire ;</li>
+    <li><code>&lt;form:input&gt;</code> pour nom, prénom, téléphone et e-mail ;</li>
+    <li><code>&lt;form:radiobutton&gt;</code> pour les deux choix de sexe ;</li>
+    <li><code>&lt;form:errors&gt;</code> pour afficher l’erreur associée à chaque champ.</li>
+  </ul>
+  <p>Déclaration JSP :</p>
+  <pre><code>&lt;%@ taglib prefix="form"
+    uri="http://www.springframework.org/tags/form" %&gt;</code></pre>
+  <p>Exemple de structure à compléter :</p>
+  <pre><code>&lt;form:form modelAttribute="etudiant"
+           method="post"
+           action="${pageContext.request.contextPath}/inscription"&gt;
+
+    &lt;label&gt;Nom&lt;/label&gt;
+    &lt;form:input path="nom"/&gt;
+    &lt;form:errors path="nom" cssClass="erreur"/&gt;
+
+    &lt;!-- Ajouter les champs prénom, téléphone et e-mail --&gt;
+
+    &lt;label&gt;Sexe&lt;/label&gt;
+    &lt;form:radiobutton path="sexe" value="Féminin"/&gt; Féminin
+    &lt;form:radiobutton path="sexe" value="Masculin"/&gt; Masculin
+    &lt;form:errors path="sexe" cssClass="erreur"/&gt;
+
+    &lt;button type="submit"&gt;S'inscrire&lt;/button&gt;
+&lt;/form:form&gt;</code></pre>
+  <h3>Tests à effectuer</h3>
+  <ol>
+    <li>Soumettre le formulaire sans remplir aucun champ.</li>
+    <li>Saisir un nom d’un seul caractère.</li>
+    <li>Saisir un e-mail incorrect.</li>
+    <li>Saisir un numéro de téléphone ne respectant pas le format retenu.</li>
+    <li>Soumettre un formulaire valide et vérifier la page de confirmation.</li>
+    <li>Vérifier que les champs déjà saisis restent renseignés après une erreur.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>Partie 3 — Intercepteur Spring MVC</h2>
+  <p><span class="tag">Objectif</span> Créer un <code>HandlerInterceptor</code> qui journalise les requêtes et observe les différentes étapes du traitement MVC.</p>
+  <h3>A. Créer <code>JournalInterceptor</code></h3>
+  <p>La classe doit implémenter <code>HandlerInterceptor</code> et redéfinir les trois méthodes suivantes :</p>
+  <table>
+    <thead><tr><th>Méthode</th><th>Travail demandé</th></tr></thead>
+    <tbody>
+      <tr><td><code>preHandle()</code></td><td>Afficher l’URL demandée et l’heure de début ; retourner <code>true</code> pour continuer.</td></tr>
+      <tr><td><code>postHandle()</code></td><td>Afficher un message indiquant que le contrôleur a terminé son traitement avant le rendu de la vue.</td></tr>
+      <tr><td><code>afterCompletion()</code></td><td>Afficher un message de fin de traitement et, si possible, la durée totale de la requête.</td></tr>
+    </tbody>
+  </table>
+  <p>Signature indicative :</p>
+  <pre><code>public class JournalInterceptor implements HandlerInterceptor {
+
+    @Override
+    public boolean preHandle(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Object handler) throws Exception {
+        // Journaliser l'URL et l'heure de début
+        return true;
+    }
+
+    @Override
+    public void postHandle(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Object handler,
+            ModelAndView modelAndView) throws Exception {
+        // Journaliser la fin du contrôleur
+    }
+
+    @Override
+    public void afterCompletion(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Object handler,
+            Exception ex) throws Exception {
+        // Journaliser la fin du traitement MVC
+    }
+}</code></pre>
+  <p>Ajoutez les imports nécessaires depuis <code>jakarta.servlet</code> et <code>org.springframework.web.servlet</code>.</p>
+  <h3>B. Enregistrer l’intercepteur dans <code>WebConfig</code></h3>
+  <p>Créez une classe de configuration qui implémente <code>WebMvcConfigurer</code>. Elle doit enregistrer l’intercepteur avec <code>addInterceptors</code>.</p>
+  <pre><code>@Configuration
+public class WebConfig implements WebMvcConfigurer {
+
+    private final JournalInterceptor journalInterceptor;
+
+    public WebConfig(JournalInterceptor journalInterceptor) {
+        this.journalInterceptor = journalInterceptor;
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(journalInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/css/**", "/js/**");
+    }
+}</code></pre>
+  <p>Vérifiez que l’intercepteur est bien détecté par Spring, par exemple en annotant sa classe avec <code>@Component</code>.</p>
+  <h3>C. Vérifications</h3>
+  <ol>
+    <li>Accéder à la page d’accueil et observer les logs.</li>
+    <li>Afficher le formulaire d’inscription.</li>
+    <li>Soumettre un formulaire invalide puis un formulaire valide.</li>
+    <li>Comparer l’ordre d’appel de <code>preHandle()</code>, <code>postHandle()</code> et <code>afterCompletion()</code>.</li>
+    <li>Expliquer pourquoi <code>postHandle()</code> peut ne pas être appelé lorsqu’une exception interrompt le traitement du contrôleur.</li>
+  </ol>
+  <div class="note"><strong>Limite :</strong> un intercepteur Spring MVC intervient dans le cycle des gestionnaires MVC. Il ne remplace pas un filtre Servlet ni les mécanismes d’authentification et d’autorisation de Spring Security.</div>
+</section>
+
+<section>
+  <h2>Livrables attendus</h2>
+  <ul class="checklist">
+    <li>Projet Spring Boot MVC fonctionnel.</li>
+    <li>Classe <code>EtudiantForm</code> avec les contraintes de validation.</li>
+    <li>Contrôleurs pour l’accueil et l’inscription.</li>
+    <li>Pages JSP : accueil, inscription et confirmation.</li>
+    <li>Utilisation vérifiable des balises JSTL et des fonctions demandées.</li>
+    <li>Classe <code>JournalInterceptor</code> avec les trois méthodes.</li>
+    <li>Classe <code>WebConfig implements WebMvcConfigurer</code>.</li>
+    <li>(*)Captures d’écran du formulaire valide, des erreurs de validation et des logs de l’intercepteur.</li>
+    <li>(*)Réponses aux questions de chaque partie.</li>
+    <li>A soumettre: Un fichier PDF contenant les captures d'écran des classes et des vue JSP ainsi que les réponses</li>
+  </ul>
+</section>
+
+<footer>
+  TP3 — Spring Boot MVC, JSP, JSTL, Jakarta Bean Validation et HandlerInterceptor
+</footer>
+</main>
+</body>
+</html>
