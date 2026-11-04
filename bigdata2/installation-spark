@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TD – Installation et compilation d’Apache Spark 4.3.0 sous Ubuntu</title>
+<style>
+:root{--ink:#172033;--muted:#5b6475;--blue:#2457a7;--pale:#edf4ff;--line:#d9e1ee;--bg:#f5f7fb;--green:#16794b;--amber:#8a5a00}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+main{max-width:1000px;margin:32px auto;padding:0 20px 50px}.hero{background:linear-gradient(130deg,#102b50,#2864ad);color:white;padding:38px;border-radius:18px}
+.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.78rem;font-weight:700;opacity:.85}.hero h1{font-size:clamp(1.8rem,4vw,2.7rem);line-height:1.15;margin:.5rem 0 1rem}.hero p{max-width:760px;margin:0;color:#e6efff}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.meta span{border:1px solid #ffffff55;border-radius:999px;padding:5px 12px;font-size:.88rem}
+section,.intro{background:white;border:1px solid var(--line);border-radius:14px;padding:26px;margin-top:20px}
+h2{font-size:1.35rem;margin:0 0 14px;color:#173c70}h3{font-size:1.08rem;margin:22px 0 8px;color:#244c80}
+p{margin:9px 0}ul,ol{padding-left:24px}li{margin:5px 0}.note,.warning,.success{padding:14px 16px;border-radius:10px;margin:14px 0}.note{background:var(--pale);border-left:4px solid var(--blue)}.warning{background:#fff6e5;border-left:4px solid #d99a25;color:#573b0b}.success{background:#eaf7f0;border-left:4px solid var(--green)}
+pre{background:#101827;color:#e7eefb;padding:17px 18px;border-radius:10px;overflow-x:auto;font:14px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;position:relative;white-space:pre}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}p code,li code{background:#eef1f6;padding:2px 5px;border-radius:4px;color:#263b5c}
+.step{display:inline-block;background:#e8f0ff;color:#214f91;border-radius:7px;padding:3px 9px;font-size:.8rem;font-weight:700;margin-bottom:8px}
+table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid var(--line);padding:10px;text-align:left;vertical-align:top}th{background:#f0f4fa}
+a{color:#1e5ca8;overflow-wrap:anywhere}.small{font-size:.9rem;color:var(--muted)}.checklist li{list-style:"☐  ";padding-left:5px}.footer{color:var(--muted);font-size:.88rem;text-align:center;margin-top:25px}
+@media(max-width:650px){main{padding:0 12px 30px}.hero{padding:25px}.intro,section{padding:19px}pre{font-size:12px}}
+@media print{body{background:white}.hero{background:#173c70!important;print-color-adjust:exact}.intro,section{break-inside:avoid;box-shadow:none}main{max-width:none;margin:0}}
+</style>
+</head>
+<body>
+<main>
+<header class="hero">
+  <div class="eyebrow">Travaux dirigés · Big Data</div>
+  <h1>Installation et compilation d’Apache Spark 4.3.0 sous Ubuntu</h1>
+  <p>Préparer une machine virtuelle Ubuntu, installer Java, récupérer les sources d’Apache Spark, configurer l’environnement puis compiler le projet avec Maven.</p>
+  <div class="meta"><span>OS : Ubuntu 64 bits</span><span>Apache Spark : 4.3.0</span><span>Java : OpenJDK 17</span><span>Disque : 80 Go dynamique</span></div>
+</header>
+
+<div class="intro">
+<h2>Objectifs pédagogiques</h2>
+<ul>
+<li>Préparer une machine virtuelle Ubuntu adaptée à la compilation d’un projet Big Data.</li>
+<li>Installer et vérifier l’environnement Java.</li>
+<li>Télécharger et extraire l’archive source d’Apache Spark.</li>
+<li>Définir les variables d’environnement nécessaires.</li>
+<li>Compiler Spark à partir de son code source avec le script Maven fourni.</li>
+<li>Vérifier le résultat et diagnostiquer les erreurs courantes.</li>
+</ul>
+<div class="note"><strong>Important – source ou binaire ?</strong><br>
+L’archive demandée <code>spark-4.3.0.tgz</code> est l’archive du <strong>code source</strong> (environ 52 Mo dans l’archive Apache), et non une distribution binaire prête à l’emploi. Le présent TD suit donc une installation par compilation. Pour une mise en service rapide sans compiler, il existe également une archive précompilée telle que <code>spark-4.3.0-bin-hadoop3.tgz</code>.</div>
+</div>
+
+<section>
+<h2>1. Préparation de la machine virtuelle</h2>
+<p>Créer une machine virtuelle avec VirtualBox, VMware ou un hyperviseur équivalent. Sélectionner une image ISO Ubuntu Desktop ou Ubuntu Server 64 bits. Une version LTS est recommandée pour un environnement pédagogique stable.</p>
+<table>
+<thead><tr><th>Ressource</th><th>Configuration recommandée</th><th>Explication</th></tr></thead>
+<tbody>
+<tr><td>Système</td><td>Ubuntu 64 bits</td><td>Environnement Linux compatible avec Spark et ses outils de compilation.</td></tr>
+<tr><td>Processeur</td><td>4 vCPU si disponibles</td><td>La compilation peut paralléliser plusieurs tâches. Ne pas attribuer tous les cœurs de l’hôte à la VM.</td></tr>
+<tr><td>Mémoire vive</td><td>8 Go recommandés</td><td>La compilation de Spark est gourmande en mémoire. 4 Go peuvent être insuffisants ou ralentir fortement le processus.</td></tr>
+<tr><td>Disque virtuel</td><td><strong>80 Go, allocation dynamique</strong></td><td>Le fichier virtuel grandit selon l’espace réellement utilisé, jusqu’à la limite de 80 Go. Prévoir suffisamment d’espace libre sur le disque physique de l’hôte.</td></tr>
+<tr><td>Réseau</td><td>NAT ou accès par pont</td><td>Une connexion Internet est nécessaire pour télécharger l’archive et les dépendances Maven.</td></tr>
+</tbody>
+</table>
+<div class="note"><strong>Pourquoi un disque dynamique de 80 Go ?</strong><br>La compilation génère des fichiers temporaires, des dépendances téléchargées et des artefacts de construction. Un disque de 80 Go fournit une marge confortable pour le système, les sources, les dépendances et les résultats de compilation. « Dynamique » signifie que le fichier disque n’occupe pas immédiatement 80 Go sur l’ordinateur hôte ; il augmente progressivement, sans dépasser sa capacité maximale.</div>
+<h3>Après l’installation d’Ubuntu</h3>
+<p>Ouvrir un terminal et mettre à jour l’index des paquets :</p>
+<pre><code>sudo apt update
+sudo apt upgrade -y</code></pre>
+<p>Installer les utilitaires de base nécessaires au téléchargement et à l’extraction :</p>
+<pre><code>sudo apt install -y wget curl tar gzip</code></pre>
+</section>
+
+<section>
+<h2>2. Installation d’OpenJDK 17</h2>
+<div class="step">Étape 1</div>
+<p>Apache Spark 4.3.0 prend en charge Java 17, 21 et 25. Dans ce TD, nous retenons OpenJDK 17 pour disposer d’un environnement Java LTS.</p>
+<pre><code>sudo apt install openjdk-17-jdk</code></pre>
+<p>Le paquet <code>openjdk-17-jdk</code> installe le kit de développement Java, notamment le compilateur <code>javac</code> et la machine virtuelle Java nécessaire à Spark.</p>
+<h3>Vérifier l’installation</h3>
+<pre><code>java -version
+javac -version</code></pre>
+<p>Les deux commandes doivent afficher une version 17.x. Si plusieurs versions Java sont installées, vérifier celle qui est sélectionnée :</p>
+<pre><code>sudo update-alternatives --config java
+sudo update-alternatives --config javac</code></pre>
+<div class="note"><strong>À retenir :</strong> <code>java</code> exécute les applications Java ; <code>javac</code> compile le code source Java. Spark a besoin d’un environnement Java fonctionnel pour s’exécuter et se compiler.</div>
+</section>
+
+<section>
+<h2>3. Télécharger l’archive source de Spark 4.3.0</h2>
+<div class="step">Étape 2</div>
+<p>Créer un répertoire de travail dans le dossier personnel, puis s’y déplacer :</p>
+<pre><code>mkdir -p ~/spark
+cd ~/spark</code></pre>
+<p>Télécharger l’archive source officielle :</p>
+<p><a href="https://archive.apache.org/dist/spark/spark-4.3.0/spark-4.3.0.tgz">https://archive.apache.org/dist/spark/spark-4.3.0/spark-4.3.0.tgz</a></p>
+<pre><code>wget https://archive.apache.org/dist/spark/spark-4.3.0/spark-4.3.0.tgz</code></pre>
+<p>Vérifier la présence et la taille du fichier :</p>
+<pre><code>ls -lh spark-4.3.0.tgz</code></pre>
+<h3>Extraire l’archive</h3>
+<pre><code>tar -xzf spark-4.3.0.tgz
+ls -l</code></pre>
+<p>Après extraction, le répertoire <code>spark-4.3.0</code> contient le code source, les modules et les scripts de construction de Spark.</p>
+<div class="warning"><strong>Attention :</strong> ne pas confondre le fichier téléchargé <code>spark-4.3.0.tgz</code> avec une archive binaire précompilée. Le fichier utilisé dans ce TD contient les sources ; la compilation est donc une étape nécessaire avant de disposer des artefacts compilés.</div>
+</section>
+
+<section>
+<h2>4. Définir les variables d’environnement</h2>
+<div class="step">Étape 3</div>
+<p>La variable <code>SPARK_HOME</code> indique l’emplacement du répertoire Spark. La variable <code>PATH</code> permet d’exécuter les commandes de Spark depuis n’importe quel répertoire du terminal.</p>
+<p>Ouvrir le fichier de configuration du shell :</p>
+<pre><code>nano ~/.bashrc</code></pre>
+<p>Ajouter à la fin du fichier les lignes suivantes :</p>
+<pre><code>export SPARK_HOME=~/spark/spark-4.3.0
+export PATH=$SPARK_HOME/bin:$PATH
+export PATH=$SPARK_HOME/sbin:$PATH</code></pre>
+<p>Enregistrer le fichier, puis recharger la configuration :</p>
+<pre><code>source ~/.bashrc</code></pre>
+<h3>Vérifier les variables</h3>
+<pre><code>echo $SPARK_HOME
+echo $PATH</code></pre>
+<p>La première commande doit afficher le chemin vers le dossier <code>spark-4.3.0</code>. Les répertoires <code>bin</code> et <code>sbin</code> de Spark doivent apparaître dans le chemin d’exécution.</p>
+<div class="note"><strong>Différence entre bin et sbin :</strong><br><code>bin</code> contient notamment les commandes destinées à lancer les applications Spark (par exemple <code>spark-shell</code>). <code>sbin</code> contient des scripts d’administration et de gestion de services/daemons Spark, notamment pour les déploiements en mode cluster.</div>
+</section>
+
+<section>
+<h2>5. Compiler Apache Spark avec Maven</h2>
+<div class="step">Étape 4</div>
+<p>Se placer impérativement à la racine du projet Spark :</p>
+<pre><code>cd $SPARK_HOME
+pwd
+ls</code></pre>
+<p>Le répertoire courant doit être <code>~/spark/spark-4.3.0</code>. Vérifier également la présence du script <code>build/mvn</code>.</p>
+<h3>Lancer la compilation</h3>
+<pre><code>./build/mvn -DskipTests clean package</code></pre>
+<p><strong>Rôle des éléments de la commande :</strong></p>
+<table>
+<thead><tr><th>Élément</th><th>Signification</th></tr></thead>
+<tbody>
+<tr><td><code>./build/mvn</code></td><td>Script Maven fourni avec les sources Spark. Il prépare/utilise les outils de construction nécessaires.</td></tr>
+<tr><td><code>-DskipTests</code></td><td>Demande de ne pas exécuter les tests, afin de réduire la durée de cette compilation pédagogique.</td></tr>
+<tr><td><code>clean</code></td><td>Supprime les résultats de compilation précédents.</td></tr>
+<tr><td><code>package</code></td><td>Compile les modules et construit les artefacts empaquetés prévus par le cycle Maven.</td></tr>
+</tbody>
+</table>
+<div class="warning"><strong>Ne pas lancer cette commande avec <code>sudo</code>.</strong> Elle doit être exécutée depuis le compte utilisateur normal, à la racine du projet. L’utilisation de sudo peut créer des fichiers appartenant à root dans le répertoire de travail.</div>
+<p>La première compilation peut être longue : Maven télécharge les dépendances nécessaires depuis Internet et compile plusieurs composants Java et Scala. Ne pas fermer le terminal pendant l’opération.</p>
+<h3>Ressources mémoire</h3>
+<p>La documentation Spark indique qu’une compilation Maven peut nécessiter une configuration mémoire importante. Le script <code>build/mvn</code> ajoute automatiquement des options mémoire lorsque celles-ci ne sont pas définies. Si la machine dispose d’au moins 8 Go de RAM et que la compilation manque de mémoire, on peut essayer :</p>
+<pre><code>export MAVEN_OPTS="-Xss64m -Xmx4g -Xms4g -XX:ReservedCodeCacheSize=128m"</code></pre>
+<p>Ne pas réserver 4 Go au processus Maven si la VM ne dispose pas d’assez de mémoire : laisser de la mémoire au système Ubuntu.</p>
+</section>
+
+<section>
+<h2>6. Vérifier le résultat de la compilation</h2>
+<p>À la fin, Maven doit terminer avec un message indiquant un résultat de construction réussi, généralement <code>BUILD SUCCESS</code>.</p>
+<p>Consulter les principaux répertoires de résultats :</p>
+<pre><code>find . -maxdepth 4 -type d -name target
+find assembly -type f -name "*.jar" 2>/dev/null | head</code></pre>
+<p>La commande de compilation construit les artefacts Maven. Elle ne doit pas être confondue avec la création d’une distribution autonome prête à être copiée sur d’autres machines.</p>
+<div class="note"><strong>Pour produire une distribution Spark exécutable empaquetée :</strong> la documentation officielle recommande le script <code>dev/make-distribution.sh</code>. Par exemple, depuis la racine du projet :</div>
+<pre><code>./dev/make-distribution.sh --name spark-local --tgz</code></pre>
+<p>Cette opération crée une archive de distribution dans le répertoire du projet. Elle peut nécessiter du temps et de l’espace disque supplémentaires.</p>
+<h3>Premier test local</h3>
+<p>Si la construction a produit une distribution utilisable, lancer le shell Spark depuis son répertoire de distribution, ou utiliser le script <code>bin/spark-shell</code> correspondant :</p>
+<pre><code>./bin/spark-shell --master local[*]</code></pre>
+<p><code>local[*]</code> demande à Spark d’utiliser tous les cœurs logiques disponibles sur la machine locale. Dans le shell Scala, exécuter :</p>
+<pre><code>spark.range(1, 6).show()</code></pre>
+<p>Le résultat doit afficher cinq lignes, avec les valeurs de 0 à 4. Quitter le shell avec <code>:quit</code>.</p>
+<div class="warning">Si <code>spark-shell</code> ne démarre pas directement après la compilation des sources, cela ne signifie pas nécessairement que la compilation a échoué : vérifier la présence de la distribution exécutable et, si nécessaire, effectuer l’étape de packaging avec <code>make-distribution.sh</code>.</div>
+</section>
+
+<section>
+<h2>7. Problèmes fréquents et solutions</h2>
+<table>
+<thead><tr><th>Problème</th><th>Cause possible</th><th>Vérification / solution</th></tr></thead>
+<tbody>
+<tr><td><code>java: command not found</code></td><td>Java absent ou PATH incorrect.</td><td>Réinstaller OpenJDK 17 et vérifier <code>java -version</code>.</td></tr>
+<tr><td><code>JAVA_HOME is not set</code></td><td>La variable Java n’est pas définie ou détectée.</td><td>Exécuter <code>readlink -f $(which java)</code>, puis définir JAVA_HOME vers le dossier JDK (par exemple <code>/usr/lib/jvm/java-17-openjdk-amd64</code>).</td></tr>
+<tr><td><code>Permission denied</code></td><td>Script non exécutable ou mauvais propriétaire.</td><td>Depuis la racine du projet, vérifier <code>ls -l build/mvn</code>. Si nécessaire : <code>chmod +x build/mvn</code>.</td></tr>
+<tr><td><code>No space left on device</code></td><td>Disque virtuel ou espace hôte insuffisant.</td><td>Contrôler <code>df -h</code> et libérer de l’espace ou augmenter la capacité du disque virtuel.</td></tr>
+<tr><td><code>Java heap space</code> / processus arrêté</td><td>Mémoire insuffisante pour la compilation.</td><td>Augmenter la RAM de la VM si possible et ajuster prudemment <code>MAVEN_OPTS</code>.</td></tr>
+<tr><td>Téléchargement Maven impossible</td><td>Connexion réseau, DNS ou proxy.</td><td>Tester l’accès Internet et relancer la commande une fois le réseau rétabli.</td></tr>
+</tbody>
+</table>
+<p>Pour vérifier l’espace disque et la mémoire disponibles :</p>
+<pre><code>df -h
+free -h
+nproc</code></pre>
+</section>
+
+<section>
+<h2>8. Travail demandé aux étudiants</h2>
+<ol class="checklist">
+<li>Créer une machine virtuelle Ubuntu avec un disque dynamique de 80 Go.</li>
+<li>Installer OpenJDK 17 et relever la sortie de <code>java -version</code> et <code>javac -version</code>.</li>
+<li>Télécharger puis extraire l’archive source Spark 4.3.0.</li>
+<li>Définir <code>SPARK_HOME</code> et mettre à jour <code>PATH</code>.</li>
+<li>Exécuter la commande de compilation depuis la racine du projet.</li>
+<li>Identifier le message final de Maven et localiser les répertoires <code>target</code>.</li>
+<li>Expliquer la différence entre une archive source et une distribution binaire précompilée.</li>
+<li>Expliquer le rôle de <code>SPARK_HOME</code>, de <code>PATH</code>, de Maven, de <code>clean</code>, de <code>package</code> et de <code>-DskipTests</code>.</li>
+<li>Indiquer la capacité maximale du disque virtuel et l’espace réellement utilisé après la compilation.</li>
+</ol>
+<h3>Compte rendu à remettre</h3>
+<ul>
+<li>Captures d’écran de la configuration de la VM et des vérifications Java.</li>
+<li>Commandes exécutées pour télécharger, extraire et configurer Spark.</li>
+<li>Capture du résultat de compilation (message de succès ou erreur rencontrée).</li>
+<li>Réponses aux questions du travail demandé.</li>
+</ul>
+</section>
+
+<section>
+<h2>9. Références officielles</h2>
+<ul>
+<li><a href="https://spark.apache.org/docs/4.3.0/building-spark.html">Apache Spark 4.3.0 – Building Spark</a> : prérequis Java/Maven, compilation et création d’une distribution.</li>
+<li><a href="https://spark.apache.org/docs/4.3.0/">Apache Spark 4.3.0 – Documentation</a>.</li>
+<li><a href="https://archive.apache.org/dist/spark/spark-4.3.0/">Apache Archive – fichiers de la version 4.3.0</a>.</li>
+<li><a href="https://spark.apache.org/downloads.html">Apache Spark – Downloads</a>.</li>
+</ul>
+<p class="small">Remarque de version : Spark 4.3.0 est la version ciblée par ce TD. Les prérequis et les commandes peuvent évoluer dans les versions ultérieures ; consulter la documentation correspondant exactement à la version utilisée.</p>
+</section>
+
+<div class="footer">Travaux dirigés – Big Data · Installation d’Apache Spark 4.3.0 sous Ubuntu</div>
+</main>
+</body>
+</html>
