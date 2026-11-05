@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TP – Spring Boot MVC et Thymeleaf</title>
+<style>
+:root{--navy:#17324d;--blue:#2364aa;--pale:#eef5fb;--ink:#263442;--muted:#637487;--line:#d8e1e9;--green:#24734d;--orange:#a85b16}
+*{box-sizing:border-box}
+body{margin:0;background:#f3f6f9;color:var(--ink);font:15px/1.65 Arial,Helvetica,sans-serif}
+header{background:linear-gradient(120deg,#17324d,#2364aa);color:white;padding:42px 24px}
+header .wrap,main{max-width:1050px;margin:auto}
+.eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:12px;opacity:.85;font-weight:bold}
+h1{font-size:32px;line-height:1.2;margin:10px 0}
+header p{max-width:760px;margin:12px 0 0;color:#e8f1fa}
+main{padding:28px 20px 60px}
+.card{background:white;border:1px solid var(--line);border-radius:12px;padding:22px 24px;margin:18px 0;box-shadow:0 3px 12px rgba(25,50,75,.04)}
+h2{font-size:22px;color:var(--navy);margin:0 0 14px;padding-bottom:9px;border-bottom:2px solid var(--pale)}
+h3{font-size:17px;color:var(--blue);margin:22px 0 8px}
+h4{margin:14px 0 6px;color:var(--navy)}
+p{margin:8px 0}
+ul,ol{padding-left:24px}
+li{margin:5px 0}
+code{font-family:Consolas,Monaco,monospace;background:#edf2f7;padding:2px 5px;border-radius:4px;color:#9a3d25}
+pre{background:#172433;color:#e8f0f7;padding:16px 18px;border-radius:8px;overflow-x:auto;font:13px/1.55 Consolas,Monaco,monospace;white-space:pre}
+pre code{background:none;color:inherit;padding:0}
+.note{border-left:4px solid var(--blue);background:var(--pale);padding:12px 15px;border-radius:0 7px 7px 0;margin:14px 0}
+.warning{border-left-color:#d28a31;background:#fff7eb}
+.success{border-left-color:var(--green);background:#eef8f2}
+.tag{display:inline-block;background:#e8f0f8;color:#1d568b;padding:3px 9px;border-radius:20px;font-size:12px;font-weight:bold;margin-right:5px}
+table{border-collapse:collapse;width:100%;margin:12px 0}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:#edf3f8;color:var(--navy)}
+.small{font-size:13px;color:var(--muted)}
+.task{background:#fbfcfd;border:1px dashed #b9c9d8;border-radius:8px;padding:13px 15px;margin:12px 0}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:25px}
+@media print{body{background:white}.card{box-shadow:none;break-inside:avoid}header{background:#17324d!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}pre{white-space:pre-wrap;break-inside:avoid}}
+</style>
+</head>
+<body>
+<header>
+ <div class="wrap">
+  <div class="eyebrow">Travaux pratiques · Développement web Java</div>
+  <h1>TP : Développement d’une application Spring Boot MVC avec Thymeleaf</h1>
+  <p>Manipulation des expressions, conditions, boucles, objets utilitaires et navigation sûre dans les templates Thymeleaf.</p>
+ </div>
+</header>
+<main>
+<section class="card">
+ <h2>Objectifs du TP</h2>
+ <ul>
+  <li>Créer une application web basée sur l’architecture Spring Boot MVC.</li>
+  <li>Transmettre des données du contrôleur vers une vue Thymeleaf avec <code>${...}</code>.</li>
+  <li>Construire des liens dynamiques avec <code>@{...}</code> et réutiliser des fragments avec <code>~{...}</code>.</li>
+  <li>Utiliser les conditions <code>th:if</code> et <code>th:unless</code>.</li>
+  <li>Parcourir une collection avec <code>th:each</code>, y compris avec une condition.</li>
+  <li>Manipuler des chaînes de caractères avec l’objet utilitaire <code>#strings</code>.</li>
+  <li>Éviter les erreurs d’accès à des propriétés nulles avec l’opérateur de sûreté <code>?.</code>.</li>
+ </ul>
+ <div class="note"><strong>Contexte :</strong> vous allez développer une petite application de gestion des étudiants. Elle affichera une liste d’étudiants, leurs informations, leur statut et leurs résultats.</div>
+</section>
+
+<section class="card">
+ <h2>Préparation – Création du projet</h2>
+ <h3>1. Création du projet Spring Boot</h3>
+ <p>Créer un projet Maven avec Spring Initializr ou votre environnement de développement.</p>
+ <p>Paramètres conseillés :</p>
+ <ul>
+  <li>Project : Maven</li><li>Language : Java</li><li>Packaging : Jar</li>
+  <li>Java : 17 ou version compatible avec la version de Spring Boot utilisée</li>
+  <li>Group : <code>com.example</code></li><li>Artifact : <code>gestion-etudiants</code></li>
+ </ul>
+ <h3>2. Dépendances Maven</h3>
+ <p>Ajouter les dépendances suivantes dans le fichier <code>pom.xml</code> (ou les sélectionner lors de la création du projet) :</p>
+ <pre><code>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-thymeleaf&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+ <p><strong>Rôle :</strong> <code>spring-boot-starter-web</code> fournit Spring MVC et le serveur web embarqué ; <code>spring-boot-starter-thymeleaf</code> intègre le moteur de templates Thymeleaf.</p>
+ <h3>3. Organisation du projet</h3>
+ <pre><code>src/
+ └── main/
+     ├── java/com/example/gestionetudiants/
+     │   ├── GestionEtudiantsApplication.java
+     │   ├── controller/
+     │   │   └── EtudiantController.java
+     │   └── model/
+     │       ├── Etudiant.java
+     │       └── Adresse.java
+     └── resources/
+         ├── templates/
+         │   ├── etudiants.html
+         │   └── fragments/
+         │       └── header.html
+         └── static/
+             └── css/</code></pre>
+ <h3>4. Créer les classes métier</h3>
+ <p>Créer la classe <code>Etudiant</code> avec les propriétés suivantes :</p>
+ <pre><code>public class Etudiant {
+    private Long id;
+    private String nom;
+    private String email;
+    private double note;
+    private boolean actif;
+    private String niveau;
+    private Adresse adresse;
+
+    // Constructeur(s), getters et setters
+}</code></pre>
+ <p>Créer également la classe <code>Adresse</code> :</p>
+ <pre><code>public class Adresse {
+    private String ville;
+
+    // Constructeur(s), getter et setter
+}</code></pre>
+ <div class="note warning"><strong>Important :</strong> les getters et setters sont nécessaires pour permettre à Thymeleaf et à Spring Expression Language d'accéder aux propriétés des objets Java. Vous pouvez les générer avec votre IDE.</div>
+</section>
+
+<section class="card">
+ <h2>Partie 1 – Expressions Thymeleaf</h2>
+ <p><span class="tag">Variable Expression</span><span class="tag">Link URL Expression</span><span class="tag">Fragment Expression</span></p>
+ <h3>1.1. Préparer le contrôleur</h3>
+ <p>Créer <code>EtudiantController</code>. Dans la méthode ci-dessous, construire une liste de quelques étudiants et la transmettre à la vue.</p>
+ <pre><code>@Controller
+public class EtudiantController {
+
+    @GetMapping("/etudiants")
+    public String afficherEtudiants(Model model) {
+
+        List&lt;Etudiant&gt; etudiants = new ArrayList&lt;&gt;();
+
+        // Créer et ajouter au moins 4 étudiants
+        // avec des notes, niveaux et statuts différents.
+
+        model.addAttribute("etudiants", etudiants);
+        model.addAttribute("titre", "Gestion des étudiants");
+        model.addAttribute("message", "Bienvenue dans l'application");
+
+        return "etudiants";
+    }
+}</code></pre>
+ <h3>1.2. Expression <code>${...}</code> – Variable Expression</h3>
+ <p>Dans le template <code>etudiants.html</code>, afficher le titre et le message transmis par le contrôleur.</p>
+ <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="fr" xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Étudiants&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1 th:text="${titre}"&gt;Titre par défaut&lt;/h1&gt;
+    &lt;p th:text="${message}"&gt;Message par défaut&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+ <div class="task"><strong>Travail demandé :</strong>
+  <ol>
+   <li>Expliquer le rôle de <code>model.addAttribute()</code>.</li>
+   <li>Afficher le nom et l'email d'un étudiant en utilisant <code>${etudiant.nom}</code> et <code>${etudiant.email}</code>.</li>
+   <li>Tester l'accès à l'URL <code>http://localhost:8080/etudiants</code>.</li>
+  </ol>
+ </div>
+ <h3>1.3. Expression <code>@{...}</code> – Link URL Expression</h3>
+ <p>Cette expression permet de construire des URL en tenant compte du contexte de l'application.</p>
+ <p>Ajouter dans la page un lien vers la liste des étudiants :</p>
+ <pre><code>&lt;a th:href="@{/etudiants}"&gt;Afficher les étudiants&lt;/a&gt;</code></pre>
+ <p>Ajouter ensuite un lien de consultation pour chaque étudiant. L'URL devra contenir son identifiant :</p>
+ <pre><code>&lt;a th:href="@{/etudiants/{id}(id=${e.id})}"&gt;
+    Consulter
+&lt;/a&gt;</code></pre>
+ <p>Créer dans le contrôleur une méthode qui reçoit cet identifiant :</p>
+ <pre><code>@GetMapping("/etudiants/{id}")
+public String detail(@PathVariable Long id, Model model) {
+    // Créer un etudiant avec id = 4
+    // Ajouter l'étudiant au Model avec la clé "etudiant"
+    return "detail";
+}</code></pre>
+ <div class="task"><strong>Travail demandé :</strong>
+  <ol>
+   <li>Créer la vue <code>detail.html</code> pour afficher les informations de l'étudiant.</li>
+   <li>Ajouter dans cette vue un lien de retour vers <code>/etudiants</code>.</li>
+   <li>Expliquer la différence entre une URL écrite directement dans <code>href</code> et une URL construite avec <code>th:href</code>.</li>
+  </ol>
+ </div>
+ <h3>1.4. Expression <code>~{...}</code> – Fragment Expression</h3>
+ <p>Un fragment est une partie d'une page HTML réutilisable dans plusieurs templates. L'expression de fragment Thymeleaf s'écrit <code>~{...}</code>.</p>
+ <p>Créer le fichier <code>templates/fragments/header.html</code> :</p>
+ <pre><code>&lt;header th:fragment="entete"&gt;
+    &lt;h1&gt;Application de gestion des étudiants&lt;/h1&gt;
+    &lt;nav&gt;
+        &lt;a th:href="@{/etudiants}"&gt;Liste des étudiants&lt;/a&gt;
+    &lt;/nav&gt;
+    &lt;hr&gt;
+&lt;/header&gt;</code></pre>
+ <p>Insérer le fragment dans <code>etudiants.html</code> :</p>
+ <pre><code>&lt;div th:replace="~{fragments/header :: entete}"&gt;&lt;/div&gt;</code></pre>
+ <div class="task"><strong>Travail demandé :</strong>
+  <ol>
+   <li>Insérer le même fragment dans <code>detail.html</code>.</li>
+   <li>Ajouter un fragment de pied de page et l'utiliser dans les deux vues.</li>
+   <li>Expliquer l'intérêt de <code>th:fragment</code> et de <code>th:replace</code>.</li>
+  </ol>
+ </div>
+</section>
+
+<section class="card">
+ <h2>Partie 2 – Conditions, boucles et objets utilitaires</h2>
+ <p><span class="tag">th:if</span><span class="tag">th:unless</span><span class="tag">th:each</span><span class="tag">#strings</span></p>
+ <h3>2.1. Conditions avec <code>th:if</code> et <code>th:unless</code></h3>
+ <p><code>th:if</code> affiche un élément lorsque la condition est vraie. <code>th:unless</code> affiche l'élément lorsque la condition est fausse.</p>
+ <p>Dans la vue, afficher un message en fonction du statut de l'étudiant :</p>
+ <pre><code>&lt;span th:if="${e.actif}"&gt;Compte actif&lt;/span&gt;
+&lt;span th:unless="${e.actif}"&gt;Compte inactif&lt;/span&gt;</code></pre>
+ <p>Afficher également le résultat en fonction de la note :</p>
+ <pre><code>&lt;span th:if="${e.note &gt;= 10}"&gt;Admis&lt;/span&gt;
+&lt;span th:unless="${e.note &gt;= 10}"&gt;Non admis&lt;/span&gt;</code></pre>
+ <div class="task"><strong>Travail demandé :</strong>
+  <ol>
+   <li>Afficher « Excellent » lorsque la note est supérieure ou égale à 16.</li>
+   <li>Afficher « À améliorer » lorsque la note est inférieure à 10.</li>
+   <li>Afficher un message spécifique pour les étudiants actifs et inactifs.</li>
+   <li>Combiner deux conditions avec <code>and</code> : afficher « Étudiant actif et admis » si l'étudiant est actif et possède une note supérieure ou égale à 10.</li>
+  </ol>
+ </div>
+ <h3>2.2. Boucle avec <code>th:each</code></h3>
+ <p>Utiliser <code>th:each</code> pour parcourir la liste d'étudiants et générer une ligne de tableau par étudiant.</p>
+ <pre><code>&lt;table border="1"&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;ID&lt;/th&gt;
+            &lt;th&gt;Nom&lt;/th&gt;
+            &lt;th&gt;Email&lt;/th&gt;
+            &lt;th&gt;Note&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr th:each="e : ${etudiants}"&gt;
+            &lt;td th:text="${e.id}"&gt;&lt;/td&gt;
+            &lt;td th:text="${e.nom}"&gt;&lt;/td&gt;
+            &lt;td th:text="${e.email}"&gt;&lt;/td&gt;
+            &lt;td th:text="${e.note}"&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+ <p>Pour récupérer les informations de l'itération, ajouter une variable de statut :</p>
+ <pre><code>&lt;tr th:each="e, stat : ${etudiants}"&gt;
+    &lt;td th:text="${stat.count}"&gt;&lt;/td&gt;
+    &lt;td th:text="${e.nom}"&gt;&lt;/td&gt;
+    &lt;td th:text="${stat.first ? 'Premier' : ''}"&gt;&lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+ <p class="small">Propriétés utiles : <code>stat.index</code> (indice à partir de 0), <code>stat.count</code> (rang à partir de 1), <code>stat.size</code> (taille de la collection), <code>stat.first</code>, <code>stat.last</code>, <code>stat.even</code> et <code>stat.odd</code>.</p>
+ <div class="task"><strong>Travail demandé :</strong>
+  <ol>
+   <li>Ajouter une colonne « Rang » qui affiche <code>stat.count</code>.</li>
+   <li>Ajouter une colonne « Position » qui affiche « Premier » pour le premier étudiant et « Dernier » pour le dernier.</li>
+   <li>Afficher le nombre total d'étudiants à l'aide de <code>stat.size</code> ou de l'objet utilitaire <code>#lists</code>.</li>
+  </ol>
+ </div>
+ <h3>2.3. Objet utilitaire <code>#strings</code></h3>
+ <p>Thymeleaf fournit l'objet utilitaire <code>#strings</code> pour effectuer des opérations courantes sur les chaînes de caractères.</p>
+ <table>
+  <thead><tr><th>Méthode</th><th>Rôle</th><th>Exemple</th></tr></thead>
+  <tbody>
+   <tr><td><code>toUpperCase()</code></td><td>Convertir en majuscules</td><td><code>${#strings.toUpperCase(e.nom)}</code></td></tr>
+   <tr><td><code>toLowerCase()</code></td><td>Convertir en minuscules</td><td><code>${#strings.toLowerCase(e.email)}</code></td></tr>
+   <tr><td><code>length()</code></td><td>Calculer la longueur</td><td><code>${#strings.length(e.nom)}</code></td></tr>
+   <tr><td><code>isEmpty()</code></td><td>Vérifier si la chaîne est vide</td><td><code>${#strings.isEmpty(e.email)}</code></td></tr>
+   <tr><td><code>contains()</code></td><td>Vérifier si une chaîne en contient une autre</td><td><code>${#strings.contains(e.nom, 'a')}</code></td></tr>
+   <tr><td><code>replace()</code></td><td>Remplacer une sous-chaîne</td><td><code>${#strings.replace(e.nom, 'a', '@')}</code></td></tr>
+  </tbody>
+ </table>
+ <p>Exemples à intégrer dans une ligne du tableau :</p>
+ <pre><code>&lt;td th:text="${#strings.toUpperCase(e.nom)}"&gt;&lt;/td&gt;
+&lt;td th:text="${#strings.toLowerCase(e.email)}"&gt;&lt;/td&gt;
+&lt;td th:text="${#strings.length(e.nom)}"&gt;&lt;/td&gt;
+&lt;td th:text="${#strings.replace(e.nom, 'a', '@')}"&gt;&lt;/td&gt;</code></pre>
+ <div class="task"><strong>Travail demandé :</strong>
+  <ol>
+   <li>Afficher le nom de chaque étudiant en majuscules.</li>
+   <li>Afficher son email en minuscules.</li>
+   <li>Afficher le nombre de caractères de son nom.</li>
+   <li>Remplacer la lettre « a » par « @ » dans le nom pour observer le résultat.</li>
+   <li>Tester <code>#strings.isEmpty()</code> avec un email vide ou nul.</li>
+  </ol>
+ </div>
+ <h3>2.4. Boucle avec condition</h3>
+ <p>Il est possible de combiner <code>th:each</code> et <code>th:if</code> afin de n'afficher que les éléments qui respectent une condition.</p>
+ <p>Exemple : afficher uniquement les étudiants admis.</p>
+ <pre><code>&lt;tr th:each="e : ${etudiants}" th:if="${e.note &gt;= 10}"&gt;
+    &lt;td th:text="${e.nom}"&gt;&lt;/td&gt;
+    &lt;td th:text="${e.note}"&gt;&lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+ <div class="task"><strong>Travail demandé :</strong>
+  <ol>
+   <li>Afficher uniquement les étudiants ayant une note supérieure ou égale à 10.</li>
+   <li>Afficher uniquement les étudiants actifs.</li>
+   <li>Afficher les étudiants actifs ayant une note supérieure ou égale à 12.</li>
+   <li>Créer un tableau distinct contenant uniquement les étudiants de niveau « L3 ».</li>
+  </ol>
+ </div>
+ <div class="note warning"><strong>Attention :</strong> placer <code>th:if</code> sur le même élément que <code>th:each</code> permet de contrôler l'affichage de chaque élément parcouru. Pour une logique de filtrage métier réutilisable ou une grande collection, effectuer de préférence le filtrage dans le service ou le contrôleur.</div>
+</section>
+
+<section class="card">
+ <h2>Partie 3 – Opérateur de sûreté (Safe Navigation Operator)</h2>
+ <h3>3.1. Comprendre le problème des valeurs null</h3>
+ <p>Une propriété d'un objet Java peut ne pas être renseignée et contenir la valeur <code>null</code>. Un accès direct à une propriété imbriquée peut alors provoquer une erreur d'évaluation.</p>
+ <p>Exemple : si <code>etudiant.adresse</code> vaut <code>null</code>, l'expression suivante n'est pas sûre :</p>
+ <pre><code>&lt;p th:text="${etudiant.adresse.ville}"&gt;&lt;/p&gt;</code></pre>
+ <h3>3.2. Utiliser l'opérateur <code>?.</code></h3>
+ <p>L'opérateur de navigation sûre permet de vérifier qu'un objet intermédiaire n'est pas nul avant d'accéder à sa propriété.</p>
+ <pre><code>&lt;p th:text="${etudiant.adresse?.ville}"&gt;&lt;/p&gt;</code></pre>
+ <ul>
+  <li>Si <code>adresse</code> existe, l'expression récupère sa propriété <code>ville</code>.</li>
+  <li>Si <code>adresse</code> vaut <code>null</code>, l'expression renvoie <code>null</code> au lieu de tenter l'accès à <code>ville</code>.</li>
+ </ul>
+ <div class="note"><strong>Précision technique :</strong> dans cet exemple, <code>?.</code> est l'opérateur de navigation sûre de Spring Expression Language (SpEL), utilisé dans les expressions Thymeleaf avec Spring.</div>
+ <h3>3.3. Mise en pratique</h3>
+ <p>Dans les données de test, créer au moins un étudiant avec une adresse renseignée et un autre sans adresse.</p>
+ <pre><code>Etudiant e1 = new Etudiant();
+e1.setNom("Ahmed");
+e1.setAdresse(new Adresse());
+e1.getAdresse().setVille("Agadir");
+
+Etudiant e2 = new Etudiant();
+e2.setNom("Salma");
+e2.setAdresse(null);</code></pre>
+ <p>Dans le template, afficher le nom et la ville :</p>
+ <pre><code>&lt;tr th:each="e : ${etudiants}"&gt;
+    &lt;td th:text="${e.nom}"&gt;&lt;/td&gt;
+    &lt;td th:text="${e.adresse?.ville}"&gt;&lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+ <h3>3.4. Combiner navigation sûre et valeur par défaut</h3>
+ <p>L'opérateur Elvis <code>?:</code> permet de fournir une valeur de remplacement lorsque le résultat est nul.</p>
+ <pre><code>&lt;td th:text="${e.adresse?.ville ?: 'Ville non renseignée'}"&gt;&lt;/td&gt;</code></pre>
+ <p>Si l'adresse ou la ville est absente, le template affiche « Ville non renseignée ».</p>
+ <div class="task"><strong>Travail demandé :</strong>
+  <ol>
+   <li>Afficher la ville de chaque étudiant en utilisant <code>?.</code>.</li>
+   <li>Remplacer une valeur nulle par le texte « Ville non renseignée » avec <code>?:</code>.</li>
+   <li>Tester le comportement avec une adresse existante et avec une adresse égale à <code>null</code>.</li>
+   <li>Expliquer la différence entre <code>?.</code> et <code>?:</code>.</li>
+  </ol>
+ </div>
+</section>
+
+<section class="card">
+ <h2>Travail de synthèse</h2>
+ <p>Améliorer l'application afin de produire une page de gestion des étudiants répondant aux exigences suivantes :</p>
+ <ol>
+  <li>Afficher un titre et un message transmis par le contrôleur avec <code>${...}</code>.</li>
+  <li>Afficher un lien vers la liste et des liens de détail dynamiques avec <code>@{...}</code>.</li>
+  <li>Réutiliser un en-tête commun avec un fragment <code>~{...}</code>.</li>
+  <li>Présenter les étudiants dans un tableau généré avec <code>th:each</code>.</li>
+  <li>Afficher leur statut et leur résultat avec <code>th:if</code> et <code>th:unless</code>.</li>
+  <li>Afficher le nom en majuscules et l'email en minuscules avec <code>#strings</code>.</li>
+  <li>Créer une vue ou une section affichant uniquement les étudiants admis et actifs.</li>
+  <li>Afficher la ville avec l'opérateur <code>?.</code> et une valeur de remplacement avec <code>?:</code>.</li>
+ </ol>
+ <div class="note success"><strong>Livrable attendu :</strong> Un compte rendu (fichier PDF) contenant les captures d'écran de la structure de projet, les classes créées, les fichiers HTML et leur résultat HTML.</div>
+</section>
+
+<footer>Travaux pratiques – Spring Boot MVC &amp; Thymeleaf</footer>
+</main>
+</body>
+</html>
