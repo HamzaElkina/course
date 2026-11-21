@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TP Spark SQL — Analyse des performances des étudiants</title>
+<style>
+:root{--ink:#203047;--blue:#1769aa;--pale:#eaf3fb;--line:#d7e0ea;--green:#eaf7ee;--orange:#fff4e5}
+body{font-family:Arial,Helvetica,sans-serif;line-height:1.6;color:#263445;background:#f4f7fa;margin:0}
+main{max-width:1000px;margin:30px auto;background:#fff;padding:42px 54px;box-shadow:0 3px 18px #0001}
+h1{color:#123c67;margin-bottom:6px}h2{color:#1769aa;border-bottom:2px solid #dceaf6;padding-bottom:6px;margin-top:32px}
+h3{color:#30465e;margin-top:22px}p{margin:9px 0}ul,ol{padding-left:25px}
+.meta{color:#5d6c7d}.box{padding:14px 18px;border-left:4px solid var(--blue);background:var(--pale);margin:16px 0}
+.note{padding:12px 16px;background:var(--orange);border-left:4px solid #e49a2b;margin:14px 0}
+.success{padding:12px 16px;background:var(--green);border-left:4px solid #37a260;margin:14px 0}
+code{background:#f0f3f6;padding:2px 5px;border-radius:4px;color:#8a2f54}
+pre{background:#172434;color:#e8f0f7;padding:15px;border-radius:8px;overflow-x:auto;font-size:14px;line-height:1.5}
+table{border-collapse:collapse;width:100%;margin:14px 0}th,td{border:1px solid var(--line);padding:9px;text-align:left}th{background:#eaf3fb}
+.task{border:1px solid var(--line);border-radius:8px;padding:14px 18px;margin:15px 0}
+.task h3{margin-top:0}.answer-space{border-bottom:1px dashed #b8c4d0;height:24px;margin:6px 0}
+footer{border-top:1px solid var(--line);margin-top:36px;padding-top:15px;color:#65758a;font-size:13px}
+@media print{body{background:#fff}main{box-shadow:none;margin:0;padding:20px;max-width:none}.task,pre,.box{break-inside:avoid}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>Travaux pratiques : Spark SQL</h1>
+<p><strong>Thème :</strong> Analyse des performances académiques à partir d'un fichier CSV</p>
+<p class="meta"><strong>Module :</strong> Big Data 2 &nbsp; | &nbsp; <strong>Outil :</strong> Apache Spark / PySpark</p>
+</header>
+
+<h2>1. Objectifs du TP</h2>
+<ul>
+<li>Charger un fichier CSV dans Spark et définir explicitement son schéma.</li>
+<li>Examiner et manipuler un DataFrame.</li>
+<li>Utiliser les fonctions d'agrégation : <code>COUNT</code>, <code>MAX</code>, <code>MIN</code>, <code>AVG</code> et <code>SUM</code>.</li>
+<li>Filtrer, trier et regrouper les données avec Spark SQL.</li>
+<li>Créer une vue temporaire et interroger cette vue avec des requêtes SQL.</li>
+<li>Comparer l'utilisation de l'API DataFrame et de SQL.</li>
+</ul>
+
+<h2>2. Contexte et jeu de données</h2>
+<p>Le fichier CSV contient des informations simulées sur les étudiants et leurs résultats académiques. Il est utilisé pour étudier les liens entre l'assiduité, le travail personnel, la participation et les résultats finaux.</p>
+<table>
+<thead><tr><th>Colonne</th><th>Description</th><th>Type attendu</th></tr></thead>
+<tbody>
+<tr><td><code>student_id</code></td><td>Identifiant unique de l'étudiant</td><td>Integer</td></tr>
+<tr><td><code>weekly_self_study_hours</code></td><td>Heures moyennes de travail personnel par semaine (0–40)</td><td>Integer / Double</td></tr>
+<tr><td><code>attendance_percentage</code></td><td>Taux de présence (50–100 %)</td><td>Double</td></tr>
+<tr><td><code>class_participation</code></td><td>Participation en classe (0–10)</td><td>Double</td></tr>
+<tr><td><code>total_score</code></td><td>Score final (0–100)</td><td>Double</td></tr>
+<tr><td><code>grade</code></td><td>Note catégorielle : A, B, C, D ou F</td><td>String</td></tr>
+</tbody>
+</table>
+<div class="box"><strong>Fichier à utiliser :</strong> <code>students.csv</code>. Placez le fichier dans un répertoire accessible depuis votre environnement Spark. Adaptez le chemin utilisé dans le code aux emplacements de votre machine.</div>
+
+<h2>3. Préparation de l'environnement</h2>
+<p>Ouvrir un notebook PySpark ou un shell PySpark. Si Spark est déjà installé et configuré, démarrer votre session de travail.</p>
+<pre><code>pyspark</code></pre>
+<p>Dans un notebook, créer une session Spark (si elle n'existe pas déjà) :</p>
+<pre><code>from pyspark.sql import SparkSession
+
+spark = SparkSession.builder \\
+    .appName("TP-SparkSQL-Students") \\
+    .getOrCreate()</code></pre>
+
+<h2>4. Chargement du fichier CSV</h2>
+<div class="task">
+<h3>Manipulation 1 — Importer les données</h3>
+<p>Charger <code>students.csv</code> avec les paramètres suivants :</p>
+<ul><li>La première ligne contient les noms des colonnes (<code>header=True</code>).</li><li>Spark doit détecter automatiquement les types (<code>inferSchema=True</code>) pour cette première manipulation.</li><li>Le séparateur est la virgule.</li></ul>
+<pre><code>df = spark.read \\
+    .option("header", True) \\
+    .option("inferSchema", True) \\
+    .option("sep", ",") \\
+    .csv("chemin/vers/students.csv")</code></pre>
+<ol>
+<li>Afficher les 10 premières lignes.</li>
+<li>Afficher le schéma du DataFrame.</li>
+<li>Afficher le nombre total de lignes.</li>
+<li>Afficher la liste des colonnes.</li>
+<li>Vérifier si les types de données détectés sont cohérents avec les descriptions.</li>
+</ol>
+</div>
+
+<h2>5. Exploration avec l'API DataFrame</h2>
+<div class="task">
+<h3>Manipulation 2 — Premières opérations</h3>
+<p>Écrire les instructions PySpark permettant de répondre aux questions :</p>
+<ol>
+<li>Afficher uniquement <code>student_id</code>, <code>total_score</code> et <code>grade</code>.</li>
+<li>Afficher les étudiants ayant obtenu un score supérieur ou égal à 80.</li>
+<li>Afficher les étudiants dont la note est A ou B.</li>
+<li>Afficher les étudiants ayant plus de 20 heures de travail personnel par semaine.</li>
+<li>Trier les étudiants par score décroissant.</li>
+<li>Afficher les 20 étudiants ayant les scores les plus élevés.</li>
+</ol>
+</div>
+
+<div class="task">
+<h3>Manipulation 3 — Fonctions d'agrégation</h3>
+<p>À l'aide de <code>pyspark.sql.functions</code>, calculer :</p>
+<ol>
+<li>Le nombre total d'étudiants.</li>
+<li>Le score maximum et le score minimum.</li>
+<li>Le score moyen de l'ensemble des étudiants.</li>
+<li>La moyenne des heures de travail personnel.</li>
+<li>La moyenne du taux de présence.</li>
+<li>La moyenne de la participation en classe.</li>
+<li>Le nombre d'étudiants dont le score est supérieur ou égal à 50.</li>
+</ol>
+<p>Exemple de structure à compléter :</p>
+<pre><code>from pyspark.sql import functions as F
+
+df.select(
+    F.count("*").alias("nombre_etudiants"),
+    F.max("total_score").alias("score_max"),
+    F.min("total_score").alias("score_min"),
+    F.avg("total_score").alias("score_moyen")
+).show()</code></pre>
+</div>
+
+<div class="task">
+<h3>Manipulation 4 — Agrégation par catégorie</h3>
+<ol>
+<li>Calculer le nombre d'étudiants dans chaque grade (A, B, C, D, F).</li>
+<li>Calculer le score moyen pour chaque grade.</li>
+<li>Calculer le score maximum et minimum de chaque grade.</li>
+<li>Calculer, pour chaque grade, la moyenne des heures d'étude.</li>
+<li>Trier le résultat par score moyen décroissant.</li>
+</ol>
+<p>Indication : utiliser <code>groupBy("grade")</code>, <code>agg()</code> et <code>orderBy()</code>.</p>
+</div>
+
+<h2>6. Spark SQL : création et utilisation d'une vue</h2>
+<div class="box"><strong>Principe :</strong> Une vue temporaire permet d'associer un nom à un DataFrame afin de l'interroger avec des instructions SQL. Elle est disponible pendant la durée de la session Spark et ne correspond pas à une table persistante enregistrée dans une base de données.</div>
+
+<div class="task">
+<h3>Manipulation 5 — Créer une vue temporaire</h3>
+<ol>
+<li>Créer une vue temporaire nommée <code>students</code> à partir du DataFrame <code>df</code>.</li>
+<li>Afficher les données de cette vue avec une requête SQL.</li>
+<li>Afficher uniquement les colonnes <code>student_id</code>, <code>total_score</code> et <code>grade</code>.</li>
+</ol>
+<pre><code>df.createOrReplaceTempView("students")
+
+spark.sql("""
+    SELECT *
+    FROM students
+""").show()</code></pre>
+<p>À retenir : <code>createOrReplaceTempView()</code> crée la vue ou remplace une vue temporaire existante portant le même nom.</p>
+</div>
+
+<h2>7. Requêtes SQL</h2>
+<div class="task">
+<h3>Manipulation 6 — Sélection et filtrage</h3>
+<p>Exécuter les requêtes suivantes à l'aide de <code>spark.sql()</code> :</p>
+<ol>
+<li>Afficher toutes les lignes de la vue <code>students</code>.</li>
+<li>Afficher les étudiants ayant obtenu un score supérieur à 90.</li>
+<li>Afficher les étudiants ayant un taux de présence supérieur ou égal à 90 %.</li>
+<li>Afficher les étudiants ayant une note A ou B.</li>
+<li>Afficher les étudiants ayant entre 10 et 20 heures d'étude par semaine (bornes incluses).</li>
+<li>Afficher les étudiants dont la note est différente de F.</li>
+<li>Afficher les 10 étudiants ayant obtenu les scores les plus faibles.</li>
+</ol>
+<pre><code>spark.sql("""
+    SELECT student_id, total_score, grade
+    FROM students
+    WHERE total_score > 90
+    ORDER BY total_score DESC
+""").show()</code></pre>
+</div>
+
+<div class="task">
+<h3>Manipulation 7 — COUNT, MAX, MIN, AVG et SUM</h3>
+<p>Écrire les requêtes SQL correspondantes :</p>
+<ol>
+<li>Compter le nombre total d'étudiants.</li>
+<li>Calculer le score maximal et le score minimal.</li>
+<li>Calculer le score moyen.</li>
+<li>Calculer la moyenne des heures de travail personnel.</li>
+<li>Calculer la moyenne de présence et de participation.</li>
+<li>Calculer la somme de tous les scores.</li>
+<li>Compter le nombre d'étudiants ayant obtenu un score au moins égal à 50.</li>
+</ol>
+<pre><code>spark.sql("""
+    SELECT
+        COUNT(*) AS nb_etudiants,
+        MAX(total_score) AS score_max,
+        MIN(total_score) AS score_min,
+        AVG(total_score) AS score_moyen,
+        SUM(total_score) AS somme_scores
+    FROM students
+""").show()</code></pre>
+</div>
+
+<div class="task">
+<h3>Manipulation 8 — GROUP BY et HAVING</h3>
+<p>Écrire et exécuter les requêtes SQL permettant de :</p>
+<ol>
+<li>Compter le nombre d'étudiants par grade.</li>
+<li>Calculer le score moyen par grade.</li>
+<li>Calculer, par grade, la moyenne des heures d'étude et de présence.</li>
+<li>Afficher les grades dont le nombre d'étudiants est supérieur à 100.</li>
+<li>Afficher les grades dont le score moyen est supérieur à 70.</li>
+<li>Classer les grades du score moyen le plus élevé au plus faible.</li>
+</ol>
+<pre><code>spark.sql("""
+    SELECT
+        grade,
+        COUNT(*) AS effectif,
+        AVG(total_score) AS score_moyen
+    FROM students
+    GROUP BY grade
+    ORDER BY score_moyen DESC
+""").show()</code></pre>
+</div>
+
+<div class="task">
+<h3>Manipulation 9 — Analyse croisée</h3>
+<p>Réaliser les analyses suivantes :</p>
+<ol>
+<li>Comparer le score moyen des étudiants ayant moins de 10 heures d'étude avec celui des étudiants ayant au moins 10 heures.</li>
+<li>Comparer le score moyen des étudiants dont la présence est inférieure à 75 % avec ceux dont la présence est au moins 75 %.</li>
+<li>Pour chaque grade, afficher le score moyen, la moyenne des heures d'étude et la moyenne de présence.</li>
+<li>Identifier les étudiants qui ont un score supérieur à la moyenne globale (utiliser une sous-requête).</li>
+<li>Afficher le nombre d'étudiants par grade, puis calculer la proportion de chaque grade dans l'effectif total (en pourcentage).</li>
+</ol>
+<p>Indication : une sous-requête peut être utilisée pour calculer la moyenne globale :</p>
+<pre><code>SELECT student_id, total_score
+FROM students
+WHERE total_score &gt; (
+    SELECT AVG(total_score)
+    FROM students
+)</code></pre>
+</div>
+
+<h2>8. Créer une deuxième vue</h2>
+<div class="task">
+<h3>Manipulation 10 — Vue des étudiants performants</h3>
+<ol>
+<li>Créer une vue temporaire nommée <code>high_performers</code> contenant uniquement les étudiants dont le score est supérieur ou égal à 80.</li>
+<li>Afficher le contenu de cette vue.</li>
+<li>Compter les étudiants présents dans cette vue.</li>
+<li>Calculer le score moyen de ces étudiants.</li>
+<li>Afficher leur répartition par grade.</li>
+</ol>
+<pre><code>spark.sql("""
+    CREATE OR REPLACE TEMP VIEW high_performers AS
+    SELECT *
+    FROM students
+    WHERE total_score >= 80
+""")</code></pre>
+</div>
+
+<h2>9. Comparaison DataFrame et Spark SQL</h2>
+<div class="task">
+<h3>Manipulation 11 — Réaliser la même analyse de deux façons</h3>
+<p>Calculer le nombre d'étudiants, le score moyen et le score maximal par grade :</p>
+<ul>
+<li>Une première fois avec l'API DataFrame : <code>groupBy()</code>, <code>agg()</code>.</li>
+<li>Une deuxième fois avec Spark SQL : <code>GROUP BY</code> et fonctions d'agrégation.</li>
+</ul>
+<p>Comparer les résultats obtenus. Les deux approches doivent produire des résultats équivalents.</p>
+</div>
+
+<h2>10. Synthèse et questions</h2>
+<ol>
+<li>Quel est le rôle de <code>SparkSession</code> ?</li>
+<li>Pourquoi utilise-t-on <code>inferSchema=True</code> lors du chargement du CSV ? Quel est son inconvénient ?</li>
+<li>Quelle est la différence entre un DataFrame et une vue temporaire SQL ?</li>
+<li>Une vue temporaire contient-elle une copie permanente des données ?</li>
+<li>Quelle est la différence entre <code>WHERE</code> et <code>HAVING</code> ?</li>
+<li>Quel est le rôle de <code>GROUP BY</code> ?</li>
+<li>Quelle différence existe-t-il entre <code>COUNT(*)</code> et <code>COUNT(colonne)</code> lorsque des valeurs nulles sont présentes ?</li>
+<li>Pourquoi peut-on utiliser SQL avec Spark sans utiliser un serveur de base de données relationnelle traditionnel ?</li>
+<li>Quel avantage Spark SQL apporte-t-il pour analyser un fichier de grande taille réparti sur plusieurs machines ?</li>
+</ol>
+
+<h2>11. Travail à rendre</h2>
+<div class="success">
+<ul>
+<li>Le notebook / script contenant le code de toutes les manipulations.</li>
+<li>Les résultats des requêtes et les captures d'écran pertinentes.</li>
+</ul>
+</div>
+
+<footer>TP Spark SQL — Analyse d'un jeu de données étudiant | Support pédagogique</footer>
+</main>
+</body>
+</html>
