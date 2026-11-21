@@ -61,8 +61,8 @@ footer{border-top:1px solid var(--line);margin-top:36px;padding-top:15px;color:#
 <p>Dans un notebook, créer une session Spark (si elle n'existe pas déjà) :</p>
 <pre><code>from pyspark.sql import SparkSession
 
-spark = SparkSession.builder \\
-    .appName("TP-SparkSQL-Students") \\
+spark = SparkSession.builder \
+    .appName("TP-SparkSQL-Students") \
     .getOrCreate()</code></pre>
 
 <h2>4. Chargement du fichier CSV</h2>
@@ -70,10 +70,10 @@ spark = SparkSession.builder \\
 <h3>Manipulation 1 — Importer les données</h3>
 <p>Charger <code>students.csv</code> avec les paramètres suivants :</p>
 <ul><li>La première ligne contient les noms des colonnes (<code>header=True</code>).</li><li>Spark doit détecter automatiquement les types (<code>inferSchema=True</code>) pour cette première manipulation.</li><li>Le séparateur est la virgule.</li></ul>
-<pre><code>df = spark.read \\
-    .option("header", True) \\
-    .option("inferSchema", True) \\
-    .option("sep", ",") \\
+<pre><code>df = spark.read \
+    .option("header", True) \
+    .option("inferSchema", True) \
+    .option("sep", ",") \
     .csv("chemin/vers/students.csv")</code></pre>
 <ol>
 <li>Afficher les 10 premières lignes.</li>
