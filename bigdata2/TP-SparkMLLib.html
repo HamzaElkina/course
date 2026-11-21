@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TP Spark MLlib — Prédiction des performances des étudiants</title>
+<style>
+:root{--ink:#203047;--blue:#1769aa;--pale:#eaf3fb;--line:#d7e0ea;--green:#eaf7ee;--orange:#fff4e5}
+body{font-family:Arial,Helvetica,sans-serif;line-height:1.6;color:#263445;background:#f4f7fa;margin:0}
+main{max-width:1000px;margin:30px auto;background:#fff;padding:42px 54px;box-shadow:0 3px 18px #0001}
+h1{color:#123c67;margin-bottom:6px}h2{color:#1769aa;border-bottom:2px solid #dceaf6;padding-bottom:6px;margin-top:32px}
+h3{color:#30465e;margin-top:22px}p{margin:9px 0}ul,ol{padding-left:25px}
+.meta{color:#5d6c7d}.box{padding:14px 18px;border-left:4px solid var(--blue);background:var(--pale);margin:16px 0}
+.note{padding:12px 16px;background:var(--orange);border-left:4px solid #e49a2b;margin:14px 0}
+.success{padding:12px 16px;background:var(--green);border-left:4px solid #37a260;margin:14px 0}
+code{background:#f0f3f6;padding:2px 5px;border-radius:4px;color:#8a2f54}
+pre{background:#172434;color:#e8f0f7;padding:15px;border-radius:8px;overflow-x:auto;font-size:14px;line-height:1.5}
+table{border-collapse:collapse;width:100%;margin:14px 0}th,td{border:1px solid var(--line);padding:9px;text-align:left}th{background:#eaf3fb}
+.task{border:1px solid var(--line);border-radius:8px;padding:14px 18px;margin:15px 0}
+.task h3{margin-top:0}.answer-space{border-bottom:1px dashed #b8c4d0;height:24px;margin:6px 0}
+footer{border-top:1px solid var(--line);margin-top:36px;padding-top:15px;color:#65758a;font-size:13px}
+@media print{body{background:#fff}main{box-shadow:none;margin:0;padding:20px;max-width:none}.task,pre,.box{break-inside:avoid}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>Travaux pratiques : Spark MLlib</h1>
+<p><strong>Thème :</strong> Prédiction et classification des performances académiques à partir d'un fichier CSV</p>
+<p class="meta"><strong>Module :</strong> Big Data 2 &nbsp; | &nbsp; <strong>Outil :</strong> Apache Spark / PySpark MLlib</p>
+</header>
+
+<h2>1. Objectifs du TP</h2>
+<ul>
+<li>Charger et explorer un fichier CSV dans Spark.</li>
+<li>Encoder une variable catégorielle avec <code>StringIndexer</code>.</li>
+<li>Assembler les variables explicatives avec <code>VectorAssembler</code>.</li>
+<li>Normaliser avec <code>MinMaxScaler</code> et standardiser avec <code>StandardScaler</code>.</li>
+<li>Diviser les données en ensembles d'entraînement et de test (80/20).</li>
+<li>Entraîner un modèle de classification avec <code>LogisticRegression</code>.</li>
+<li>Évaluer un classifieur : Accuracy, F1, Precision, Recall.</li>
+<li>Entraîner un modèle de régression avec <code>LinearRegression</code>.</li>
+<li>Évaluer un régresseur : RMSE, MAE et R².</li>
+<li>Comparer les modèles et synthétiser les résultats.</li>
+</ul>
+
+<h2>2. Contexte et jeu de données</h2>
+<p>Le fichier CSV contient des informations simulées sur les étudiants et leurs résultats académiques. Il permet d'étudier les liens entre l'assiduité, le travail personnel, la participation et la performance finale. L'objectif est double : <strong>classer</strong> les étudiants par grade (A, B, C, D, F) et <strong>prédire</strong> leur score final.</p>
+<table>
+<thead><tr><th>Colonne</th><th>Description</th><th>Type attendu</th></tr></thead>
+<tbody>
+<tr><td><code>student_id</code></td><td>Identifiant unique de l'étudiant</td><td>Integer</td></tr>
+<tr><td><code>weekly_self_study_hours</code></td><td>Heures moyennes de travail personnel par semaine (0–40), distribution normale centrée sur 15 h</td><td>Double</td></tr>
+<tr><td><code>attendance_percentage</code></td><td>Taux de présence (50–100 %), distribution normale autour de 85 %</td><td>Double</td></tr>
+<tr><td><code>class_participation</code></td><td>Participation en classe (0–10), distribution normale centrée sur 6</td><td>Double</td></tr>
+<tr><td><code>total_score</code></td><td>Score final (0–100), fonction des heures d'étude + bruit, borné entre 0 et 100</td><td>Double</td></tr>
+<tr><td><code>grade</code></td><td>Note catégorielle : A, B, C, D ou F, dérivée de <code>total_score</code></td><td>String</td></tr>
+</tbody>
+</table>
+<div class="box"><strong>Fichier à utiliser :</strong> <code>students.csv</code>. Placez le fichier dans un répertoire accessible depuis votre environnement Spark. Adaptez le chemin utilisé dans le code aux emplacements de votre machine.</div>
+<div class="note"><strong>Attention :</strong> <code>grade</code> est dérivée de <code>total_score</code>. Pour la classification, on utilise <code>grade</code> comme étiquette et les autres variables (hors <code>student_id</code> et <code>total_score</code>) comme features. Pour la régression, on utilise <code>total_score</code> comme cible.</div>
+
+<h2>3. Préparation de l'environnement</h2>
+<p>Ouvrir un notebook PySpark ou un shell PySpark. Démarrer la session :</p>
+<pre><code>pyspark</code></pre>
+<p>Dans un notebook, créer une session Spark (si elle n'existe pas déjà) :</p>
+<pre><code>from pyspark.sql import SparkSession
+
+spark = SparkSession.builder \
+    .appName("TP-SparkMLlib-Students") \
+    .getOrCreate()</code></pre>
+
+<h2>4. Chargement et exploration du CSV</h2>
+<div class="task">
+<h3>Manipulation 1 — Importer et explorer les données</h3>
+<p>Charger <code>students.csv</code> avec les paramètres suivants :</p>
+<ul>
+<li>La première ligne contient les noms des colonnes (<code>header=True</code>).</li>
+<li>Détection automatique des types (<code>inferSchema=True</code>).</li>
+<li>Séparateur virgule (<code>sep=","</code>).</li>
+</ul>
+<pre><code>df = spark.read \
+    .option("header", True) \
+    .option("inferSchema", True) \
+    .option("sep", ",") \
+    .csv("chemin/vers/students.csv")</code></pre>
+<ol>
+<li>Afficher les 10 premières lignes.</li>
+<li>Afficher le schéma du DataFrame.</li>
+<li>Afficher le nombre total de lignes.</li>
+<li>Afficher la liste des colonnes.</li>
+<li>Vérifier la cohérence des types détectés avec les descriptions.</li>
+<li>Afficher les statistiques descriptives des colonnes numériques avec <code>df.describe().show()</code>.</li>
+<li>Vérifier la répartition des grades : <code>df.groupBy("grade").count().show()</code>.</li>
+</ol>
+</div>
+
+<h2>5. Préparation des features</h2>
+<div class="task">
+<h3>Manipulation 2 — Encodage catégoriel avec StringIndexer</h3>
+<p>La colonne <code>grade</code> est catégorielle (A, B, C, D, F). Les algorithmes MLlib attendent des étiquettes numériques.</p>
+<ol>
+<li>Importer <code>StringIndexer</code> depuis <code>pyspark.ml.feature</code>.</li>
+<li>Créer un <code>StringIndexer</code> qui transforme <code>grade</code> en <code>label</code>.</li>
+<li>Appliquer le transformateur sur le DataFrame et afficher les colonnes <code>grade</code> et <code>label</code> pour vérifier la correspondance.</li>
+<li>Expliquer pourquoi <code>StringIndexer</code> attribue les indices par fréquence décroissante.</li>
+</ol>
+<pre><code>from pyspark.ml.feature import StringIndexer
+
+indexer = StringIndexer(inputCol="grade", outputCol="label")
+df_indexed = indexer.fit(df).transform(df)
+df_indexed.select("grade", "label").distinct().show()</code></pre>
+</div>
+
+<div class="task">
+<h3>Manipulation 3 — Assemblage des features avec VectorAssembler</h3>
+<p>Les algorithmes MLlib attendent un vecteur unique de features.</p>
+<ol>
+<li>Définir la liste des colonnes explicatives : <code>weekly_self_study_hours</code>, <code>attendance_percentage</code>, <code>class_participation</code>.</li>
+<li>Créer un <code>VectorAssembler</code> qui produit la colonne <code>features</code>.</li>
+<li>Appliquer le transformateur et afficher les colonnes <code>features</code> et <code>label</code>.</li>
+</ol>
+<pre><code>from pyspark.ml.feature import VectorAssembler
+
+feature_cols = ["weekly_self_study_hours", "attendance_percentage", "class_participation"]
+assembler = VectorAssembler(inputCols=feature_cols, outputCol="features")
+df_assembled = assembler.transform(df_indexed)
+df_assembled.select("features", "label").show(5, truncate=False)</code></pre>
+<div class="note">Pour la régression, on assemble les mêmes features mais la cible est <code>total_score</code>. On pourra réutiliser le même assembleur.</div>
+</div>
+
+<h2>6. Normalisation et standardisation</h2>
+<div class="task">
+<h3>Manipulation 4 — MinMaxScaler</h3>
+<p><code>MinMaxScaler</code> ramène chaque feature dans l'intervalle [0, 1].</p>
+<ol>
+<li>Importer <code>MinMaxScaler</code>.</li>
+<li>Créer un scaler avec <code>inputCol="features"</code> et <code>outputCol="features_scaled"</code>.</li>
+<li>Ajuster le scaler sur les données assemblées puis transformer.</li>
+<li>Afficher quelques lignes pour vérifier que les valeurs sont bien dans [0, 1].</li>
+</ol>
+<pre><code>from pyspark.ml.feature import MinMaxScaler
+
+minmax = MinMaxScaler(inputCol="features", outputCol="features_scaled")
+minmax_model = minmax.fit(df_assembled)
+df_minmax = minmax_model.transform(df_assembled)
+df_minmax.select("features", "features_scaled").show(5, truncate=False)</code></pre>
+</div>
+
+<div class="task">
+<h3>Manipulation 5 — StandardScaler</h3>
+<p><code>StandardScaler</code> centre et réduit chaque feature (moyenne 0, écart-type 1).</p>
+<ol>
+<li>Importer <code>StandardScaler</code>.</li>
+<li>Créer un scaler avec <code>inputCol="features"</code>, <code>outputCol="features_std"</code>, <code>withMean=True</code> et <code>withStd=True</code>.</li>
+<li>Ajuster puis transformer les données assemblées.</li>
+<li>Comparer visuellement les valeurs obtenues avec celles de <code>MinMaxScaler</code>.</li>
+</ol>
+<pre><code>from pyspark.ml.feature import StandardScaler
+
+std = StandardScaler(inputCol="features", outputCol="features_std", withMean=True, withStd=True)
+std_model = std.fit(df_assembled)
+df_std = std_model.transform(df_assembled)
+df_std.select("features", "features_std").show(5, truncate=False)</code></pre>
+<div class="box"><strong>À retenir :</strong> <code>MinMaxScaler</code> est adapté aux algorithmes sensibles à l'échelle et aux données bornées ; <code>StandardScaler</code> est préféré lorsque les features suivent approximativement une loi normale ou pour les modèles linéaires régularisés.</div>
+</div>
+
+<h2>7. Division Train/Test (80/20)</h2>
+<div class="task">
+<h3>Manipulation 6 — Split des données</h3>
+<ol>
+<li>Diviser le DataFrame préparé en ensembles d'entraînement (80 %) et de test (20 %) avec <code>randomSplit([0.8, 0.2], seed=42)</code>.</li>
+<li>Afficher le nombre de lignes de chaque ensemble.</li>
+<li>Conserver les DataFrames <code>train</code> et <code>test</code> pour la suite.</li>
+</ol>
+<pre><code>train, test = df_std.randomSplit([0.8, 0.2], seed=42)
+print("Train :", train.count(), "| Test :", test.count())</code></pre>
+<div class="note">On utilise ici <code>df_std</code> (features standardisées) pour la classification et la régression. On peut également refaire le split avec <code>df_minmax</code> pour comparer l'effet du scaling.</div>
+</div>
+
+<h2>8. Classification avec LogisticRegression</h2>
+<div class="task">
+<h3>Manipulation 7 — Entraînement du classifieur</h3>
+<ol>
+<li>Importer <code>LogisticRegression</code> depuis <code>pyspark.ml.classification</code>.</li>
+<li>Créer un modèle avec <code>featuresCol="features_std"</code>, <code>labelCol="label"</code>, <code>maxIter=100</code>.</li>
+<li>Entraîner le modèle sur <code>train</code>.</li>
+<li>Générer les prédictions sur <code>test</code> avec <code>model.transform(test)</code>.</li>
+<li>Afficher quelques lignes de prédictions (<code>label</code>, <code>prediction</code>, <code>probability</code>).</li>
+</ol>
+<pre><code>from pyspark.ml.classification import LogisticRegression
+
+lr = LogisticRegression(featuresCol="features_std", labelCol="label", maxIter=100)
+lr_model = lr.fit(train)
+predictions = lr_model.transform(test)
+predictions.select("label", "prediction", "probability").show(5, truncate=False)</code></pre>
+</div>
+
+<div class="task">
+<h3>Manipulation 8 — Évaluation : Accuracy, F1, Precision, Recall</h3>
+<ol>
+<li>Importer <code>MulticlassClassificationEvaluator</code>.</li>
+<li>Calculer l'Accuracy, le F1-score, la Precision et le Recall (métriques <code>accuracy</code>, <code>f1</code>, <code>weightedPrecision</code>, <code>weightedRecall</code>).</li>
+<li>Afficher la matrice de confusion avec <code>predictions.groupBy("label", "prediction").count().show()</code>.</li>
+<li>Interpréter les résultats : le modèle confond-il certaines classes (par exemple B et C) ?</li>
+</ol>
+<pre><code>from pyspark.ml.evaluation import MulticlassClassificationEvaluator
+
+evaluator = MulticlassClassificationEvaluator(labelCol="label", predictionCol="prediction")
+for metric in ["accuracy", "f1", "weightedPrecision", "weightedRecall"]:
+    print(metric, "=", evaluator.evaluate(predictions, {evaluator.metricName: metric}))
+
+predictions.groupBy("label", "prediction").count().orderBy("label", "prediction").show()</code></pre>
+</div>
+
+<h2>9. Régression linéaire avec LinearRegression</h2>
+<div class="task">
+<h3>Manipulation 9 — Entraînement du régresseur</h3>
+<p>Pour la régression, la cible est <code>total_score</code>. On assemble les mêmes features et on standardise.</p>
+<ol>
+<li>Créer un DataFrame <code>df_reg</code> avec <code>features_std</code> et <code>total_score</code> renommé en <code>label_reg</code>.</li>
+<li>Diviser en <code>train_reg</code> et <code>test_reg</code> (80/20, seed=42).</li>
+<li>Importer <code>LinearRegression</code> depuis <code>pyspark.ml.regression</code>.</li>
+<li>Entraîner le modèle sur <code>train_reg</code>.</li>
+<li>Générer les prédictions sur <code>test_reg</code>.</li>
+<li>Afficher les coefficients et l'intercept du modèle.</li>
+</ol>
+<pre><code>from pyspark.ml.regression import LinearRegression
+
+df_reg = df_std.withColumnRenamed("total_score", "label_reg")
+train_reg, test_reg = df_reg.randomSplit([0.8, 0.2], seed=42)
+
+linreg = LinearRegression(featuresCol="features_std", labelCol="label_reg")
+linreg_model = linreg.fit(train_reg)
+pred_reg = linreg_model.transform(test_reg)
+
+print("Coefficients :", linreg_model.coefficients)
+print("Intercept :", linreg_model.intercept)
+pred_reg.select("label_reg", "prediction").show(5)</code></pre>
+</div>
+
+<div class="task">
+<h3>Manipulation 10 — Évaluation : RMSE, MAE et R²</h3>
+<ol>
+<li>Importer <code>RegressionEvaluator</code>.</li>
+<li>Calculer le RMSE, le MAE et le R² (métriques <code>rmse</code>, <code>mae</code>, <code>r2</code>).</li>
+<li>Interpréter : un R² proche de 1 indique un bon ajustement ; un RMSE faible indique des prédictions proches des valeurs réelles.</li>
+</ol>
+<pre><code>from pyspark.ml.evaluation import RegressionEvaluator
+
+reg_eval = RegressionEvaluator(labelCol="label_reg", predictionCol="prediction")
+for metric in ["rmse", "mae", "r2"]:
+    print(metric, "=", reg_eval.evaluate(pred_reg, {reg_eval.metricName: metric}))</code></pre>
+</div>
+
+<h2>10. Comparaison des modèles et synthèse</h2>
+<div class="task">
+<h3>Manipulation 11 — Comparer et conclure</h3>
+<ol>
+<li>Comparer les performances du classifieur (Accuracy, F1) et du régresseur (RMSE, MAE, R²) dans un tableau récapitulatif.</li>
+<li>Refaire la classification avec <code>features_scaled</code> (MinMax) au lieu de <code>features_std</code> et comparer l'Accuracy.</li>
+<li>Discuter : quel modèle est le plus adapté à chaque objectif (classer vs prédire un score) ?</li>
+<li>Proposer des pistes d'amélioration : ajout de features, réglage des hyperparamètres (<code>regParam</code>, <code>elasticNetParam</code>), validation croisée.</li>
+</ol>
+<div class="answer-space"></div>
+<div class="answer-space"></div>
+<div class="answer-space"></div>
+</div>
+
+<h2>11. Synthèse et questions</h2>
+<ol>
+<li>Quel est le rôle de <code>StringIndexer</code> ? Pourquoi est-il indispensable avant <code>LogisticRegression</code> ?</li>
+<li>Pourquoi <code>VectorAssembler</code> est-il nécessaire dans MLlib ?</li>
+<li>Quelle est la différence entre <code>MinMaxScaler</code> et <code>StandardScaler</code> ? Dans quels cas privilégier l'un ou l'autre ?</li>
+<li>Pourquoi divise-t-on les données en ensembles d'entraînement et de test ?</li>
+<li>Que mesure l'Accuracy ? Le F1-score ? Pourquoi le F1 est-il utile en cas de classes déséquilibrées ?</li>
+<li>Que mesure le RMSE ? Le MAE ? Le R² ?</li>
+<li>Peut-on utiliser <code>LogisticRegression</code> pour prédire <code>total_score</code> ? Justifier.</li>
+<li>Quel avantage Spark MLlib offre-t-il pour entraîner des modèles sur de grands volumes de données ?</li>
+<li>Comment réutiliser un modèle entraîné (<code>model.save()</code> / <code>Model.load()</code>) ?</li>
+</ol>
+
+<h2>12. Travail à rendre</h2>
+<div class="success">
+<ul>
+<li>Le notebook / script contenant le code de toutes les manipulations.</li>
+<li>Les résultats des évaluations (métriques) et les matrices de confusion.</li>
+<li>Un tableau comparatif des modèles et une brève conclusion.</li>
+</ul>
+</div>
+
+<footer>TP Spark MLlib — Prédiction des performances étudiantes</footer>
+</main>
+</body>
+</html>
